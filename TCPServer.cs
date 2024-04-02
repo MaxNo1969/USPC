@@ -81,8 +81,8 @@ namespace USPC
         }
         public void start()
         {
-            log.add(LogRecord.LogReason.info, "TCPServer: start()");
-            acceptCallback = new AsyncCallback(ProcessAcceptClient);
+            log.add(LogRecord.LogReason.info, "{0}: {1}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name);
+            acceptCallback = new AsyncCallback(OnAcceptTCPClient);
             try
             {
                 log.add(LogRecord.LogReason.info, "{0}: {1}: {2}", "TCPServer", "TCPServer", "Start listening");
@@ -93,12 +93,12 @@ namespace USPC
             }
             catch (Exception ex)
             {
-                log.add(LogRecord.LogReason.error, "{0}: {1}: Error: {2}", "TCPServer", "TCPServer", ex.Message);
+                log.add(LogRecord.LogReason.error, "{0}: {1}: {2}: {3}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, "Error:", ex.Message);
             }
         }
         public void stop()
         {
-            log.add(LogRecord.LogReason.info, "TCPServer: stop()");
+            log.add(LogRecord.LogReason.info, "{0}: {1}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name);
             if (server != null)
             {
                 isRunning = false;
@@ -107,7 +107,7 @@ namespace USPC
         }
         ~TCPServer()
         {
-            log.add(LogRecord.LogReason.info, "TCPServer: ~TCPServer()");
+            log.add(LogRecord.LogReason.info, "{0}: {1}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name);
         }
 
         private byte[] serverResponce(string _cmd)
@@ -188,7 +188,7 @@ namespace USPC
             return ret;
         }
 
-        void ProcessAcceptClient(IAsyncResult res)
+        void OnAcceptTCPClient(IAsyncResult res)
         {
             if (!isRunning) return;
             TcpClient client = server.EndAcceptTcpClient(res);
@@ -207,18 +207,17 @@ namespace USPC
                         cmd.AppendFormat("{0}", Encoding.UTF8.GetString(myReadBuffer, 0, numberOfBytesRead));
                     }
                     while (stream.DataAvailable);
-                    log.add(LogRecord.LogReason.info, "TCPServer: ProcessAcceptClient: received command: {0}", cmd);
+                    log.add(LogRecord.LogReason.info, "{0}: {1}: {2}: {3}",GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name,"Command:",cmd);
                     Byte[] responseData = serverResponce(cmd.ToString());
                     stream.Write(responseData, 0, responseData.Length);
                 }
             }
             catch(Exception ex)
             {
-                log.add(LogRecord.LogReason.error,"TCPServer: ProcessAcceptClient: Error: {0}", ex.Message);
+                log.add(LogRecord.LogReason.error, "{0}: {1}: {2}: {3}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, "Error:", ex.Message);
             }
             finally
             {
-                //log.add(LogRecord.LogReason.info, "TCPServer: ProcessAcceptClient: finally");
                 stream.Close();
                 client.Close();
                 server.BeginAcceptTcpClient(acceptCallback,null);            

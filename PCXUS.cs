@@ -14,6 +14,7 @@ namespace USPC
     {
         #region Data structures
         // Ascan structure is designed to convert an A-scan binary buffer to a data structure.
+        [Serializable()]
         [StructLayout(LayoutKind.Explicit)]
         public struct Ascan
         {
@@ -161,6 +162,7 @@ namespace USPC
          }
 
         // AcqCscan structure is designed to convert an Cscan binary buffer coming from acquisition to a data structure.
+        [Serializable()]
         [StructLayout(LayoutKind.Explicit)]
         public struct AcqAscan
         {
@@ -253,6 +255,7 @@ namespace USPC
         }
 
         // AscanInfo structre must hold parameters requested to display Ascan and gates
+        [Serializable()]
         public struct AscanInfo
         {
             public enum VideoMode
@@ -411,6 +414,18 @@ namespace USPC
             ASCAN_MODE = 0x1000,//A-Scan and Gates; (A-Scan resolution depends of digitising mode and filter selected),(only for hardware version LA, MBA and MHA(*))         
             HR_MODE = 0x2000,   //A-Scan HR;  A-Scan resolution is fixed by FrequencyDivider parameter (gates information excluded) ),(only for hardware version LA).
         }
+
+        public enum ACQ_STATUS : int
+        {
+            ACQ_NO_CONFIGURED = 0,
+            ACQ_RUNNING = 1,
+            ACQ_FINISHED_WITH_SCANSBACKLOG = 2,
+            ACQ_FINISHED_WITHOUT_SCANSBACKLOG = 3,
+            ACQ_WAITING_START = 4,
+            ACQ_FIFO_ERROR = 5,
+            ACQ_BUFFER_FULL = 6,
+            ACQ_BLOC_SIZE_ERROR = 7
+        }
         #endregion constants
 
         #region DLL_IMPORTS
@@ -455,9 +470,9 @@ namespace USPC
         #endregion DLL_IMPORTS
         public const int MAX_ROW = 100;
         public const int MAX_STRING = 256;
-        enum Unit { ms = 0, mm = 1, inch = 2 };
+
         Int32 hPCXUS = 0;
-        //Не работает почему то (работает после открытия платы)
+        //работает после открытия платы
         public int numBoards
         {
             get
@@ -466,6 +481,7 @@ namespace USPC
             }
         }
 
+        //работает после открытия платы
         public int serialNumber(int _board = 0)
         {
             int serialNumber;
@@ -493,40 +509,40 @@ namespace USPC
                 return true;
         }
 
-        public double getParamValueDouble(string _paramName)
+        public double getParamValueDouble(string _paramName,int _board = 0, int _test = 0, UnitCode _unit = UnitCode.UNIT_us )
         {
             double dblValue = 0;
             double[] dblArrayValue1 = new double[PCXUS.MAX_ROW];
             double[] dblArrayValue2 = new double[PCXUS.MAX_ROW];
             StringBuilder strValue = new StringBuilder(PCXUS.MAX_STRING);
-            Int32  err = PCXUS.PCXUS_READ(hPCXUS, 0, 0, 0, _paramName, ref dblValue, dblArrayValue1, dblArrayValue2, strValue);
+            Int32  err = PCXUS.PCXUS_READ(hPCXUS, _board, _test, (int)_unit, _paramName, ref dblValue, dblArrayValue1, dblArrayValue2, strValue);
             if (err != 0)
             {
-                log.add(LogRecord.LogReason.error, "GetParamValueDouble: PCXUS_READ error : 0x{0:X8}", err);
+                log.add(LogRecord.LogReason.error, "{0}: {1}: PCXUS_READ error : 0x{2:X8}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, err);
                 return dblValue;
             }
             else
             {
-                log.add(LogRecord.LogReason.info, "GetParamValueDouble: {0} = {1}", _paramName, dblValue);
+                log.add(LogRecord.LogReason.info, "{0}:{1}: {2} = {3}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, _paramName, dblValue);
                 return dblValue;
             }
         }
 
-        public string getParamValueString(string _paramName)
+        public string getParamValueString(string _paramName, int _board = 0, int _test = 0, UnitCode _unit = UnitCode.UNIT_us)
         {
             double dblValue = 0;
             double[] dblArrayValue1 = new double[PCXUS.MAX_ROW];
             double[] dblArrayValue2 = new double[PCXUS.MAX_ROW];
             StringBuilder strValue = new StringBuilder(PCXUS.MAX_STRING);
-            Int32 err = PCXUS.PCXUS_READ(hPCXUS, 0, 0, 0, _paramName, ref dblValue, dblArrayValue1, dblArrayValue2, strValue);
+            Int32 err = PCXUS.PCXUS_READ(hPCXUS, _board, _test, (int)_unit, _paramName, ref dblValue, dblArrayValue1, dblArrayValue2, strValue);
             if (err != 0)
             {
-                log.add(LogRecord.LogReason.error, "GetParamValueString: PCXUS_READ error : 0x{0:X8}", err);
+                log.add(LogRecord.LogReason.error, "{0}: {1}: PCXUS_READ error : 0x{2:X8}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, err);
                 return "";
             }
             else
             {
-                log.add(LogRecord.LogReason.info, "GetParamValueString: {0} = {1}", _paramName, strValue.ToString());
+                log.add(LogRecord.LogReason.info, "{0}:{1}: {2} = {3}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, _paramName, dblValue);
                 return strValue.ToString();
             }
         }
@@ -543,7 +559,7 @@ namespace USPC
             }
             else
             {
-                log.add(LogRecord.LogReason.info, "PCXUS_Open succes");
+                log.add(LogRecord.LogReason.info, "{0}: {1}: {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, "PCXUS opened");
                 return true;
 
             }
@@ -566,10 +582,10 @@ namespace USPC
             }
         }
 
-        public bool load(string _fName)
+        public bool load(string _fName, int _board = -1, int _test = -1)
         {
             if (!checkHandle()) return false;
-            Int32 err = PCXUS_Load(-1, -1, _fName);
+            Int32 err = PCXUS_Load(_board, _test, _fName);
             if (err != 0)
             {
                 log.add(LogRecord.LogReason.error, "{0}: {1}: 0x{2:08X}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, err);
@@ -582,12 +598,30 @@ namespace USPC
             }
         }
 
+        public bool save(string _fName, int _board = -1, int _test = -1)
+        {
+            if (!checkHandle()) return false;
+            Int32 err = PCXUS_Save(_board, _test, _fName);
+            if (err != 0)
+            {
+                log.add(LogRecord.LogReason.error, "{0}: {1}: 0x{2:08X}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, err);
+                return false;
+            }
+            else
+            {
+                log.add(LogRecord.LogReason.info, "{0}: {1}: Configuration file \"{2}\" saved", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, _fName);
+                return true;
+            }
+        }
+
         public bool config(Int32 _board, Int32 _bufferSize)
         {
             if(!checkHandle())return false;
             Int32 AcqMode = 0x800; 
             Int32 StartMode = 1;
             Int32[] Conditions = new Int32[8];
+            Int32 PrePostScans = 0;
+            Int32 FrequencyDivider = 0;
             Int32 InterruptFluidity = 256;
             Int32 Param = 0;
             // Setup acquisition
@@ -597,8 +631,8 @@ namespace USPC
                 AcqMode,
                 StartMode,
                 Conditions,
-                0,
-                0,
+                PrePostScans,
+                FrequencyDivider,
                 _bufferSize,
                 ref InterruptFluidity,
                 ref Param);
@@ -606,26 +640,14 @@ namespace USPC
             log.add(LogRecord.LogReason.info,"PCXUS.PCXUS_ACQ_CONFIG: InterruptFluidity = {0}", InterruptFluidity);
             if (err != 0)
             {
-                log.add(LogRecord.LogReason.error, "PCXUS_ACQ_CONFIG error : 0x{0:X8}", err);
+                log.add(LogRecord.LogReason.error, "{0}: {1}: 0x{2:08X}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, err);
                 return false;
             }
             else
             {
-                log.add(LogRecord.LogReason.info, "PCXUS_ACQ_CONFIG success");
+                log.add(LogRecord.LogReason.info, "{0}: {1}: {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, "success");                
                 return true;
             }
-        }
-
-        public enum ACQ_STATUS
-        {
-            ACQ_NO_CONFIGURED = 0,
-            ACQ_RUNNING = 1,
-            ACQ_FINISHED_WITH_SCANSBACKLOG = 2,
-            ACQ_FINISHED_WITHOUT_SCANSBACKLOG = 3,
-            ACQ_WAITING_START = 4,
-            ACQ_FIFO_ERROR = 5,
-            ACQ_BUFFER_FULL = 6,
-            ACQ_BLOC_SIZE_ERROR = 7
         }
 
         public bool status(Int32 _board, ref Int32 _status, ref Int32 _NumberOfScansAcquired, ref Int32 _NumberOfScansRead, ref Int32 _BufferSize, ref Int32 _scanSize)
@@ -634,12 +656,12 @@ namespace USPC
             Int32 err = PCXUS_ACQ_GET_STATUS(_board, ref _status, ref _NumberOfScansAcquired, ref _NumberOfScansRead, ref _BufferSize, ref _scanSize);
             if (err != 0)
             {
-                log.add(LogRecord.LogReason.error, "PCXUS_ACQ_GET_STATUS error : 0x{0:X8}", err);
+                log.add(LogRecord.LogReason.error, "{0}: {1}: 0x{2:08X}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, err);
                 return false;
             }
             else
             {
-                log.add(LogRecord.LogReason.info, "PCXUS_ACQ_GET_STATUS success: {0}", ((ACQ_STATUS)_status).ToString());
+                log.add(LogRecord.LogReason.info, "{0}: {1}: {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, "success");
                 return true;
             }
         }
@@ -650,12 +672,12 @@ namespace USPC
             Int32 err = PCXUS_ACQ_START(hPCXUS, _board, -1);
             if (err != 0)
             {
-                log.add(LogRecord.LogReason.error, "PCXUS_ACQ_START error : 0x{0:X8}", err);
+                log.add(LogRecord.LogReason.error, "{0}: {1}: 0x{2:08X}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, err);
                 return false;
             }
             else
             {
-                log.add(LogRecord.LogReason.info, "PCXUS_ACQ_START success");
+                log.add(LogRecord.LogReason.info, "{0}: {1}: {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, "success");
                 return true;
             }
             
@@ -667,12 +689,12 @@ namespace USPC
             Int32 err = PCXUS_ACQ_STOP(hPCXUS, _board);
             if (err != 0)
             {
-                log.add(LogRecord.LogReason.error, "PCXUS_ACQ_STOP error : 0x{0:X8}", err);
+                log.add(LogRecord.LogReason.error, "{0}: {1}: 0x{2:08X}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, err);
                 return false;
             }
             else
             {
-                log.add(LogRecord.LogReason.info, "PCXUS_ACQ_STOP success");
+                log.add(LogRecord.LogReason.info, "{0}: {1}: {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, "success");
                 return true;
             }
         }
@@ -682,12 +704,12 @@ namespace USPC
             Int32 err = PCXUS_ACQ_CLEAR(hPCXUS, _board);
             if (err != 0)
             {
-                log.add(LogRecord.LogReason.error, "PCXUS_ACQ_CLEAR error : 0x{0:X8}", err);
+                log.add(LogRecord.LogReason.error, "{0}: {1}: 0x{2:08X}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, err);
                 return false;
             }
             else
             {
-                log.add(LogRecord.LogReason.info, "PCXUS_ACQ_CLEAR success");
+                log.add(LogRecord.LogReason.info, "{0}: {1}: {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, "success");
                 return true;
             }
         }
@@ -700,12 +722,12 @@ namespace USPC
             Int32 err = PCXUS_ACQ_READ(hPCXUS, _board, 0, TimeOut, ref NumberOfRead, ref ScansBacklog, _data);
             if (err != 0)
             {
-                log.add(LogRecord.LogReason.error, "PCXUS_ACQ_READ error : 0x{0:X8}", err);
+                log.add(LogRecord.LogReason.error, "{0}: {1}: 0x{2:08X}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, err);
                 return 0;
             }
             else
             {
-                //log.add(LogRecord.LogReason.info, "PCXUS_ACQ_READ success: {0} scans readed, {1} scans remaining", NumberOfRead, ScansBacklog);
+                log.add(LogRecord.LogReason.info, "{0}: {1}: {2} = {3}, {4} = {5}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, "NumberOfRead", NumberOfRead, "ScansBacklog", ScansBacklog);
                 return NumberOfRead;
             }
         }
@@ -718,12 +740,12 @@ namespace USPC
             Int32 err = PCXUS_ACQ_READ(hPCXUS, _board, 0, TimeOut, ref NumberOfRead, ref ScansBacklog, _data);
             if (err != 0)
             {
-                log.add(LogRecord.LogReason.error, "PCXUS_ACQ_READ error : 0x{0:X8}", err);
+                log.add(LogRecord.LogReason.error, "{0}: {1}: 0x{2:08X}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, err);
                 return 0;
             }
             else
             {
-                //log.add(LogRecord.LogReason.info, "PCXUS_ACQ_READ success: {0} scans readed, {1} scans remaining", NumberOfRead, ScansBacklog);
+                log.add(LogRecord.LogReason.info, "{0}: {1}: {2} = {3}, {4} = {5}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, "NumberOfRead", NumberOfRead, "ScansBacklog", ScansBacklog);
                 return NumberOfRead;
             }
         }
