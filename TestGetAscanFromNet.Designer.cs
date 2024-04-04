@@ -1,6 +1,6 @@
 ﻿namespace USPC
 {
-    partial class TestUSPCGetAscan
+    partial class TestGetAscanFromNet
     {
         /// <summary>
         /// Required designer variable.
@@ -42,18 +42,91 @@
             System.Windows.Forms.DataVisualization.Charting.Series series10 = new System.Windows.Forms.DataVisualization.Charting.Series();
             System.Windows.Forms.DataVisualization.Charting.Series series11 = new System.Windows.Forms.DataVisualization.Charting.Series();
             System.Windows.Forms.DataVisualization.Charting.Title title1 = new System.Windows.Forms.DataVisualization.Charting.Title();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(TestUSPCGetAscan));
-            this.AscanChart = new System.Windows.Forms.DataVisualization.Charting.Chart();
-            this.timerAscan = new System.Windows.Forms.Timer(this.components);
-            this.tb = new System.Windows.Forms.ToolStrip();
-            this.tbbtnStart = new System.Windows.Forms.ToolStripButton();
-            this.tbbtnStop = new System.Windows.Forms.ToolStripButton();
-            this.gateIF = new USPC.Gate();
-            this.gate2 = new USPC.Gate();
+            this.btnStartStop = new System.Windows.Forms.Button();
+            this.timer = new System.Windows.Forms.Timer(this.components);
             this.gate1 = new USPC.Gate();
+            this.gate2 = new USPC.Gate();
+            this.gateIF = new USPC.Gate();
+            this.label1 = new System.Windows.Forms.Label();
+            this.label2 = new System.Windows.Forms.Label();
+            this.label3 = new System.Windows.Forms.Label();
+            this.AscanChart = new System.Windows.Forms.DataVisualization.Charting.Chart();
             ((System.ComponentModel.ISupportInitialize)(this.AscanChart)).BeginInit();
-            this.tb.SuspendLayout();
             this.SuspendLayout();
+            // 
+            // btnStartStop
+            // 
+            this.btnStartStop.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnStartStop.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.btnStartStop.Location = new System.Drawing.Point(671, 2);
+            this.btnStartStop.Name = "btnStartStop";
+            this.btnStartStop.Size = new System.Drawing.Size(140, 50);
+            this.btnStartStop.TabIndex = 0;
+            this.btnStartStop.Text = "Start";
+            this.btnStartStop.UseVisualStyleBackColor = true;
+            this.btnStartStop.Click += new System.EventHandler(this.btnStartStop_Click);
+            // 
+            // timer
+            // 
+            this.timer.Interval = 200;
+            this.timer.Tick += new System.EventHandler(this.timer_Tick);
+            // 
+            // gate1
+            // 
+            this.gate1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.gate1.Location = new System.Drawing.Point(671, 106);
+            this.gate1.Name = "gate1";
+            this.gate1.Size = new System.Drawing.Size(140, 79);
+            this.gate1.TabIndex = 2;
+            // 
+            // gate2
+            // 
+            this.gate2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.gate2.Location = new System.Drawing.Point(671, 227);
+            this.gate2.Name = "gate2";
+            this.gate2.Size = new System.Drawing.Size(140, 79);
+            this.gate2.TabIndex = 3;
+            // 
+            // gateIF
+            // 
+            this.gateIF.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.gateIF.Location = new System.Drawing.Point(671, 339);
+            this.gateIF.Name = "gateIF";
+            this.gateIF.Size = new System.Drawing.Size(140, 79);
+            this.gateIF.TabIndex = 4;
+            // 
+            // label1
+            // 
+            this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.label1.AutoSize = true;
+            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.label1.Location = new System.Drawing.Point(671, 75);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(59, 20);
+            this.label1.TabIndex = 5;
+            this.label1.Text = "Gate1";
+            // 
+            // label2
+            // 
+            this.label2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.label2.AutoSize = true;
+            this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.label2.Location = new System.Drawing.Point(671, 196);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(59, 20);
+            this.label2.TabIndex = 6;
+            this.label2.Text = "Gate2";
+            // 
+            // label3
+            // 
+            this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.label3.AutoSize = true;
+            this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.label3.Location = new System.Drawing.Point(671, 308);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(66, 20);
+            this.label3.TabIndex = 7;
+            this.label3.Text = "GateIF";
             // 
             // AscanChart
             // 
@@ -70,7 +143,7 @@
             chartArea1.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             chartArea1.Name = "Default";
             this.AscanChart.ChartAreas.Add(chartArea1);
-            this.AscanChart.Location = new System.Drawing.Point(0, 28);
+            this.AscanChart.Location = new System.Drawing.Point(-4, 2);
             this.AscanChart.Name = "AscanChart";
             series1.ChartArea = "Default";
             series1.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.FastLine;
@@ -131,86 +204,33 @@
             this.AscanChart.Series.Add(series9);
             this.AscanChart.Series.Add(series10);
             this.AscanChart.Series.Add(series11);
-            this.AscanChart.Size = new System.Drawing.Size(741, 448);
-            this.AscanChart.TabIndex = 0;
+            this.AscanChart.Size = new System.Drawing.Size(669, 459);
+            this.AscanChart.TabIndex = 8;
             title1.Font = new System.Drawing.Font("Arial Black", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             title1.ForeColor = System.Drawing.Color.White;
             title1.Name = "main";
             title1.Text = "A-Scan";
             this.AscanChart.Titles.Add(title1);
             // 
-            // timerAscan
-            // 
-            this.timerAscan.Tick += new System.EventHandler(this.timerAscan_Tick);
-            // 
-            // tb
-            // 
-            this.tb.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.tbbtnStart,
-            this.tbbtnStop});
-            this.tb.Location = new System.Drawing.Point(0, 0);
-            this.tb.Name = "tb";
-            this.tb.Size = new System.Drawing.Size(1004, 25);
-            this.tb.TabIndex = 3;
-            // 
-            // tbbtnStart
-            // 
-            this.tbbtnStart.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.tbbtnStart.Image = ((System.Drawing.Image)(resources.GetObject("tbbtnStart.Image")));
-            this.tbbtnStart.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.tbbtnStart.Name = "tbbtnStart";
-            this.tbbtnStart.Size = new System.Drawing.Size(35, 22);
-            this.tbbtnStart.Text = "Start";
-            this.tbbtnStart.Click += new System.EventHandler(this.tbbtnStart_Click);
-            // 
-            // tbbtnStop
-            // 
-            this.tbbtnStop.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.tbbtnStop.Image = ((System.Drawing.Image)(resources.GetObject("tbbtnStop.Image")));
-            this.tbbtnStop.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.tbbtnStop.Name = "tbbtnStop";
-            this.tbbtnStop.Size = new System.Drawing.Size(35, 22);
-            this.tbbtnStop.Text = "Stop";
-            this.tbbtnStop.Click += new System.EventHandler(this.tbbtnStop_Click);
-            // 
-            // gateIF
-            // 
-            this.gateIF.Location = new System.Drawing.Point(757, 302);
-            this.gateIF.Name = "gateIF";
-            this.gateIF.Size = new System.Drawing.Size(123, 79);
-            this.gateIF.TabIndex = 6;
-            // 
-            // gate2
-            // 
-            this.gate2.Location = new System.Drawing.Point(757, 180);
-            this.gate2.Name = "gate2";
-            this.gate2.Size = new System.Drawing.Size(123, 79);
-            this.gate2.TabIndex = 5;
-            // 
-            // gate1
-            // 
-            this.gate1.Location = new System.Drawing.Point(757, 60);
-            this.gate1.Name = "gate1";
-            this.gate1.Size = new System.Drawing.Size(123, 79);
-            this.gate1.TabIndex = 4;
-            // 
-            // TestUSPCGetAscan
+            // TestGetAscanFromNet
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1004, 570);
+            this.ClientSize = new System.Drawing.Size(815, 463);
+            this.Controls.Add(this.AscanChart);
+            this.Controls.Add(this.label3);
+            this.Controls.Add(this.label2);
+            this.Controls.Add(this.label1);
             this.Controls.Add(this.gateIF);
             this.Controls.Add(this.gate2);
             this.Controls.Add(this.gate1);
-            this.Controls.Add(this.tb);
-            this.Controls.Add(this.AscanChart);
-            this.Name = "TestUSPCGetAscan";
-            this.Text = "TestUSPCGetAscan";
-            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.TestUSPCGetAscan_FormClosing);
-            this.Load += new System.EventHandler(this.TestUSPCGetAscan_Load);
+            this.Controls.Add(this.btnStartStop);
+            this.Name = "TestGetAscanFromNet";
+            this.Text = "TestGetAscanFromNet";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.TestGetAscanFromNet_FormClosing);
+            this.Load += new System.EventHandler(this.TestGetAscanFromNet_Load);
+            this.Resize += new System.EventHandler(this.TestGetAscanFromNet_Resize);
             ((System.ComponentModel.ISupportInitialize)(this.AscanChart)).EndInit();
-            this.tb.ResumeLayout(false);
-            this.tb.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -218,13 +238,14 @@
 
         #endregion
 
-        private System.Windows.Forms.DataVisualization.Charting.Chart AscanChart;
-        private System.Windows.Forms.Timer timerAscan;
-        private System.Windows.Forms.ToolStrip tb;
-        private System.Windows.Forms.ToolStripButton tbbtnStart;
-        private System.Windows.Forms.ToolStripButton tbbtnStop;
+        private System.Windows.Forms.Button btnStartStop;
+        private System.Windows.Forms.Timer timer;
         private Gate gate1;
         private Gate gate2;
         private Gate gateIF;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.DataVisualization.Charting.Chart AscanChart;
     }
 }

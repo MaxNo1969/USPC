@@ -17,7 +17,9 @@ namespace USPC
     public partial class FRMain : Form
     {
         public PCXUS pcxus = null;
-        
+
+        PCXUSNetworkServer server = null;
+
         //! Форма для отображения протокола
         private FRProt pr;
         
@@ -27,8 +29,6 @@ namespace USPC
             InitializeComponent();
             IsMdiContainer = true;
             WindowState = FormWindowState.Normal;
-
-            pcxus = new PCXUS();
         }
 
         private void FRMain_Load(object sender, EventArgs e)
@@ -52,9 +52,29 @@ namespace USPC
             miWindowsProt.Checked = pr.Visible;
             FormPosSaver.load(pr);
 
-            miOpenUSPC.Enabled = true;
-            miLoadUSPC.Enabled = false;
-            //miBoardInfo.Enabled = false;
+            string strNetServer = null;
+            try
+            {
+                strNetServer = Program.cmdLineArgs["Server"];
+            }
+            catch (Exception ex)
+            {
+                log.add(LogRecord.LogReason.error, "{0}: {1}: {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message);
+                log.add(LogRecord.LogReason.info, "{0}: {1}: {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, "command line param \"Server\" not specified");
+            }
+            if (strNetServer == null)
+            {
+                //создаём объект для платы
+                pcxus = new PCXUS();
+                //Запускаем сервер
+                server = new PCXUSNetworkServer(pcxus);
+                server.start();
+                log.add(LogRecord.LogReason.info, "{0}: {1}: {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, "server started");
+            }
+            else
+            {
+                log.add(LogRecord.LogReason.info, "{0}: {1}: {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, "server not started");
+            }
         }
 
         private void miShowProt_Click(object sender, EventArgs e)
@@ -65,6 +85,7 @@ namespace USPC
 
         private void miExit_Click(object sender, EventArgs e)
         {
+            if (server != null) server.stop();
             if (pcxus != null) pcxus.close();
             Close();
         }
@@ -77,27 +98,28 @@ namespace USPC
 
         private void miOpenUSPC_Click(object sender, EventArgs e)
         {
-            if (!pcxus.open(2))
-            {
-                log.add(LogRecord.LogReason.error, "{0}: {1}: {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, "Не удалось открыть плату USPC");
-                return;
-            }
-            miLoadUSPC.Enabled = true;
-            miBoardInfo.Enabled = true;
+            pcxus.open(2);
         }
 
         private void miLoadUSPC_Click(object sender, EventArgs e)
         {
-            using (OpenFileDialog ofd = new OpenFileDialog())
+            OpenFileDialog ofd = new OpenFileDialog
             {
-                ofd.Filter = "Файлы конфигураций (*.us)|*.us|All files (*.*)|*.*";
-                ofd.FilterIndex = 0;
-                if (ofd.ShowDialog() == DialogResult.OK)
+                AddExtension = true,
+                DefaultExt = "us",
+                Filter = "Файлы конфигурации (*.us)|*.us|Все файлы (*.*)|*.*"
+            };
+            if (ofd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                if (!pcxus.load(ofd.FileName))
                 {
-                    string fileName = ofd.FileName;
-                    if (!pcxus.load(fileName)) return;
+                    MessageBox.Show(string.Format("Ошибка загрузки конфигурации \"{0}\"",ofd.FileName));
                 }
             }
+        }
+        private void miCloseUSPC_Click(object sender, EventArgs e)
+        {
+            pcxus.close();
         }
 
         Dictionary<string, List<int>> data = null;
@@ -139,6 +161,12 @@ namespace USPC
         private void tCPServerToolStripMenuItem_Click(object sender, EventArgs e)
         {
             FRTestTcp frm = new FRTestTcp(this);
+            frm.Show();
+        }
+
+        private void miTestAscanFromNet_Click(object sender, EventArgs e)
+        {
+            TestGetAscanFromNet frm = new TestGetAscanFromNet(this);
             frm.Show();
         }
     }

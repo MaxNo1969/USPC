@@ -6,71 +6,24 @@ using System.ComponentModel;
 using System.Net;
 using System.Net.Sockets;
 using PROTOCOL;
+using System.IO;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.Runtime.InteropServices;
 
 namespace USPC
 {
-    class TcpCommand
-    {
-
-        public static int port = 63001;
-        string address = null;
-        int bufferSize = 1024;
-
-        public TcpCommand(string _addr)
-        {
-            address = _addr;
-        }
-
-        public byte[] sendCommand(string _cmd)
-        {
-            TcpClient client = null;
-            NetworkStream stream = null;
-            try
-            {
-                // Инициализация
-                client = new TcpClient(address, port);
-                if (_cmd != null && _cmd != "")
-                {
-                    Byte[] data = Encoding.UTF8.GetBytes(_cmd);
-                    stream = client.GetStream();
-                    // Отправка сообщения
-                    stream.Write(data, 0, data.Length);
-                    // Получение ответа
-                    Byte[] readingData = new Byte[bufferSize];
-                    int numberOfBytesRead = 0;
-                    do
-                    {
-                        numberOfBytesRead = stream.Read(readingData, 0, readingData.Length);
-                    }
-                    while (stream.DataAvailable);
-                    return readingData;
-                }
-                else
-                    return Encoding.UTF8.GetBytes("Empty command.");
-            }
-            catch (Exception ex)
-            {
-                log.add(LogRecord.LogReason.error, "TcpCommand: senDCommand: Error: {0}", ex.Message);
-                if (stream != null) stream.Close();
-                if (client != null) client.Close();
-                return null;
-            }
-            finally
-            {
-                if(stream != null)stream.Close();
-                if(client != null)client.Close();
-            }
-        }
-    }
-
+    public delegate void StreamWork(Stream _stream);
     class TCPServer
     {
         IPAddress address = IPAddress.Any;
         public static int port = 63001;
         TcpListener server = null;
-        int bufferSize = 1024;
         bool isRunning = false;
         AsyncCallback acceptCallback = null;
+        public StreamWork streamWork = null;
+        const int CMD_SIZE = 512;
+
         public PCXUS pcxus = null;
 
         //ToDo: ИП вроде не нужен - пускай слушает всё
@@ -78,14 +31,15 @@ namespace USPC
         {
             address = IPAddress.Any;
             isRunning = false;
+            //streamWork += new StreamWork(defaultStreamWorkHandler);
         }
         public void start()
         {
-            log.add(LogRecord.LogReason.info, "{0}: {1}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name);
+            //log.add(LogRecord.LogReason.info, "{0}: {1}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name);
             acceptCallback = new AsyncCallback(OnAcceptTCPClient);
             try
             {
-                log.add(LogRecord.LogReason.info, "{0}: {1}: {2}", "TCPServer", "TCPServer", "Start listening");
+                log.add(LogRecord.LogReason.info, "{0}: {1}: {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, "Start listening");
                 server = new TcpListener(address, port);
                 server.Start();
                 isRunning = true;
@@ -107,87 +61,10 @@ namespace USPC
         }
         ~TCPServer()
         {
-            log.add(LogRecord.LogReason.info, "{0}: {1}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name);
+            //log.add(LogRecord.LogReason.info, "{0}: {1}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name);
         }
 
-        private byte[] serverResponce(string _cmd)
-        {
-            string[] cmdAndPars = _cmd.Split(new char[] {','});
-            byte[] ret = null;
-            switch (cmdAndPars[0])
-            {
-                case "TEST":
-                    ret = Encoding.UTF8.GetBytes(cmdAndPars[0]);
-                    break;
-                case "PCXUS_OPEN":
-                    {
-                        if (cmdAndPars.Count() != 3)
-                        {
-                            log.add(LogRecord.LogReason.error, "PCXUS_OPEN: wrong params");
-                            ret = Encoding.UTF8.GetBytes("PCXUS_OPEN: wrong params");
-                            break;
-                        }
-                        int hPCXUS = Convert.ToInt32(cmdAndPars[1]);
-                        int boot = Convert.ToInt32(cmdAndPars[2]);
-                        pcxus.open(boot);
-                        ret = Encoding.UTF8.GetBytes("PCXUS_OPEN: board opened");
-                    }
-                    break;
-                case "PCXUS_LOAD":
-                    {
-                        if (cmdAndPars.Count() != 4)
-                        {
-                            log.add(LogRecord.LogReason.error, "PCXUS_LOAD: wrong params");
-                            ret = Encoding.UTF8.GetBytes("PCXUS_LOAD: wrong params");
-                            break;
-                        }
-                        int board = Convert.ToInt32(cmdAndPars[1]);
-                        int test = Convert.ToInt32(cmdAndPars[2]);
-                        string fName = cmdAndPars[3];
-                        string configPath = @"c:\uspc\UT_files";
-                        fName = string.Format(@"{0}\{1}", configPath, fName);
-                        pcxus.load(fName);
-                        ret = Encoding.UTF8.GetBytes(string.Format("PCXUS_LOAD: Configuration \"{0}\" loaded",fName));
-                    }
-                    break;
-                case "PCXUS_CLOSE":
-                    {
-                        if (cmdAndPars.Count() != 1)
-                        {
-                            log.add(LogRecord.LogReason.error, "PCXUS_CLOSE: wrong params");
-                            ret = Encoding.UTF8.GetBytes("PCXUS_OPEN: wrong params");
-                            break;
-                        }
-                        pcxus.close();
-                        ret = Encoding.UTF8.GetBytes("PCXUS_OPEN: board closed");
-                    }
-                    break;
-                case "PCXUS_ACQ_ASCAN":
-                    {
-                        if (cmdAndPars.Count() != 4)
-                        {
-                            log.add(LogRecord.LogReason.error, "PCXUS_ACQ_ASCAN: wrong params");
-                            ret = Encoding.UTF8.GetBytes("PCXUS_ACQ_ASCAN: wrong params");
-                            break;
-                        }
-                        int board = Convert.ToInt32(cmdAndPars[1]);
-                        int test = Convert.ToInt32(cmdAndPars[2]);
-                        int _ascan = Convert.ToInt32(cmdAndPars[3]);
-                        int timeout = Convert.ToInt32(cmdAndPars[4]);
-                        PCXUS.Ascan ascan = new PCXUS.Ascan();
-                        PCXUS.PCXUS_ACQ_ASCAN(board, test, ref ascan, timeout);                        
-                        //byte[] bytes =                         
-                    }
-                    break;
-
-                default:
-                    ret = Encoding.UTF8.GetBytes(cmdAndPars[0]);
-                    break;
-
-            }
-            return ret;
-        }
-
+        //ToDo: Пока чтение и запись в Stream сделаны синхронно (может так и оставлю)
         void OnAcceptTCPClient(IAsyncResult res)
         {
             if (!isRunning) return;
@@ -196,21 +73,7 @@ namespace USPC
             // Обмен данными
             try
             {
-                if (stream.CanRead)
-                {
-                    byte[] myReadBuffer = new byte[bufferSize];
-                    int numberOfBytesRead = 0;
-                    StringBuilder cmd = new StringBuilder();
-                    do
-                    {
-                        numberOfBytesRead = stream.Read(myReadBuffer, 0, myReadBuffer.Length);
-                        cmd.AppendFormat("{0}", Encoding.UTF8.GetString(myReadBuffer, 0, numberOfBytesRead));
-                    }
-                    while (stream.DataAvailable);
-                    log.add(LogRecord.LogReason.info, "{0}: {1}: {2}: {3}",GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name,"Command:",cmd);
-                    Byte[] responseData = serverResponce(cmd.ToString());
-                    stream.Write(responseData, 0, responseData.Length);
-                }
+                if (streamWork != null) streamWork(stream);
             }
             catch(Exception ex)
             {
@@ -221,6 +84,20 @@ namespace USPC
                 stream.Close();
                 client.Close();
                 server.BeginAcceptTcpClient(acceptCallback,null);            
+            }
+        }
+        //Делегат по умолчанию для обработки входящих соединений - просто возвращает назад полученные данные        
+        private void defaultStreamWorkHandler(Stream _stream)
+        {
+            //log.add(LogRecord.LogReason.info, "{0}: {1}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name);
+            if (_stream.CanRead)
+            {
+                byte[] buffer = new byte[CMD_SIZE];
+                int bytesReaded = _stream.Read(buffer, 0, CMD_SIZE);
+                if (_stream.CanWrite)
+                {
+                    _stream.Write(buffer, 0, bytesReaded);
+                }
             }
         }
     }

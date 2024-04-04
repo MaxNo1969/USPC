@@ -40,11 +40,13 @@
             this.miTest = new System.Windows.Forms.ToolStripMenuItem();
             this.miBoardTest = new System.Windows.Forms.ToolStripMenuItem();
             this.miTestUSPCAscan = new System.Windows.Forms.ToolStripMenuItem();
+            this.tCPServerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.miWindows = new System.Windows.Forms.ToolStripMenuItem();
             this.miWindowsProt = new System.Windows.Forms.ToolStripMenuItem();
             this.miUSPC = new System.Windows.Forms.ToolStripMenuItem();
             this.miOpenUSPC = new System.Windows.Forms.ToolStripMenuItem();
             this.miLoadUSPC = new System.Windows.Forms.ToolStripMenuItem();
+            this.miCloseUSPC = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripSeparator();
             this.miBoardInfo = new System.Windows.Forms.ToolStripMenuItem();
             this.sb = new System.Windows.Forms.StatusStrip();
@@ -54,7 +56,7 @@
             this.duration = new System.Windows.Forms.ToolStripStatusLabel();
             this.heap = new System.Windows.Forms.ToolStripStatusLabel();
             this.timerUpdUI = new System.Windows.Forms.Timer(this.components);
-            this.tCPServerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.miTestAscanFromNet = new System.Windows.Forms.ToolStripMenuItem();
             this.menu.SuspendLayout();
             this.sb.SuspendLayout();
             this.SuspendLayout();
@@ -131,7 +133,8 @@
             this.miTest.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.miBoardTest,
             this.miTestUSPCAscan,
-            this.tCPServerToolStripMenuItem});
+            this.tCPServerToolStripMenuItem,
+            this.miTestAscanFromNet});
             this.miTest.Name = "miTest";
             this.miTest.Size = new System.Drawing.Size(95, 20);
             this.miTest.Text = "Тестирование";
@@ -139,16 +142,23 @@
             // miBoardTest
             // 
             this.miBoardTest.Name = "miBoardTest";
-            this.miBoardTest.Size = new System.Drawing.Size(155, 22);
+            this.miBoardTest.Size = new System.Drawing.Size(173, 22);
             this.miBoardTest.Text = "Плата";
             this.miBoardTest.Click += new System.EventHandler(this.miBoardTest_Click);
             // 
             // miTestUSPCAscan
             // 
             this.miTestUSPCAscan.Name = "miTestUSPCAscan";
-            this.miTestUSPCAscan.Size = new System.Drawing.Size(155, 22);
+            this.miTestUSPCAscan.Size = new System.Drawing.Size(173, 22);
             this.miTestUSPCAscan.Text = "TestUSPCAscan";
             this.miTestUSPCAscan.Click += new System.EventHandler(this.miTestUSPCAscan_Click);
+            // 
+            // tCPServerToolStripMenuItem
+            // 
+            this.tCPServerToolStripMenuItem.Name = "tCPServerToolStripMenuItem";
+            this.tCPServerToolStripMenuItem.Size = new System.Drawing.Size(173, 22);
+            this.tCPServerToolStripMenuItem.Text = "TCPServer";
+            this.tCPServerToolStripMenuItem.Click += new System.EventHandler(this.tCPServerToolStripMenuItem_Click);
             // 
             // miWindows
             // 
@@ -171,6 +181,7 @@
             this.miUSPC.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.miOpenUSPC,
             this.miLoadUSPC,
+            this.miCloseUSPC,
             this.toolStripMenuItem2,
             this.miBoardInfo});
             this.miUSPC.Name = "miUSPC";
@@ -190,6 +201,13 @@
             this.miLoadUSPC.Size = new System.Drawing.Size(215, 22);
             this.miLoadUSPC.Text = "Загрузить конфигурацию";
             this.miLoadUSPC.Click += new System.EventHandler(this.miLoadUSPC_Click);
+            // 
+            // miCloseUSPC
+            // 
+            this.miCloseUSPC.Name = "miCloseUSPC";
+            this.miCloseUSPC.Size = new System.Drawing.Size(215, 22);
+            this.miCloseUSPC.Text = "Закрыть плату";
+            this.miCloseUSPC.Click += new System.EventHandler(this.miCloseUSPC_Click);
             // 
             // toolStripMenuItem2
             // 
@@ -260,12 +278,12 @@
             this.timerUpdUI.Enabled = true;
             this.timerUpdUI.Tick += new System.EventHandler(this.timerUpdUI_Tick);
             // 
-            // tCPServerToolStripMenuItem
+            // miTestAscanFromNet
             // 
-            this.tCPServerToolStripMenuItem.Name = "tCPServerToolStripMenuItem";
-            this.tCPServerToolStripMenuItem.Size = new System.Drawing.Size(155, 22);
-            this.tCPServerToolStripMenuItem.Text = "TCPServer";
-            this.tCPServerToolStripMenuItem.Click += new System.EventHandler(this.tCPServerToolStripMenuItem_Click);
+            this.miTestAscanFromNet.Name = "miTestAscanFromNet";
+            this.miTestAscanFromNet.Size = new System.Drawing.Size(173, 22);
+            this.miTestAscanFromNet.Text = "TestAscanFromNet";
+            this.miTestAscanFromNet.Click += new System.EventHandler(this.miTestAscanFromNet_Click);
             // 
             // FRMain
             // 
@@ -317,6 +335,8 @@
         private System.Windows.Forms.Timer timerUpdUI;
         private System.Windows.Forms.ToolStripMenuItem miTestUSPCAscan;
         private System.Windows.Forms.ToolStripMenuItem tCPServerToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem miCloseUSPC;
+        private System.Windows.Forms.ToolStripMenuItem miTestAscanFromNet;
 
     }
 }

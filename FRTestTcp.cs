@@ -13,7 +13,6 @@ namespace USPC
     public partial class FRTestTcp : Form
     {
         List<string> resp = null;
-        TCPServer server = null;
         public FRTestTcp(FRMain _frMain)
         {
             InitializeComponent();
@@ -21,9 +20,6 @@ namespace USPC
             MdiParent = _frMain;
             AcceptButton = btnSend;
             resp = new List<string>();
-            server = new TCPServer();
-            server.pcxus = _frMain.pcxus;
-            server.start();
         }
 
         private void btnTest_Click(object sender, EventArgs e)
@@ -39,27 +35,30 @@ namespace USPC
                 log.add(LogRecord.LogReason.warning, "Parameter \"Server\" not assigned. Use \"127.0.0.1\"");
                 serverAddress = "127.0.0.1";
             }
-            TcpCommand cmd = new TcpCommand(serverAddress);
-            byte[] responce = cmd.sendCommand(edCommand.Text.Trim().ToUpper());
-            edResponce.Text += string.Format("{0}", edCommand.Text.Trim().ToUpper());
-            edCommand.Text = string.Empty;
-            if (responce != null)
+            PCXUSNetworkClient client = new PCXUSNetworkClient(serverAddress);
+            Object retval = new Object();
+            int res = client.callNetworkFunction(edCommand.Text,out retval);
+            string[] cmdAndArgs = edCommand.Text.Split(new char[] {','});
+            double doubleVal = 0;
+            string stringVal = "";
+            if (cmdAndArgs[0] == "readdouble")
             {
-                string s = Encoding.UTF8.GetString(responce);
-                resp.Add(s);
-                edResponce.Text += string.Format(" -> {0}",s);
+                doubleVal = (double)retval;
+                edResponce.Text += string.Format("{0} : {1}: val = {2}", edCommand.Text, res,doubleVal);
+            }
+            else if (cmdAndArgs[0] == "readstring")
+            {
+                stringVal = (string)retval;
+                edResponce.Text += string.Format("{0} : {1}: val = {2}", edCommand.Text, res, stringVal);
             }
             else
             {
-                log.add(LogRecord.LogReason.error, "FRTestTcp: btnTestClick: responce = null");
-                edResponce.Text += string.Format("(<-)null");
+
+                edResponce.Text += string.Format("{0} : {1}", edCommand.Text, res);
             }
             edResponce.Text += System.Environment.NewLine;
-        }
+            edCommand.Text = string.Empty;
 
-        private void FRTestTcp_FormClosing(object sender, FormClosingEventArgs e)
-        {
-            server.stop();
         }
     }
 }

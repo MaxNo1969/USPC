@@ -6,24 +6,87 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
-using USPC;
 using PROTOCOL;
 using FPS;
-using System.Runtime.InteropServices;
 
 namespace USPC
 {
-    public partial class TestUSPCGetAscan : Form
+    public partial class TestGetAscanFromNet : Form
     {
         FRMain frMain;
+        string serverAddress = null;
         AscanInfo info;
 
-        public TestUSPCGetAscan(FRMain _frMain)
+        public AscanInfo GetAscanInfoNet(int _board, int _channel)
+        {
+            AscanInfo info = new AscanInfo();
+
+            // Part 1.  This part gets parameters to display Ascan according to: 
+            //          - the scope video mode
+            //          - the scope zero calibration
+            //          To display gates according to:
+            //          - the wave alternance selection (phase)   
+            PCXUSNetworkClient client = new PCXUSNetworkClient(serverAddress);
+            Object retval = new Object();
+            int res = client.callNetworkFunction("readdouble,scope_video",out retval);
+            if (client.callNetworkFunction("readdouble,scope_video", out retval) == 0) info.Video = (AscanInfo.VideoMode)((double)retval);
+            if (client.callNetworkFunction("readdouble,scope_zero", out retval) == 0) info.ZeroVideo = (double)retval;
+
+            if (client.callNetworkFunction("readdouble,gateIF_phase", out retval) == 0) info.GIFPhase = (AscanInfo.PhaseType)((double)retval);
+            if (client.callNetworkFunction("readdouble,gate1_phase", out retval) == 0) info.G1Phase = (AscanInfo.PhaseType)((double)retval);
+            if (client.callNetworkFunction("readdouble,gate2_phase", out retval) == 0) info.G2Phase = (AscanInfo.PhaseType)((double)retval);
+
+            // Part 2.  This part gets parameters to convert Ascan data coming from acquisition to Ascan structure ready to display 
+            if (client.callNetworkFunction("readdouble,gate1_trigger", out retval) == 0) info.gate1_trigger = (double)retval;
+            if (client.callNetworkFunction("readdouble,gate1_position", out retval) == 0) info.gate1_position = (double)retval;
+            if (client.callNetworkFunction("readdouble,gate1_width", out retval) == 0) info.gate1_width = (double)retval;
+            if (client.callNetworkFunction("readdouble,gate1_level", out retval) == 0) info.gate1_level = (double)retval;
+            if (client.callNetworkFunction("readdouble,gate1_nb_alarm_level", out retval) == 0) info.gate1_level_alarm = (double)retval;
+
+            if (client.callNetworkFunction("readdouble,gate2_trigger", out retval) == 0) info.gate2_trigger = (double)retval;
+            if (client.callNetworkFunction("readdouble,gate2_position", out retval) == 0) info.gate2_position = (double)retval;
+            if (client.callNetworkFunction("readdouble,gate2_width", out retval) == 0) info.gate2_width = (double)retval;
+            if (client.callNetworkFunction("readdouble,gate2_level", out retval) == 0) info.gate2_level = (double)retval;
+            if (client.callNetworkFunction("readdouble,gate2_nb_alarm_level", out retval) == 0) info.gate2_level_alarm = (double)retval;
+
+            if (client.callNetworkFunction("readdouble,scope_trigger", out retval) == 0) info.scope_trigger = (double)retval;
+            if (client.callNetworkFunction("readdouble,scope_offset", out retval) == 0) info.scope_offset = (double)retval;
+            if (client.callNetworkFunction("readdouble,scope_range", out retval) == 0) info.scope_range = (double)retval;
+
+            return info;
+        }
+
+
+        public TestGetAscanFromNet(FRMain _frMain)
         {
             InitializeComponent();
             frMain = _frMain;
             MdiParent = frMain;
-            info = frMain.pcxus.GetAscanInfo(0, 0);
+            try
+            {
+                serverAddress = Program.cmdLineArgs["Server"];
+            }
+            catch (Exception ex)
+            {
+                log.add(LogRecord.LogReason.warning, "FRTestTcp: btnTest_Click: Error: {0}", ex.Message);
+                log.add(LogRecord.LogReason.warning, "Parameter \"Server\" not assigned. Use \"127.0.0.1\"");
+                serverAddress = "127.0.0.1";
+            }
+            info = GetAscanInfoNet(0, 0);
+        }
+
+        private void btnStartStop_Click(object sender, EventArgs e)
+        {
+            if (btnStartStop.Text == "Start")
+            {
+                btnStartStop.Text = "Stop";
+                timer.Enabled = true;
+            }
+            else
+            {
+                btnStartStop.Text = "Start";
+                timer.Enabled = false;
+            }
         }
 
         // This function draws an Ascan and gates...
@@ -209,43 +272,38 @@ namespace USPC
             AscanChart.Series["GateIFNegPlot"].Enabled = GateNegativePart;
 
         }
+
         
-        private void timerAscan_Tick(object sender, EventArgs e)
+        private void timer_Tick(object sender, EventArgs e)
         {
-            // A timer event to get an A-scan
-            Ascan ascan = new Ascan();
-            if (!frMain.pcxus.readAscan(ref ascan, 20))
+            Object retval = new Object();
+            PCXUSNetworkClient client = new PCXUSNetworkClient(serverAddress);
+            int res = client.callNetworkFunction("ascan,0,0,100",out retval);
+            if (res == 0)
             {
-                //log.add(LogRecord.LogReason.error, "PCXUS.readAscan(ref ascan, 20)");
-                return;
+                Ascan ascan = (Ascan)retval;
+                // Update gate information
+                gateIF.UpdateGate(Gate.GateNum.GateIF, ascan);
+                gate1.UpdateGate(Gate.GateNum.Gate1, ascan);
+                gate2.UpdateGate(Gate.GateNum.Gate2, ascan);
+
+                UpdateAscan(ascan, info);
             }
-
-            // Update gate information
-            gateIF.UpdateGate(Gate.GateNum.GateIF, ascan);
-            gate1.UpdateGate(Gate.GateNum.Gate1, ascan);
-            gate2.UpdateGate(Gate.GateNum.Gate2, ascan);
-
-            UpdateAscan(ascan, info);
         }
 
-        private void tbbtnStart_Click(object sender, EventArgs e)
-        {
-            timerAscan.Enabled = true;
-        }
-
-        private void tbbtnStop_Click(object sender, EventArgs e)
-        {
-            timerAscan.Enabled = false;
-        }
-
-        private void TestUSPCGetAscan_Load(object sender, EventArgs e)
+        private void TestGetAscanFromNet_Load(object sender, EventArgs e)
         {
             FormPosSaver.load(this);
         }
 
-        private void TestUSPCGetAscan_FormClosing(object sender, FormClosingEventArgs e)
+        private void TestGetAscanFromNet_FormClosing(object sender, FormClosingEventArgs e)
         {
             FormPosSaver.save(this);
+        }
+
+        private void TestGetAscanFromNet_Resize(object sender, EventArgs e)
+        {
+            AscanChart.SetBounds(0,0, ClientSize.Width-150, ClientSize.Height);
         }
     }
 }

@@ -20,7 +20,7 @@ namespace USPC
         
         FRMain frMain;
         public PCXUS pcxus;
-        public PCXUS.AcqAscan[] data = null;
+        public AcqAscan[] data = null;
         UspcDataReader dataReader = null;
         
         public FRTestAcq(FRMain _frMain)
@@ -43,7 +43,7 @@ namespace USPC
             }
         }
 
-        public void updateGraph(PCXUS.AcqAscan[] _data)
+        public void updateGraph(AcqAscan[] _data)
         {
             for (int i = 0; i < _data.Count(); i++)
             {

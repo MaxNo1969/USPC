@@ -80,7 +80,6 @@
             this.Controls.Add(this.btnSend);
             this.Name = "FRTestTcp";
             this.Text = "FRTestTcp";
-            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FRTestTcp_FormClosing);
             this.ResumeLayout(false);
             this.PerformLayout();
 

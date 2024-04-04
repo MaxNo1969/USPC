@@ -12,7 +12,7 @@ namespace USPC
     class UspcDataReader : BackgroundWorker
     {
         PCXUS pcxus = null;
-        PCXUS.AcqAscan[] data = null;
+        AcqAscan[] data = null;
         int Board = 0;
         FRTestAcq frTestAcq = null;
         
@@ -66,8 +66,8 @@ namespace USPC
             {
                 return;
             }
-            log.add(LogRecord.LogReason.info, "ACQ_STATUS: {0}, BufferSize(in numbers od scans): {1}, ScanSize(in number of DWORD): {2}", ((PCXUS.ACQ_STATUS)status).ToString(), BufferSize, ScanSize);
-            data = new PCXUS.AcqAscan[BufferSize];
+            log.add(LogRecord.LogReason.info, "ACQ_STATUS: {0}, BufferSize(in numbers od scans): {1}, ScanSize(in number of DWORD): {2}", ((ACQ_STATUS)status).ToString(), BufferSize, ScanSize);
+            data = new AcqAscan[BufferSize];
             if (data == null)
             {
                 log.add(LogRecord.LogReason.error, "Не удалось выделить {0} байт под буфер для захвата", BufferSize * ScanSize * sizeof(uint));
@@ -87,7 +87,7 @@ namespace USPC
                     e.Cancel = true;
                     return;
                 }
-                log.add(LogRecord.LogReason.info, "ACQ_STATUS: {0}, NumberOfScansAcquired: {1}, NumberOfScansRead: {2}", ((PCXUS.ACQ_STATUS)status).ToString(), NumberOfScansAcquired, NumberOfScansRead);
+                log.add(LogRecord.LogReason.info, "ACQ_STATUS: {0}, NumberOfScansAcquired: {1}, NumberOfScansRead: {2}", ((ACQ_STATUS)status).ToString(), NumberOfScansAcquired, NumberOfScansRead);
                 Int32 NumberOfScans = pcxus.read(Board, data);
                 log.add(LogRecord.LogReason.info, "NumberOfScans: {0}", NumberOfScans);
                 //frTestAcq.updateGraph(data);

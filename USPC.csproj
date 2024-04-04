@@ -47,6 +47,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BytesToStructure.cs" />
     <Compile Include="CSVHelper.cs" />
     <Compile Include="FRTestAcq.cs">
       <SubType>Form</SubType>
@@ -72,9 +73,17 @@
     <Compile Include="FRUspcInfo.Designer.cs">
       <DependentUpon>FRUspcInfo.cs</DependentUpon>
     </Compile>
+    <Compile Include="Gate.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gate.Designer.cs">
+      <DependentUpon>Gate.cs</DependentUpon>
+    </Compile>
     <Compile Include="MNMDIForm.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="PCXUSNetworkClient.cs" />
+    <Compile Include="PCXUSNetworkServer.cs" />
     <Compile Include="Protocol\FRProt.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -92,6 +101,12 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TCPServer.cs" />
+    <Compile Include="TestGetAscanFromNet.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="TestGetAscanFromNet.Designer.cs">
+      <DependentUpon>TestGetAscanFromNet.cs</DependentUpon>
+    </Compile>
     <Compile Include="TestUSPCGetAscan.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -116,6 +131,9 @@
     <EmbeddedResource Include="FRUspcInfo.resx">
       <DependentUpon>FRUspcInfo.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Gate.resx">
+      <DependentUpon>Gate.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Protocol\FRProt.resx">
       <DependentUpon>FRProt.cs</DependentUpon>
     </EmbeddedResource>
@@ -128,6 +146,9 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="TestGetAscanFromNet.resx">
+      <DependentUpon>TestGetAscanFromNet.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="TestUSPCGetAscan.resx">
       <DependentUpon>TestUSPCGetAscan.cs</DependentUpon>
     </EmbeddedResource>
@@ -147,9 +168,7 @@
       <Name>FormPosSaver</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Graph\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

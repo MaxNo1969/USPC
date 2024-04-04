@@ -95,7 +95,7 @@ namespace USPC
             {
                 return;
             }
-            PCXUS.ACQ_STATUS acqStatus = (PCXUS.ACQ_STATUS)status;
+            ACQ_STATUS acqStatus = (ACQ_STATUS)status;
             //log.add(string.Format("ACQ_STATUS: {0}", acqStatus.ToString()), LogRecord.LogReason.info);
             Debug.WriteLine(string.Format("ACQ_STATUS: {0}", acqStatus.ToString()));
             //log.add(string.Format("BufferSize(in numbers od scans): {0}, ScanSize(in number of DWORD): {1}", BufferSize, ScanSize), LogRecord.LogReason.info);
@@ -110,7 +110,7 @@ namespace USPC
             {
                 return;
             }
-            acqStatus = (PCXUS.ACQ_STATUS)status;
+            acqStatus = (ACQ_STATUS)status;
             //log.add(string.Format("ACQ_STATUS: {0}", acqStatus.ToString()), LogRecord.LogReason.info);
             Debug.WriteLine(string.Format("ACQ_STATUS: {0}", acqStatus.ToString()));
             //log.add(string.Format("BufferSize(in numbers od scans): {0}, ScanSize(in number of DWORD): {1}", BufferSize, ScanSize), LogRecord.LogReason.info);
