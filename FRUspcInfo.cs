@@ -22,16 +22,23 @@ namespace USPC
             frMain = _frMain;
             PCXUS pcxus = frMain.pcxus;
             List<string> info = new List<string>();
-            info.Add(string.Format("Установлено {0} плат USPC", pcxus.numBoards));
-            info.Add(string.Format("Board S/N = {0}", pcxus.serialNumber()));
-            //Не работает!!!
-            //info.Add(string.Format("Board S/N (param) = {0}", (int)pcxus.getParamValueDouble("board_serial")));
-            info.Add(string.Format("MUX S/N = {0}", pcxus.getParamValueDouble("mux_rcpp_serial_number")));
-            info.Add(string.Format("HW Version = {0}", pcxus.getParamValueString("hardware_version")));
-            info.Add(string.Format("DLL Version = {0}", pcxus.getParamValueString("dll_version")));
-            info.Add(string.Format("Driver Version = {0}", pcxus.getParamValueString("driver_version")));
-            info.Add(string.Format("Package Version = {0}", pcxus.getParamValueString("package_version")));
-            info.Add(string.Format("Configuration file: {0}", pcxus.getParamValueString("current_file_name")));
+            if (pcxus != null)
+            {
+                info.Add(string.Format("Установлено {0} плат USPC", pcxus.numBoards));
+                info.Add(string.Format("Board S/N = {0}", pcxus.serialNumber()));
+                //Не работает!!!
+                //info.Add(string.Format("Board S/N (param) = {0}", (int)pcxus.getParamValueDouble("board_serial")));
+                info.Add(string.Format("MUX S/N = {0}", pcxus.getParamValueDouble("mux_rcpp_serial_number")));
+                info.Add(string.Format("HW Version = {0}", pcxus.getParamValueString("hardware_version")));
+                info.Add(string.Format("DLL Version = {0}", pcxus.getParamValueString("dll_version")));
+                info.Add(string.Format("Driver Version = {0}", pcxus.getParamValueString("driver_version")));
+                info.Add(string.Format("Package Version = {0}", pcxus.getParamValueString("package_version")));
+                info.Add(string.Format("Configuration file: {0}", pcxus.getParamValueString("current_file_name")));
+            }
+            else
+            {
+                info.Add("Плата USPC не проинициализирована!");
+            }
             txtInfo.Lines = info.ToArray();
         }
 

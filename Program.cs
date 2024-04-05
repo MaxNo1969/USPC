@@ -6,6 +6,7 @@ using PROTOCOL;
 using System.Diagnostics;
 using System.Threading;
 using FPS;
+using PCIE1730;
 
 namespace USPC
 {
@@ -72,6 +73,8 @@ namespace USPC
             finally
             {
                 Debug.WriteLine("Вошли в program/finally");
+                //Снимаем все выходные сигналы и останавливаем PCIE1730
+                SL.Destroy();
                 FormPosSaver.ser();
             }
             return ret;

@@ -9,7 +9,7 @@ namespace PCIE1730
     /// <summary>
     /// Плата цифрового ввода/вывода (PCIE1730 или эмулятор)
     /// </summary>
-    public abstract class PCIE_1730
+    public abstract class PCIE_1730 : IDisposable
     {
         /// <summary>
         /// Очищена?

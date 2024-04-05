@@ -53,6 +53,12 @@
   <ItemGroup>
     <Compile Include="BytesToStructure.cs" />
     <Compile Include="CSVHelper.cs" />
+    <Compile Include="Emul\FREmul.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Emul\FREmul.designer.cs">
+      <DependentUpon>FREmul.cs</DependentUpon>
+    </Compile>
     <Compile Include="FRTestAcq.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -86,9 +92,27 @@
     <Compile Include="MNMDIForm.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="PCIE-1730\FRSignals.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="PCIE-1730\FRSignals.designer.cs">
+      <DependentUpon>FRSignals.cs</DependentUpon>
+    </Compile>
+    <Compile Include="PCIE-1730\Latch.cs" />
     <Compile Include="PCIE-1730\PCIE_1730.cs" />
     <Compile Include="PCIE-1730\PCIE_1730_real.cs" />
     <Compile Include="PCIE-1730\PCIE_1730_virtual.cs" />
+    <Compile Include="PCIE-1730\Signal.cs" />
+    <Compile Include="PCIE-1730\SignalIn.cs" />
+    <Compile Include="PCIE-1730\SignalList.cs" />
+    <Compile Include="PCIE-1730\SLLUZK.cs" />
+    <Compile Include="PCIE-1730\SignalOut.cs" />
+    <Compile Include="PCIE-1730\UCSignal.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="PCIE-1730\UCSignal.designer.cs">
+      <DependentUpon>UCSignal.cs</DependentUpon>
+    </Compile>
     <Compile Include="PCXUSNetworkClient.cs" />
     <Compile Include="PCXUSNetworkServer.cs" />
     <Compile Include="Protocol\FRProt.cs">
@@ -107,6 +131,16 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="settings\FRSettings.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="settings\FRSettings.designer.cs">
+      <DependentUpon>FRSettings.cs</DependentUpon>
+    </Compile>
+    <Compile Include="settings\PCIE1730Settings.cs" />
+    <Compile Include="settings\PropGridHelper.cs" />
+    <Compile Include="settings\Settings.cs" />
+    <Compile Include="settings\SignalSettings.cs" />
     <Compile Include="TCPServer.cs" />
     <Compile Include="TestGetAscanFromNet.cs">
       <SubType>Form</SubType>
@@ -120,9 +154,14 @@
     <Compile Include="TestUSPCGetAscan.Designer.cs">
       <DependentUpon>TestUSPCGetAscan.cs</DependentUpon>
     </Compile>
+    <Compile Include="TypeSize.cs" />
     <Compile Include="UspcDataReader.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="workThread.cs" />
+    <EmbeddedResource Include="Emul\FREmul.resx">
+      <DependentUpon>FREmul.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="FRMain.resx">
       <DependentUpon>FRMain.cs</DependentUpon>
     </EmbeddedResource>
@@ -141,6 +180,12 @@
     <EmbeddedResource Include="Gate.resx">
       <DependentUpon>Gate.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="PCIE-1730\FRSignals.resx">
+      <DependentUpon>FRSignals.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PCIE-1730\UCSignal.resx">
+      <DependentUpon>UCSignal.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Protocol\FRProt.resx">
       <DependentUpon>FRProt.cs</DependentUpon>
     </EmbeddedResource>
@@ -153,6 +198,9 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="settings\FRSettings.resx">
+      <DependentUpon>FRSettings.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="TestGetAscanFromNet.resx">
       <DependentUpon>TestGetAscanFromNet.cs</DependentUpon>
     </EmbeddedResource>

@@ -34,6 +34,8 @@
             this.miStart = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
             this.miExit = new System.Windows.Forms.ToolStripMenuItem();
+            this.настройкиToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.miSettings = new System.Windows.Forms.ToolStripMenuItem();
             this.miView = new System.Windows.Forms.ToolStripMenuItem();
             this.miLoadFile = new System.Windows.Forms.ToolStripMenuItem();
             this.miSaveFile = new System.Windows.Forms.ToolStripMenuItem();
@@ -41,8 +43,10 @@
             this.miBoardTest = new System.Windows.Forms.ToolStripMenuItem();
             this.miTestUSPCAscan = new System.Windows.Forms.ToolStripMenuItem();
             this.tCPServerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.miTestAscanFromNet = new System.Windows.Forms.ToolStripMenuItem();
             this.miWindows = new System.Windows.Forms.ToolStripMenuItem();
             this.miWindowsProt = new System.Windows.Forms.ToolStripMenuItem();
+            this.miWindowsSignals = new System.Windows.Forms.ToolStripMenuItem();
             this.miUSPC = new System.Windows.Forms.ToolStripMenuItem();
             this.miOpenUSPC = new System.Windows.Forms.ToolStripMenuItem();
             this.miLoadUSPC = new System.Windows.Forms.ToolStripMenuItem();
@@ -56,19 +60,24 @@
             this.duration = new System.Windows.Forms.ToolStripStatusLabel();
             this.heap = new System.Windows.Forms.ToolStripStatusLabel();
             this.timerUpdUI = new System.Windows.Forms.Timer(this.components);
-            this.miTestAscanFromNet = new System.Windows.Forms.ToolStripMenuItem();
+            this.tb = new System.Windows.Forms.ToolStrip();
+            this.lblTubesCount = new System.Windows.Forms.ToolStripLabel();
+            this.miEmul = new System.Windows.Forms.ToolStripMenuItem();
             this.menu.SuspendLayout();
             this.sb.SuspendLayout();
+            this.tb.SuspendLayout();
             this.SuspendLayout();
             // 
             // menu
             // 
             this.menu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.miMainWork,
+            this.настройкиToolStripMenuItem,
             this.miView,
             this.miTest,
             this.miWindows,
-            this.miUSPC});
+            this.miUSPC,
+            this.miEmul});
             this.menu.Location = new System.Drawing.Point(0, 0);
             this.menu.Name = "menu";
             this.menu.Size = new System.Drawing.Size(1020, 24);
@@ -89,21 +98,37 @@
             // 
             this.miStart.Name = "miStart";
             this.miStart.ShortcutKeys = System.Windows.Forms.Keys.F5;
-            this.miStart.Size = new System.Drawing.Size(146, 22);
+            this.miStart.Size = new System.Drawing.Size(152, 22);
             this.miStart.Text = "Запуск";
+            this.miStart.Click += new System.EventHandler(this.miStart_Click);
             // 
             // toolStripMenuItem1
             // 
             this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-            this.toolStripMenuItem1.Size = new System.Drawing.Size(143, 6);
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(149, 6);
             // 
             // miExit
             // 
             this.miExit.Name = "miExit";
             this.miExit.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.X)));
-            this.miExit.Size = new System.Drawing.Size(146, 22);
+            this.miExit.Size = new System.Drawing.Size(152, 22);
             this.miExit.Text = "Выход";
             this.miExit.Click += new System.EventHandler(this.miExit_Click);
+            // 
+            // настройкиToolStripMenuItem
+            // 
+            this.настройкиToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.miSettings});
+            this.настройкиToolStripMenuItem.Name = "настройкиToolStripMenuItem";
+            this.настройкиToolStripMenuItem.Size = new System.Drawing.Size(79, 20);
+            this.настройкиToolStripMenuItem.Text = "Настройки";
+            // 
+            // miSettings
+            // 
+            this.miSettings.Name = "miSettings";
+            this.miSettings.Size = new System.Drawing.Size(134, 22);
+            this.miSettings.Text = "Настройки";
+            this.miSettings.Click += new System.EventHandler(this.miSettings_Click);
             // 
             // miView
             // 
@@ -160,10 +185,18 @@
             this.tCPServerToolStripMenuItem.Text = "TCPServer";
             this.tCPServerToolStripMenuItem.Click += new System.EventHandler(this.tCPServerToolStripMenuItem_Click);
             // 
+            // miTestAscanFromNet
+            // 
+            this.miTestAscanFromNet.Name = "miTestAscanFromNet";
+            this.miTestAscanFromNet.Size = new System.Drawing.Size(173, 22);
+            this.miTestAscanFromNet.Text = "TestAscanFromNet";
+            this.miTestAscanFromNet.Click += new System.EventHandler(this.miTestAscanFromNet_Click);
+            // 
             // miWindows
             // 
             this.miWindows.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.miWindowsProt});
+            this.miWindowsProt,
+            this.miWindowsSignals});
             this.miWindows.Name = "miWindows";
             this.miWindows.Size = new System.Drawing.Size(47, 20);
             this.miWindows.Text = "Окна";
@@ -175,6 +208,14 @@
             this.miWindowsProt.Size = new System.Drawing.Size(154, 22);
             this.miWindowsProt.Text = "Протокол";
             this.miWindowsProt.Click += new System.EventHandler(this.miShowProt_Click);
+            // 
+            // miWindowsSignals
+            // 
+            this.miWindowsSignals.Name = "miWindowsSignals";
+            this.miWindowsSignals.ShortcutKeys = System.Windows.Forms.Keys.F12;
+            this.miWindowsSignals.Size = new System.Drawing.Size(154, 22);
+            this.miWindowsSignals.Text = "Сигналы";
+            this.miWindowsSignals.Click += new System.EventHandler(this.miWindowsSignals_Click);
             // 
             // miUSPC
             // 
@@ -275,21 +316,40 @@
             // 
             // timerUpdUI
             // 
-            this.timerUpdUI.Enabled = true;
             this.timerUpdUI.Tick += new System.EventHandler(this.timerUpdUI_Tick);
             // 
-            // miTestAscanFromNet
+            // tb
             // 
-            this.miTestAscanFromNet.Name = "miTestAscanFromNet";
-            this.miTestAscanFromNet.Size = new System.Drawing.Size(173, 22);
-            this.miTestAscanFromNet.Text = "TestAscanFromNet";
-            this.miTestAscanFromNet.Click += new System.EventHandler(this.miTestAscanFromNet_Click);
+            this.tb.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.lblTubesCount});
+            this.tb.Location = new System.Drawing.Point(0, 24);
+            this.tb.Name = "tb";
+            this.tb.Size = new System.Drawing.Size(1020, 33);
+            this.tb.TabIndex = 4;
+            // 
+            // lblTubesCount
+            // 
+            this.lblTubesCount.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            this.lblTubesCount.AutoSize = false;
+            this.lblTubesCount.Font = new System.Drawing.Font("Segoe UI", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.lblTubesCount.Name = "lblTubesCount";
+            this.lblTubesCount.Size = new System.Drawing.Size(50, 30);
+            this.lblTubesCount.Text = "0";
+            this.lblTubesCount.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // miEmul
+            // 
+            this.miEmul.Name = "miEmul";
+            this.miEmul.Size = new System.Drawing.Size(74, 20);
+            this.miEmul.Text = "Эмуляция";
+            this.miEmul.Click += new System.EventHandler(this.эмуляцияToolStripMenuItem_Click);
             // 
             // FRMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1020, 539);
+            this.Controls.Add(this.tb);
             this.Controls.Add(this.sb);
             this.Controls.Add(this.menu);
             this.IsMdiContainer = true;
@@ -302,6 +362,8 @@
             this.menu.PerformLayout();
             this.sb.ResumeLayout(false);
             this.sb.PerformLayout();
+            this.tb.ResumeLayout(false);
+            this.tb.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -337,6 +399,12 @@
         private System.Windows.Forms.ToolStripMenuItem tCPServerToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem miCloseUSPC;
         private System.Windows.Forms.ToolStripMenuItem miTestAscanFromNet;
+        private System.Windows.Forms.ToolStripMenuItem miWindowsSignals;
+        private System.Windows.Forms.ToolStripMenuItem настройкиToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem miSettings;
+        private System.Windows.Forms.ToolStrip tb;
+        private System.Windows.Forms.ToolStripLabel lblTubesCount;
+        private System.Windows.Forms.ToolStripMenuItem miEmul;
 
     }
 }
