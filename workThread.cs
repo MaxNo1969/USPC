@@ -58,7 +58,7 @@ namespace USPC
                 curState = WrkStates.startWorkCycle;
                 while (isRunning)
                 {
-                    //Проверяем сигналы ICC и  CYCLE3 - они должны быть выставлены воё время работы
+                    //Проверяем сигналы ICC и  CYCLE - они должны быть выставлены воё время работы
                     if (!SL.getInst().checkSignals())
                     {
                         errStr = "Отсутствуют сигналы";
@@ -93,11 +93,22 @@ namespace USPC
                             {
                                 //Если перекладка не снята - снимаем её
                                 SL.getInst().oPEREKL.Val = false;
+                                //Снимаем все выходные сигналв, кроме ПИТАНИЕ БМ
+                                SL.getInst().oWRK.Val = false;
+                                SL.getInst().oPEREKL.Val = false;
+                                SL.getInst().oRES1.Val = false;
+                                SL.getInst().oRES2.Val = false;
+                                //Резерв не трогаем
+                                //SL.getInst().oREZ.Val=false;
+
                                 //Здесь подготовка модуля к работе
                                 {
+                                    //Установить сигнал "Питание БМ"
+                                    SL.getInst().oPBM.Val = true;
+                                    prepareBoardsForWork();
                                 }
                                 //Выставляем сигнал "РАБОТА"
-                                SL.getInst().oWRK.Val = true;
+                                //SL.getInst().oWRK.Val = true;
                                 waitReadyStarted = sw.Elapsed;
                                 curState = WrkStates.moduleReady;
                             }
@@ -110,7 +121,7 @@ namespace USPC
                                 curState = WrkStates.error;
                                 break;
                             }
-                            //Снялcя сигнал "ГОТОВНОСТЬ3" - труба начала движение
+                            //Снялcя сигнал "ГОТОВНОСТЬ" - труба начала движение
                             if (SL.getInst().iREADY.Val == false)
                             {
                                 //Включить сбор данных с модуля контроля. Ожидать появления сигнала КОНТРОЛЬ. 
@@ -174,6 +185,11 @@ namespace USPC
                 if (!frm.bStopForView && curState != WrkStates.error)
                     frm.startStop();
             }
+        }
+
+        private void prepareBoardsForWork()
+        {
+            log.add(LogRecord.LogReason.info, "{0}: {1}: {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name,"Подготовка к работе");
         }
         public void start()
         {

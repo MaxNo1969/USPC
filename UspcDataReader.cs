@@ -9,13 +9,14 @@ using System.Threading;
 
 namespace USPC
 {
+    public delegate void OnDataAcquired(int _NumberOfScans, AcqAscan[] _data);
     class UspcDataReader : BackgroundWorker
     {
         PCXUS pcxus = null;
         AcqAscan[] data = null;
         int Board = 0;
         FRTestAcq frTestAcq = null;
-        
+        public OnDataAcquired dataAcquired = null;
         public UspcDataReader(FRTestAcq _frTestAcq)
         {
             frTestAcq = _frTestAcq;
@@ -43,13 +44,13 @@ namespace USPC
         {
             if (e.ProgressPercentage == 0)
             {
-                //lb.Items.Add(e.UserState as string);
+                frTestAcq.updateGraph((int)e.UserState, data);
             }
         }
 
         void worker_DoWork(object sender, DoWorkEventArgs e)
         {
-            log.add(LogRecord.LogReason.info,"{0}: {1}: {2}", "UspcDataReader", "worker_DoWorl", "Worker started");
+            log.add(LogRecord.LogReason.info,"{0}: {1}: {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, "Worker started");
             //Подготовим плату к захвату
             Int32 status = 0;
             Int32 NumberOfScansAcquired = 0;
@@ -57,7 +58,7 @@ namespace USPC
             Int32 BufferSize = 0;
             Int32 ScanSize = 0;
             //Подготавливаем к захвату
-            if (!pcxus.config(Board, 1024 * 100))
+            if (!pcxus.config(Board, 1024))
             {
                 return;
             }
@@ -84,13 +85,17 @@ namespace USPC
                 //Получим информацию о статусе
                 if (!pcxus.status(Board, ref status, ref NumberOfScansAcquired, ref NumberOfScansRead, ref BufferSize, ref ScanSize))
                 {
+                    log.add(LogRecord.LogReason.error, "PCXUS_ACQ_GET_STATUS return {0:8X}", pcxus.Err);
                     e.Cancel = true;
                     return;
                 }
-                log.add(LogRecord.LogReason.info, "ACQ_STATUS: {0}, NumberOfScansAcquired: {1}, NumberOfScansRead: {2}", ((ACQ_STATUS)status).ToString(), NumberOfScansAcquired, NumberOfScansRead);
+                //log.add(LogRecord.LogReason.info, "ACQ_STATUS: {0}, NumberOfScansAcquired: {1}, NumberOfScansRead: {2}", ((ACQ_STATUS)status).ToString(), NumberOfScansAcquired, NumberOfScansRead);
                 Int32 NumberOfScans = pcxus.read(Board, data);
                 log.add(LogRecord.LogReason.info, "NumberOfScans: {0}", NumberOfScans);
-                //frTestAcq.updateGraph(data);
+                AcqAscan[] buffer = new AcqAscan[NumberOfScans];
+                Array.Copy(data, buffer, NumberOfScans);
+                if (dataAcquired != null) dataAcquired(NumberOfScans, buffer);
+                ReportProgress(0,(Object)NumberOfScans);
                 if (CancellationPending)
                 {
                     e.Cancel = true;

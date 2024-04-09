@@ -93,13 +93,19 @@ namespace USPC
             //Настраиваем окно сигналов
             // Окно создаем сразу оно будет существовать 
             // всё время работы программы
-            fSignals = new FRSignals(SL.getInst())
+            if (!Program.cmdLineArgs.ContainsKey("NOSIGNALWINDOW"))
             {
-                MdiParent = this,
-            };
-            fSignals.onHide += new FRSignals.OnHideForm(() => { miWindowsSignals.Checked = false; });
-            fSignals.Visible = FormPosSaver.visible(fSignals);
-            miWindowsSignals.Checked = fSignals.Visible;
+                log.add(LogRecord.LogReason.debug, "{0}: {1}: {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, "fSignals form creation");
+                fSignals = new FRSignals(SL.getInst())
+                {
+                    MdiParent = this,
+                };
+                fSignals.onHide += new FRSignals.OnHideForm(() => { miWindowsSignals.Checked = false; });
+                fSignals.Visible = FormPosSaver.visible(fSignals);
+                miWindowsSignals.Checked = fSignals.Visible;
+            }
+            else
+                miWindowsSignals.Visible = false;
 
 
 
@@ -139,7 +145,7 @@ namespace USPC
             if (!isWorked)
             {
                 startWorkTime = DateTime.UtcNow;
-                SL.getInst().oPEREKL.Val = true;
+                //SL.getInst().oPEREKL.Val = true;
                 Thread.Sleep(100);
                 wrkTh.start();
             }

@@ -189,7 +189,7 @@ namespace PCIE1730
 
             if (oWRK != null) oWRK.Val = false;
             if (oPEREKL != null) oPEREKL.Val = false;
-            if (oRES1 != null) oRES1.Val = false;
+            if (oPBM != null) oPBM.Val = false;
             if (oRES1 != null) oRES1.Val = false;
             if (oRES2 != null) oRES2.Val = false;
             if (oREZ != null) oREZ.Val = false;

@@ -12,17 +12,12 @@ namespace USPC
 {
     public partial class FRTestAcq : Form
     {
-        double[] x;
-        double[] g1wt;
-        double[] g2wt;
-
-        int size = 2100;
-        
         FRMain frMain;
         public PCXUS pcxus;
         public AcqAscan[] data = null;
         UspcDataReader dataReader = null;
-        
+        AscanInfo info;
+
         public FRTestAcq(FRMain _frMain)
         {
             InitializeComponent();
@@ -30,27 +25,41 @@ namespace USPC
             Owner = _frMain;
             MdiParent = _frMain;
             pcxus = frMain.pcxus;
+            int board = 0;
+            int channel = 0;
+            info = pcxus.GetAscanInfo(board, channel);
             dataReader = new UspcDataReader(this);
-
-            x = new double[size];
-            g1wt = new double[size];
-            g2wt = new double[size];
-            for (int i = 0; i < size; i++)
-            {
-                x[i] = (double)i;
-                g1wt[i] = 0;
-                g2wt[i] = 0;
-            }
+            //dataReader.dataAcquired += updateGraph;
         }
 
-        public void updateGraph(AcqAscan[] _data)
+        public void updateGraph(int _numberOfScans,AcqAscan[] _data)
         {
-            for (int i = 0; i < _data.Count(); i++)
+            try
             {
-                x[i] = (double)i;
-                g1wt[i] = (double)(_data[i].G1Amp);
-                g2wt[i] = (double)(_data[i].G2Amp);
+                // Clear previous data
+                AcqChart.Series["Gate1TOF"].Points.Clear();
+                AcqChart.Series["Gate2TOF"].Points.Clear();
+                AcqChart.Series["GateIFTOF"].Points.Clear();
+
+
+                AcqChart.ChartAreas["Default"].AxisY.Maximum = 100.0;
+                AcqChart.ChartAreas["Default"].AxisY.Interval = 10.0;
+
+                AcqChart.ChartAreas["Default"].AxisX.Minimum = 0;
+                AcqChart.ChartAreas["Default"].AxisX.Maximum = _numberOfScans;
+
+                for (int iPoint = 0; iPoint < _numberOfScans; iPoint++)
+                {
+                    AcqChart.Series["Gate1TOF"].Points.AddXY(iPoint, _data[iPoint].G1QofC);
+                    AcqChart.Series["Gate2TOF"].Points.AddXY(iPoint, _data[iPoint].G2QofC);
+                    AcqChart.Series["GateIFTOF"].Points.AddXY(iPoint, _data[iPoint].GIFCouplingAlarm);
+                }
             }
+            catch (Exception ex)
+            {
+                log.add(LogRecord.LogReason.error, "{0}: {1}: Error: {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message);
+            }
+
         }
 
         private void btnStart_Click(object sender, EventArgs e)
@@ -67,6 +76,5 @@ namespace USPC
         {
             if (dataReader != null) dataReader.CancelAsync();
         }
-
     }
 }

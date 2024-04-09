@@ -59,7 +59,6 @@ namespace PROTOCOL
         //Последняя записанная запись из протокола
         private static int lastRecordedIndex = 0;
         //Коннекция для записи в БД
-        //Пока не пользуем, возьмем готовую из RAGLIB
         //private SqlConnection sqlConnection = null;
         //Для записи в файл
         private string fileName = null;

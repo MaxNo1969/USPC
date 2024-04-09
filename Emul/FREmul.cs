@@ -125,7 +125,7 @@ namespace EMUL
             sw.Start();
             worker.ReportProgress(101, "Включаем сигнал \"Цепи управления\"");
             SL.getInst().set(SL.getInst().iCC, true);
-            worker.ReportProgress(101, "Включаем сигнал \"Цикл 3\"");
+            worker.ReportProgress(101, "Включаем сигнал \"Цикл\"");
             SL.getInst().set(SL.getInst().iCYC, true);
             //Тут сделаем цикл по трубам
             while (true)
@@ -168,7 +168,7 @@ namespace EMUL
                 }
                 //Начинаем  движение трубы
                 worker.ReportProgress(101, "Начинаем движение трубы...");
-                //Снимаем сигнал "Готовность 3" (начинается движение трубы)
+                //Снимаем сигнал "Готовность" (начинается движение трубы)
                 worker.ReportProgress(101, "Снимаем сигнал \"ГОТОВНОСТЬ\"...");
                 SL.getInst().set(SL.getInst().iREADY, false);
                 tubeStartTime = DateTime.Now;

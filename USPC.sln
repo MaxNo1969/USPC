@@ -5,6 +5,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "USPC", "USPC.csproj", "{5D4
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FormPosSaver", "FormPosSaver\FormPosSaver.csproj", "{3E850B02-F522-4D55-A462-CB8F2455A5F4}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "loglib", "loglib\loglib.csproj", "{04B64A9A-9434-4CD9-A00B-0ABB1310F056}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -35,6 +37,16 @@ Global
 		{3E850B02-F522-4D55-A462-CB8F2455A5F4}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{3E850B02-F522-4D55-A462-CB8F2455A5F4}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{3E850B02-F522-4D55-A462-CB8F2455A5F4}.Release|x86.ActiveCfg = Release|Any CPU
+		{04B64A9A-9434-4CD9-A00B-0ABB1310F056}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{04B64A9A-9434-4CD9-A00B-0ABB1310F056}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{04B64A9A-9434-4CD9-A00B-0ABB1310F056}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{04B64A9A-9434-4CD9-A00B-0ABB1310F056}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{04B64A9A-9434-4CD9-A00B-0ABB1310F056}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{04B64A9A-9434-4CD9-A00B-0ABB1310F056}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{04B64A9A-9434-4CD9-A00B-0ABB1310F056}.Release|Any CPU.Build.0 = Release|Any CPU
+		{04B64A9A-9434-4CD9-A00B-0ABB1310F056}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{04B64A9A-9434-4CD9-A00B-0ABB1310F056}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{04B64A9A-9434-4CD9-A00B-0ABB1310F056}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

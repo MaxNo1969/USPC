@@ -115,13 +115,6 @@
     </Compile>
     <Compile Include="PCXUSNetworkClient.cs" />
     <Compile Include="PCXUSNetworkServer.cs" />
-    <Compile Include="Protocol\FRProt.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Protocol\FRProt.designer.cs">
-      <DependentUpon>FRProt.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Protocol\log.cs" />
     <Compile Include="PCXUS.cs" />
     <Compile Include="FRMain.cs">
       <SubType>Form</SubType>
@@ -186,9 +179,6 @@
     <EmbeddedResource Include="PCIE-1730\UCSignal.resx">
       <DependentUpon>UCSignal.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Protocol\FRProt.resx">
-      <DependentUpon>FRProt.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -221,6 +211,10 @@
     <ProjectReference Include="FormPosSaver\FormPosSaver.csproj">
       <Project>{3E850B02-F522-4D55-A462-CB8F2455A5F4}</Project>
       <Name>FormPosSaver</Name>
+    </ProjectReference>
+    <ProjectReference Include="loglib\loglib.csproj">
+      <Project>{04B64A9A-9434-4CD9-A00B-0ABB1310F056}</Project>
+      <Name>loglib</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup />

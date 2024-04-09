@@ -91,15 +91,17 @@ namespace USPC
                 {
                     s = (Settings)formatter.Deserialize(fs);
                 }
+                return s;
             }
-            catch
+            catch(Exception ex)
             {
+                log.add(LogRecord.LogReason.error, "{0}: {1}: {2}", "Settings", System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message);
                 //Обработка первого запуска - файл настроек ещё не записан
                 log.add(LogRecord.LogReason.info, "{0}: {1}: {2}", "Settings", System.Reflection.MethodBase.GetCurrentMethod().Name, "Первый запуск - файл настроек ещё не записан");
                 s = new Settings();
                 Settings.save(s);
+                return null;
             }
-            return s;
         }
         /// <summary>
         /// Запись параметров в файл

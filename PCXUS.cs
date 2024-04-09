@@ -638,7 +638,8 @@ namespace USPC
             Int32[] Conditions = new Int32[8];
             Int32 PrePostScans = 0;
             Int32 FrequencyDivider = 0;
-            Int32 InterruptFluidity = 256;
+            //Int32 InterruptFluidity = 256;
+            Int32 InterruptFluidity = 64;
             Int32 Param = 0;
             // Setup acquisition
             error = PCXUS.PCXUS_ACQ_CONFIG(

@@ -169,7 +169,10 @@ namespace PCIE1730
             MIn = new List<SignalIn>();
             MOut = new List<SignalOut>();
             PCIE1730Settings st1730 = AppSettings.settings.pcie1730Settings;
-
+            if (st1730 == null)
+            {
+                log.add(LogRecord.LogReason.error, "{0}: {1}: {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, "Не удалось загрузить настройки PCIE-1730");
+            }
             try
             {
                 if (Program.cmdLineArgs.ContainsKey("NOA1730"))
