@@ -16,11 +16,12 @@ using EMUL;
 
 namespace USPC
 {
+    public enum BoardState { NotOpened, Opened, loaded, error }; 
     public partial class FRMain : Form
     {
-        public PCXUS pcxus = null;
-
-        PCXUSNetworkServer server = null;
+        //public PCXUS pcxus = null;
+        public BoardState boardState = BoardState.NotOpened;
+        public string strNetServer = null;
 
         ///Подчиненные формы
         /// <summary>
@@ -63,8 +64,23 @@ namespace USPC
             InitializeComponent();
             IsMdiContainer = true;
             WindowState = FormWindowState.Normal;
+            try
+            {
+                strNetServer = Program.cmdLineArgs["Server"];
+            }
 
-            bStopForView = true;
+            catch (Exception ex)
+            {
+                log.add(LogRecord.LogReason.error, "{0}: {1}: {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message);
+                string str = string.Format("{0}: {1}: {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, "command line param \"Server\" not specified");
+                log.add(LogRecord.LogReason.info, str);
+                throw new Exception(str);
+            }
+
+
+            menu.MdiWindowListItem = miWindows;
+
+            bStopForView = false;
 
             // Рабочий поток
             wrkTh = new workThread(this);
@@ -93,45 +109,14 @@ namespace USPC
             //Настраиваем окно сигналов
             // Окно создаем сразу оно будет существовать 
             // всё время работы программы
-            if (!Program.cmdLineArgs.ContainsKey("NOSIGNALWINDOW"))
+            fSignals = new FRSignals(SL.getInst())
             {
-                log.add(LogRecord.LogReason.debug, "{0}: {1}: {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, "fSignals form creation");
-                fSignals = new FRSignals(SL.getInst())
-                {
-                    MdiParent = this,
-                };
-                fSignals.onHide += new FRSignals.OnHideForm(() => { miWindowsSignals.Checked = false; });
-                fSignals.Visible = FormPosSaver.visible(fSignals);
-                miWindowsSignals.Checked = fSignals.Visible;
-            }
-            else
-                miWindowsSignals.Visible = false;
+                MdiParent = this,
+            };
+            fSignals.onHide += new FRSignals.OnHideForm(() => { miWindowsSignals.Checked = false; });
+            fSignals.Visible = FormPosSaver.visible(fSignals);
+            miWindowsSignals.Checked = fSignals.Visible;
 
-
-
-            string strNetServer = null;
-            try
-            {
-                strNetServer = Program.cmdLineArgs["Server"];
-            }
-            catch (Exception ex)
-            {
-                log.add(LogRecord.LogReason.error, "{0}: {1}: {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message);
-                log.add(LogRecord.LogReason.info, "{0}: {1}: {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, "command line param \"Server\" not specified");
-            }
-            if (strNetServer == null)
-            {
-                //создаём объект для платы
-                pcxus = new PCXUS();
-                //Запускаем сервер
-                server = new PCXUSNetworkServer(pcxus);
-                server.start();
-                log.add(LogRecord.LogReason.info, "{0}: {1}: {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, "server started");
-            }
-            else
-            {
-                log.add(LogRecord.LogReason.info, "{0}: {1}: {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, "server not started");
-            }
             sb.Items["Info"].Text = "Для начала работы нажмите F5";
         }
 
@@ -146,7 +131,7 @@ namespace USPC
             {
                 startWorkTime = DateTime.UtcNow;
                 //SL.getInst().oPEREKL.Val = true;
-                Thread.Sleep(100);
+                //Thread.Sleep(100);
                 wrkTh.start();
             }
             else
@@ -187,8 +172,6 @@ namespace USPC
 
         private void miExit_Click(object sender, EventArgs e)
         {
-            if (server != null) server.stop();
-            if (pcxus != null) pcxus.close();
             Close();
         }
 
@@ -200,28 +183,79 @@ namespace USPC
 
         private void miOpenUSPC_Click(object sender, EventArgs e)
         {
-            pcxus.open(2);
+            //pcxus.open(2);
+            try
+            {
+                PCXUSNetworkClient client = new PCXUSNetworkClient(strNetServer);
+                Object obj = new object();
+                int res = client.callNetworkFunction("open,2",out obj);
+                if (res != 0)
+                {
+                    boardState = BoardState.error;
+                    throw new Exception(string.Format("callNetworkFunction(open) return {0:X8}", res));
+                }
+                else
+                {
+                    boardState = BoardState.Opened;
+                    return;
+                }
+            }
+            catch (Exception Ex)
+            {
+                log.add(LogRecord.LogReason.error, "{0}: {1}: Error: {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, Ex.Message);
+                return;
+            }
+
         }
 
         private void miLoadUSPC_Click(object sender, EventArgs e)
         {
-            OpenFileDialog ofd = new OpenFileDialog
+            if (boardState != BoardState.Opened)
             {
-                AddExtension = true,
-                DefaultExt = "us",
-                Filter = "Файлы конфигурации (*.us)|*.us|Все файлы (*.*)|*.*"
-            };
-            if (ofd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                MessageBox.Show("Плата USPC-3100 не открыта!", "Ошибка");
+                return;
+            }
+            try
             {
-                if (!pcxus.load(ofd.FileName))
+                PCXUSNetworkClient client = new PCXUSNetworkClient(strNetServer);
+                Object obj = new object();
+                int res = client.callNetworkFunction("load,default.us", out obj);
+                if (res != 0)
                 {
-                    MessageBox.Show(string.Format("Ошибка загрузки конфигурации \"{0}\"",ofd.FileName));
+                    throw new Exception(string.Format("callNetworkFunction(load) return {0:X8}", res));
                 }
+            }
+            catch (Exception Ex)
+            {
+                log.add(LogRecord.LogReason.error, "{0}: {1}: Error: {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, Ex.Message);
             }
         }
         private void miCloseUSPC_Click(object sender, EventArgs e)
         {
-            pcxus.close();
+            if (boardState != BoardState.Opened)
+            {
+                MessageBox.Show("Плата USPC-3100 не открыта!", "Ошибка");
+                return;
+            }
+            try
+            {
+                PCXUSNetworkClient client = new PCXUSNetworkClient(strNetServer);
+                Object obj = new object();
+                int res = client.callNetworkFunction("close", out obj);
+                if (res != 0)
+                {
+                    throw new Exception(string.Format("callNetworkFunction(close) return {0:X8}", res));
+                }
+                else
+                {
+                    boardState = BoardState.NotOpened;
+                    return;
+                }
+            }
+            catch (Exception Ex)
+            {
+                log.add(LogRecord.LogReason.error, "{0}: {1}: Error: {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, Ex.Message);
+            }
         }
 
         Dictionary<string, List<int>> data = null;
@@ -238,8 +272,6 @@ namespace USPC
 
         private void miBoardTest_Click(object sender, EventArgs e)
         {
-            FRTestAcq frm = new FRTestAcq(this);
-            frm.Show();
         }
 
         private void miBoardInfo_Click(object sender, EventArgs e)
@@ -252,12 +284,6 @@ namespace USPC
         {
             long usedMem = GC.GetTotalMemory(false);
             sb.Items["heap"].Text = string.Format("{0,6}M", usedMem / (1024 * 1024));
-        }
-
-        private void miTestUSPCAscan_Click(object sender, EventArgs e)
-        {
-            TestUSPCGetAscan frm = new TestUSPCGetAscan(this);
-            frm.Show();
         }
 
         private void tCPServerToolStripMenuItem_Click(object sender, EventArgs e)

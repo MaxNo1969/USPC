@@ -54,7 +54,6 @@ namespace USPC
                 //SL.getInst().oPEREKL.Val = true;
                 //В эту строку запишем сообщение об ошибке
                 string errStr = string.Empty;
-                string s;
                 curState = WrkStates.startWorkCycle;
                 while (isRunning)
                 {
@@ -76,7 +75,6 @@ namespace USPC
                     {
                         //Проверяем наличие ошибки - если выставлено, то закрываем всё и выходим из цикла
                         case WrkStates.error:
-                            s = string.Format("{0}: {1}: Ошибка: {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, errStr);
                             log.add(LogRecord.LogReason.error, "{0}: {1}: Error: {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, errStr);
                             isRunning = false;
                             frm.startStop();

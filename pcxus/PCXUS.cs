@@ -550,7 +550,7 @@ namespace USPC
             }
             else
             {
-                log.add(LogRecord.LogReason.info, "{0}:{1}: {2} = {3}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, _paramName, dblValue);
+                log.add(LogRecord.LogReason.info, "{0}:{1}: {2} = \"{3}\"", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, _paramName, strValue.ToString());
                 return strValue.ToString();
             }
         }
@@ -565,19 +565,27 @@ namespace USPC
                 log.add(LogRecord.LogReason.warning, "{0}: {1}: Предупреждение: {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, "Плата уже открыта");
                 return false;
             }
-            error = PCXUS_Open(out hPCXUS, _mode);
-            if (error != 0)
+            try
             {
-                log.add(LogRecord.LogReason.error, "{0}: {1}: Error: 0x{2:X8}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, error);
+                error = PCXUS_Open(out hPCXUS, _mode);
+                if (error != 0)
+                {
+                    log.add(LogRecord.LogReason.error, "{0}: {1}: Error: 0x{2:X8}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, error);
+                    return false;
+                }
+                else
+                {
+                    log.add(LogRecord.LogReason.info, "{0}: {1}: PCXUS opened: hPCXUS = {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, hPCXUS);
+                    return true;
+
+                }
+            }
+            catch (Exception ex)
+            {
+                log.add(LogRecord.LogReason.error, "{0}: {1}: Error: {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message);
+                error = 0x00000001;
                 return false;
             }
-            else
-            {
-                log.add(LogRecord.LogReason.info, "{0}: {1}: PCXUS opened: hPCXUS = {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, hPCXUS);
-                return true;
-
-            }
-
         }
         
         

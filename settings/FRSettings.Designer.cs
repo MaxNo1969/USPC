@@ -51,12 +51,11 @@
             this.m.Name = "m";
             this.m.Size = new System.Drawing.Size(599, 24);
             this.m.TabIndex = 1;
-            this.m.Text = "menuStrip1";
             // 
             // сохранитьToolStripMenuItem
             // 
             this.сохранитьToolStripMenuItem.Name = "сохранитьToolStripMenuItem";
-            this.сохранитьToolStripMenuItem.Size = new System.Drawing.Size(77, 20);
+            this.сохранитьToolStripMenuItem.Size = new System.Drawing.Size(78, 20);
             this.сохранитьToolStripMenuItem.Text = "Сохранить";
             this.сохранитьToolStripMenuItem.Click += new System.EventHandler(this.miSaveSettings_Click);
             // 

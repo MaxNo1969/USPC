@@ -6,6 +6,7 @@ using System.Net.Sockets;
 using PROTOCOL;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.Xml.Serialization;
 
 namespace USPC
 {
@@ -62,13 +63,14 @@ namespace USPC
                     {
                         Byte[] stringBytes = new byte[CMD_SIZE];
                         numberOfBytesRead = stream.Read(stringBytes, 0, stringBytes.Length);
-                        string retval = Encoding.UTF8.GetString(stringBytes);
+                        string retval = Encoding.UTF8.GetString(stringBytes).Trim(new char[] {'\0'});
                         ret = (Object)retval;
                     }
                     //Особая обработка если функция должна возвратить что-то ещё кроме ошибки
                     if (funcAndArgs[0] == "ascan")
                     {
                         IFormatter formatter = new BinaryFormatter();
+                        //XmlSerializer formatter = new XmlSerializer(typeof(Ascan));
                         Ascan ascan = (Ascan)formatter.Deserialize(stream);
                         ret = (Object)ascan;
                     }

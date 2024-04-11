@@ -7,6 +7,7 @@ using PROTOCOL;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.Xml.Serialization;
 
 namespace USPC
 {
@@ -160,6 +161,7 @@ namespace USPC
                             if (ret == 0)
                             {
                                 IFormatter formatter = new BinaryFormatter();
+                                //XmlSerializer formatter = new XmlSerializer(typeof(Ascan));
                                 formatter.Serialize(_stream, ascan);
                             }
                             _stream.Close();

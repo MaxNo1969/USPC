@@ -228,15 +228,6 @@ namespace USPC
             UpdateAscan(ascan, info);
         }
 
-        private void tbbtnStart_Click(object sender, EventArgs e)
-        {
-            timerAscan.Enabled = true;
-        }
-
-        private void tbbtnStop_Click(object sender, EventArgs e)
-        {
-            timerAscan.Enabled = false;
-        }
 
         private void TestUSPCGetAscan_Load(object sender, EventArgs e)
         {
@@ -246,6 +237,23 @@ namespace USPC
         private void TestUSPCGetAscan_FormClosing(object sender, FormClosingEventArgs e)
         {
             FormPosSaver.save(this);
+        }
+
+        private void TestUSPCGetAscan_Resize(object sender, EventArgs e)
+        {
+            AscanChart.SetBounds(0, 0, ClientSize.Width - 150, ClientSize.Height);
+        }
+
+        private void btnStart_Click(object sender, EventArgs e)
+        {
+            timerAscan.Enabled = true;
+        }
+
+        private void btnStop_Click(object sender, EventArgs e)
+        {
+            timerAscan.Enabled = false;
+            // Clear previous data
+            AscanChart.Series["AscanPlot"].Points.Clear();
         }
     }
 }

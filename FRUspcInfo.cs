@@ -20,20 +20,82 @@ namespace USPC
             Owner = _frMain;
             MdiParent = _frMain;
             frMain = _frMain;
-            PCXUS pcxus = frMain.pcxus;
+            string srv = frMain.strNetServer;
             List<string> info = new List<string>();
-            if (pcxus != null)
+            if(frMain.boardState == BoardState.Opened)
             {
-                info.Add(string.Format("Установлено {0} плат USPC", pcxus.numBoards));
-                info.Add(string.Format("Board S/N = {0}", pcxus.serialNumber()));
-                //Не работает!!!
-                //info.Add(string.Format("Board S/N (param) = {0}", (int)pcxus.getParamValueDouble("board_serial")));
-                info.Add(string.Format("MUX S/N = {0}", pcxus.getParamValueDouble("mux_rcpp_serial_number")));
-                info.Add(string.Format("HW Version = {0}", pcxus.getParamValueString("hardware_version")));
-                info.Add(string.Format("DLL Version = {0}", pcxus.getParamValueString("dll_version")));
-                info.Add(string.Format("Driver Version = {0}", pcxus.getParamValueString("driver_version")));
-                info.Add(string.Format("Package Version = {0}", pcxus.getParamValueString("package_version")));
-                info.Add(string.Format("Configuration file: {0}", pcxus.getParamValueString("current_file_name")));
+                int res;
+                PCXUSNetworkClient client = new PCXUSNetworkClient(srv);
+                Object obj = new object();
+                res = client.callNetworkFunction("readdouble,board_serial_number", out obj);
+                if (res == 0)
+                {
+                    info.Add(string.Format("MUX S/N = {0}", (double)obj));
+                }
+                else
+                {
+                    info.Add(string.Format("Ошибка при чтении параметра \"board_serial_number\":{0:X8}", res));
+                }
+
+                res = client.callNetworkFunction("readdouble,mux_rcpp_serial_number", out obj);
+                if (res == 0)
+                {
+                    info.Add(string.Format("MUX S/N = {0}", (double)obj));
+                }
+                else
+                {
+                    info.Add(string.Format("Ошибка при чтении параметра \"mux_rcpp_serial_number\":{0:X8}", res));
+                }
+
+                res = client.callNetworkFunction("readstring,hardware_version", out obj);
+                if (res == 0)
+                {
+                    info.Add(string.Format("HW Version = {0}", (string)obj));
+                }
+                else
+                {
+                    info.Add(string.Format("Ошибка при чтении параметра \"hardware_version\":{0:X8}", res));
+                }
+
+                res = client.callNetworkFunction("readstring,dll_version", out obj);
+                if (res == 0)
+                {
+                    info.Add(string.Format("DLL Version = {0}", (string)obj));
+                }
+                else
+                {
+                    info.Add(string.Format("Ошибка при чтении параметра \"dll_version\":{0:X8}", res));
+                }
+
+                res = client.callNetworkFunction("readstring,driver_version", out obj);
+                if (res == 0)
+                {
+                    info.Add(string.Format("Driver Version = {0}", (string)obj));
+                }
+                else
+                {
+                    info.Add(string.Format("Ошибка при чтении параметра \"driver_version\":{0:X8}", res));
+                }
+
+                res = client.callNetworkFunction("readstring,package_version", out obj);
+                if (res == 0)
+                {
+                    info.Add(string.Format("Package Version = {0}", (string)obj));
+                }
+                else
+                {
+                    info.Add(string.Format("Ошибка при чтении параметра \"package_version\":{0:X8}", res));
+                }
+
+                res = client.callNetworkFunction("readstring,current_file_name", out obj);
+                if (res == 0)
+                {
+                    info.Add(string.Format("Configuration file: {0}", (string)obj));
+                }
+                else
+                {
+                    info.Add(string.Format("Ошибка при чтении параметра \"current_file_name\":{0:X8}", res));
+                }
             }
             else
             {

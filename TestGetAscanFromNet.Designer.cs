@@ -58,7 +58,7 @@
             // 
             this.btnStartStop.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnStartStop.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.btnStartStop.Location = new System.Drawing.Point(671, 2);
+            this.btnStartStop.Location = new System.Drawing.Point(540, 2);
             this.btnStartStop.Name = "btnStartStop";
             this.btnStartStop.Size = new System.Drawing.Size(140, 50);
             this.btnStartStop.TabIndex = 0;
@@ -74,7 +74,7 @@
             // gate1
             // 
             this.gate1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.gate1.Location = new System.Drawing.Point(671, 106);
+            this.gate1.Location = new System.Drawing.Point(540, 106);
             this.gate1.Name = "gate1";
             this.gate1.Size = new System.Drawing.Size(140, 79);
             this.gate1.TabIndex = 2;
@@ -82,7 +82,7 @@
             // gate2
             // 
             this.gate2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.gate2.Location = new System.Drawing.Point(671, 227);
+            this.gate2.Location = new System.Drawing.Point(540, 227);
             this.gate2.Name = "gate2";
             this.gate2.Size = new System.Drawing.Size(140, 79);
             this.gate2.TabIndex = 3;
@@ -90,7 +90,7 @@
             // gateIF
             // 
             this.gateIF.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.gateIF.Location = new System.Drawing.Point(671, 339);
+            this.gateIF.Location = new System.Drawing.Point(540, 339);
             this.gateIF.Name = "gateIF";
             this.gateIF.Size = new System.Drawing.Size(140, 79);
             this.gateIF.TabIndex = 4;
@@ -100,7 +100,7 @@
             this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label1.AutoSize = true;
             this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.label1.Location = new System.Drawing.Point(671, 75);
+            this.label1.Location = new System.Drawing.Point(540, 75);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(59, 20);
             this.label1.TabIndex = 5;
@@ -111,7 +111,7 @@
             this.label2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label2.AutoSize = true;
             this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.label2.Location = new System.Drawing.Point(671, 196);
+            this.label2.Location = new System.Drawing.Point(540, 196);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(59, 20);
             this.label2.TabIndex = 6;
@@ -122,7 +122,7 @@
             this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label3.AutoSize = true;
             this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.label3.Location = new System.Drawing.Point(671, 308);
+            this.label3.Location = new System.Drawing.Point(540, 308);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(66, 20);
             this.label3.TabIndex = 7;
@@ -204,7 +204,7 @@
             this.AscanChart.Series.Add(series9);
             this.AscanChart.Series.Add(series10);
             this.AscanChart.Series.Add(series11);
-            this.AscanChart.Size = new System.Drawing.Size(669, 459);
+            this.AscanChart.Size = new System.Drawing.Size(536, 459);
             this.AscanChart.TabIndex = 8;
             title1.Font = new System.Drawing.Font("Arial Black", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             title1.ForeColor = System.Drawing.Color.White;
@@ -216,7 +216,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(815, 463);
+            this.ClientSize = new System.Drawing.Size(684, 461);
             this.Controls.Add(this.AscanChart);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
@@ -225,6 +225,7 @@
             this.Controls.Add(this.gate2);
             this.Controls.Add(this.gate1);
             this.Controls.Add(this.btnStartStop);
+            this.MinimumSize = new System.Drawing.Size(700, 500);
             this.Name = "TestGetAscanFromNet";
             this.Text = "TestGetAscanFromNet";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.TestGetAscanFromNet_FormClosing);

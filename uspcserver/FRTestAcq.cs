@@ -24,6 +24,7 @@ namespace USPC
             frMain = _frMain;
             Owner = _frMain;
             MdiParent = _frMain;
+            pcxus = frMain.pcxus;
             int board = 0;
             int channel = 0;
             info = pcxus.GetAscanInfo(board, channel);
