@@ -58,7 +58,7 @@ namespace USPC
             Int32 BufferSize = 0;
             Int32 ScanSize = 0;
             //Подготавливаем к захвату
-            if (!pcxus.config(Board, 1024))
+            if (!pcxus.config(Board, 1024*100))
             {
                 return;
             }
@@ -89,12 +89,12 @@ namespace USPC
                     e.Cancel = true;
                     return;
                 }
-                //log.add(LogRecord.LogReason.info, "ACQ_STATUS: {0}, NumberOfScansAcquired: {1}, NumberOfScansRead: {2}", ((ACQ_STATUS)status).ToString(), NumberOfScansAcquired, NumberOfScansRead);
-                Int32 NumberOfScans = pcxus.read(Board, data);
+                log.add(LogRecord.LogReason.info, "ACQ_STATUS: {0}, NumberOfScansAcquired: {1}, NumberOfScansRead: {2}", ((ACQ_STATUS)status).ToString(), NumberOfScansAcquired, NumberOfScansRead);
+                Int32 NumberOfScans = pcxus.read(Board, data,200);
                 log.add(LogRecord.LogReason.info, "NumberOfScans: {0}", NumberOfScans);
-                AcqAscan[] buffer = new AcqAscan[NumberOfScans];
-                Array.Copy(data, buffer, NumberOfScans);
-                if (dataAcquired != null) dataAcquired(NumberOfScans, buffer);
+                //AcqAscan[] buffer = new AcqAscan[NumberOfScans];
+                //Array.Copy(data, buffer, NumberOfScans);
+                //if (dataAcquired != null) dataAcquired(NumberOfScans, buffer);
                 ReportProgress(0,(Object)NumberOfScans);
                 if (CancellationPending)
                 {

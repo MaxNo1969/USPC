@@ -517,6 +517,33 @@ namespace USPC
                 return true;
         }
 
+        public double setParamValueDouble(string _paramName, int _board = 0, int _test = 0, UnitCode _unit = UnitCode.UNIT_us)
+        {
+            double dblValue = 0;
+            double[] dblArrayValue1 = new double[PCXUS.MAX_ROW];
+            double[] dblArrayValue2 = new double[PCXUS.MAX_ROW];
+            StringBuilder strValue = new StringBuilder(PCXUS.MAX_STRING);
+            int Clipped = 0;
+            error = PCXUS.PCXUS_WRITE(hPCXUS, _board, _test, (int)_unit, _paramName, ref dblValue, dblArrayValue1, dblArrayValue2, strValue, ref Clipped);
+            if (error != 0)
+            {
+                log.add(LogRecord.LogReason.error, "{0}: {1}: PCXUS_READ error : 0x{2:X8}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, error);
+                return dblValue;
+            }
+            else
+            {
+                if (Clipped != 0)
+                {
+                    log.add(LogRecord.LogReason.info, "{0}:{1}: {2} = {3}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, "Clipped", Clipped);
+                    error = (int)ErrorCode.PCXUS_INVALID_SETTING;
+                }
+                log.add(LogRecord.LogReason.info, "{0}:{1}: {2} = {3}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, _paramName, dblValue);
+                return dblValue;
+            }
+        }
+
+
+
         public double getParamValueDouble(string _paramName,int _board = 0, int _test = 0, UnitCode _unit = UnitCode.UNIT_us )
         {
             double dblValue = 0;
@@ -646,8 +673,8 @@ namespace USPC
             Int32[] Conditions = new Int32[8];
             Int32 PrePostScans = 0;
             Int32 FrequencyDivider = 0;
-            //Int32 InterruptFluidity = 256;
-            Int32 InterruptFluidity = 64;
+            Int32 InterruptFluidity = 464;
+            //Int32 InterruptFluidity = 64;
             Int32 Param = 0;
             // Setup acquisition
             error = PCXUS.PCXUS_ACQ_CONFIG(
@@ -662,7 +689,7 @@ namespace USPC
                 ref InterruptFluidity,
                 ref Param);
             // Display Fluidity come back
-            //log.add(LogRecord.LogReason.info,"PCXUS.PCXUS_ACQ_CONFIG: InterruptFluidity = {0}", InterruptFluidity);
+            log.add(LogRecord.LogReason.info,"PCXUS.PCXUS_ACQ_CONFIG: InterruptFluidity = {0}", InterruptFluidity);
             if (error != 0)
             {
                 log.add(LogRecord.LogReason.error, "{0}: {1}: 0x{2:X8}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, error);
@@ -738,7 +765,7 @@ namespace USPC
                 return true;
             }
         }
-        public Int32 read(Int32 _board, byte[] _data, int _timeout = 1000)
+        public Int32 read(Int32 _board, byte[] _data, int _timeout = 200)
         {
             if (!checkHandle()) return 0;
             Int32 NumberOfRead = 0;
@@ -755,7 +782,7 @@ namespace USPC
                 return NumberOfRead;
             }
         }
-        public Int32 read(Int32 _board, AcqAscan[] _data, int _timeout = 1000)
+        public Int32 read(Int32 _board, AcqAscan[] _data, int _timeout = 200)
         {
             if (!checkHandle()) return 0;
             Int32 NumberOfRead = 0;
