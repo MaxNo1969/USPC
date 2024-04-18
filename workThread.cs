@@ -3,6 +3,7 @@ using PCIE1730;
 using System;
 using System.Diagnostics;
 using System.Threading;
+using Settings;
 
 namespace USPC
 {
@@ -43,6 +44,7 @@ namespace USPC
         private static WrkStates prevState = WrkStates.none;
         private static TimeSpan waitReadyStarted;
         private static TimeSpan waitControlStarted;
+        private static TimeSpan controlIsSet;
         private void threadFunc(object _params)
         {
             try
@@ -55,6 +57,7 @@ namespace USPC
                 //В эту строку запишем сообщение об ошибке
                 string errStr = string.Empty;
                 curState = WrkStates.startWorkCycle;
+                controlIsSet = TimeSpan.Zero;
                 while (isRunning)
                 {
                     //Проверяем сигналы ICC и  CYCLE - они должны быть выставлены воё время работы
@@ -75,10 +78,11 @@ namespace USPC
                     {
                         //Проверяем наличие ошибки - если выставлено, то закрываем всё и выходим из цикла
                         case WrkStates.error:
-                            log.add(LogRecord.LogReason.error, "{0}: {1}: Error: {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, errStr);
-                            isRunning = false;
-                            frm.startStop();
-                            break;
+                            //log.add(LogRecord.LogReason.error, "{0}: {1}: Error: {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, errStr);
+                            throw new Exception(errStr);
+                            //isRunning = false;
+                            //frm.setSb("Info", errStr);
+                            //break;
                         //Начало рабочего цикла - снимаем сигнал "Перекладка" для сигнализации того, что
                         //установка ждет следующую трубу
                         case WrkStates.startWorkCycle:
@@ -106,7 +110,7 @@ namespace USPC
                                     prepareBoardsForWork();
                                 }
                                 //Выставляем сигнал "РАБОТА"
-                                //SL.getInst().oWRK.Val = true;
+                                SL.getInst().oWRK.Val = true;
                                 waitReadyStarted = sw.Elapsed;
                                 curState = WrkStates.moduleReady;
                             }
@@ -122,15 +126,11 @@ namespace USPC
                             //Снялcя сигнал "ГОТОВНОСТЬ" - труба начала движение
                             if (SL.getInst().iREADY.Val == false)
                             {
-                                //Включить сбор данных с модуля контроля. Ожидать появления сигнала КОНТРОЛЬ. 
-                                {
-                                    //Запускаем поток чтения данных
-                                }
                                 waitControlStarted = sw.Elapsed;
                                 curState = WrkStates.waitCntrl;
                             }
                             break;
-                        //При появлении сигнала КОНТРОЛЬ начать анализировать сигнал СТРОБ. 
+                        //При появлении сигнала КОНТРОЛЬ запоминаем время для вычисления скорости
                         //Если сигнал КОНТРОЛЬ не появился за определенное время (10 секунд) – 
                         //аварийное завершение режима с выводом со-ответствующего сообщения.
                         case WrkStates.waitCntrl:
@@ -140,9 +140,16 @@ namespace USPC
                                 curState = WrkStates.error;
                                 break;
                             }
+                            //
                             if(SL.getInst().iCNTR.Val==true)
                             {
+                                controlIsSet = sw.Elapsed;   
+                                log.add(LogRecord.LogReason.debug,"controlIsSet = {0}",controlIsSet.Milliseconds);
                                 curState = WrkStates.work;
+                                //Включить сбор данных с модуля контроля. Ожидать пропадания сигнала КОНТРОЛЬ. 
+                                {
+                                    //Запускаем поток чтения данных
+                                }
                             }
                             break;
                         case WrkStates.work:
@@ -153,13 +160,24 @@ namespace USPC
                                 curState = WrkStates.endWork;
                                 break;
                             }
+                            //Труба доехала до базы
+                            if (SL.getInst().iBASE.Val == true && controlIsSet != TimeSpan.Zero)
+                            {
+                                TimeSpan timeToBase = sw.Elapsed - controlIsSet;
+                                controlIsSet = TimeSpan.Zero;
+                                log.add(LogRecord.LogReason.debug,"timeToBase = {0}",timeToBase.Milliseconds);
+                                //Получаем значение скорости трубы
+                                AppSettings.s.speed = AppSettings.s.distanceToBase / timeToBase.Milliseconds;
+                                frm.setSb("speed",string.Format("{0} м/с", AppSettings.s.speed));
+                            }
                             break;
                         case WrkStates.endWork:
-                            //По окончании сбора, обработки и передачи результата снять сигнал КОНТРОЛЬ. 
+                            //По окончании сбора, обработки и передачи результата. 
+                            SL.getInst().oRES1.Val = true;
+                            SL.getInst().oRES2.Val = true;
+                            SL.getInst().oPEREKL.Val = true;
+                            Thread.Sleep(100);
                             curState = WrkStates.startWorkCycle;
-                            //По идее надо наверное выходить из цикла работы для следующей трубы уже запускать новый цикл
-                            isRunning = false;
-                            frm.startStop();
                             break;
                         default:
                             break;
@@ -169,9 +187,7 @@ namespace USPC
                 }
                 log.add(LogRecord.LogReason.info, "{0}: {1}: {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, "Вышли");
                 //Если не установлено прерывание на просмотр и нет ошибки запускаем рабочий цикл по новой
-                frm.setSb("Info", "Аварийное завершение.");
-                if (!frm.bStopForView && curState!= WrkStates.error)
-                    frm.startStop();
+                frm.setSb("Info", "Вышли из рабочего цикла.");
             }
             catch (Exception e)
             {
@@ -180,8 +196,8 @@ namespace USPC
                 frm.setSb("Info", string.Format("Аварийное завершение: {0}",e.Message));
                 SL.getInst().ClearAllSignals();
                 isRunning = false;
-                if (!frm.bStopForView && curState != WrkStates.error)
-                    frm.startStop();
+                stop();
+                frm.setStartStopMenu(true);
             }
         }
 

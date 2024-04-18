@@ -5,7 +5,7 @@ using System.ComponentModel.Design;
 using System.Globalization;
 using System.Reflection;
 
-namespace USPC
+namespace Settings
 {
     class CollectionTypeConverter : TypeConverter
     {

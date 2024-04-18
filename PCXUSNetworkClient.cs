@@ -44,6 +44,13 @@ namespace USPC
                     Byte[] bytesResult = new Byte[sizeof(Int32)];
                     int numberOfBytesRead = stream.Read(bytesResult, 0, bytesResult.Length);
                     Int32 result = BitConverter.ToInt32(bytesResult,0);
+                    if (result > 0 && _func == "read")
+                    {
+                        IFormatter formatter = new BinaryFormatter();
+                        AcqAscan[] scans = (AcqAscan[])formatter.Deserialize(stream);
+                        ret = (Object)scans;
+                        return result;
+                    }
                     if (result != 0)
                     {
                         log.add(LogRecord.LogReason.error, "{0}: {1}: {2}: {3:X8}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name,_func,result);
@@ -73,6 +80,13 @@ namespace USPC
                         //XmlSerializer formatter = new XmlSerializer(typeof(Ascan));
                         Ascan ascan = (Ascan)formatter.Deserialize(stream);
                         ret = (Object)ascan;
+                    }
+                    //Особая обработка если функция должна возвратить что-то ещё кроме ошибки
+                    if (funcAndArgs[0] == "status")
+                    {
+                        IFormatter formatter = new BinaryFormatter();
+                        AcqSatus status = (AcqSatus)formatter.Deserialize(stream);
+                        ret = (Object)status;
                     }
                     return result;
                 }

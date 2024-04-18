@@ -1,6 +1,6 @@
 ﻿namespace USPC
 {
-    partial class FRTestAcq
+    partial class FRTestAcqNet
     {
         /// <summary>
         /// Required designer variable.
@@ -32,6 +32,8 @@
             System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
             System.Windows.Forms.DataVisualization.Charting.Series series2 = new System.Windows.Forms.DataVisualization.Charting.Series();
             System.Windows.Forms.DataVisualization.Charting.Series series3 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.Series series4 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.Series series5 = new System.Windows.Forms.DataVisualization.Charting.Series();
             System.Windows.Forms.DataVisualization.Charting.Title title1 = new System.Windows.Forms.DataVisualization.Charting.Title();
             this.btnStart = new System.Windows.Forms.Button();
             this.btnStop = new System.Windows.Forms.Button();
@@ -93,9 +95,19 @@
             series3.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.FastLine;
             series3.Color = System.Drawing.Color.Red;
             series3.Name = "GateIFTOF";
+            series4.ChartArea = "Default";
+            series4.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.FastLine;
+            series4.Color = System.Drawing.Color.Red;
+            series4.Name = "Gate1Amp";
+            series5.ChartArea = "Default";
+            series5.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.FastLine;
+            series5.Color = System.Drawing.Color.Cyan;
+            series5.Name = "Gate2Amp";
             this.AcqChart.Series.Add(series1);
             this.AcqChart.Series.Add(series2);
             this.AcqChart.Series.Add(series3);
+            this.AcqChart.Series.Add(series4);
+            this.AcqChart.Series.Add(series5);
             this.AcqChart.Size = new System.Drawing.Size(927, 551);
             this.AcqChart.TabIndex = 3;
             title1.BackColor = System.Drawing.Color.Black;
@@ -162,7 +174,7 @@
             this.lblGateIFMaxTof.Text = "0";
             this.lblGateIFMaxTof.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
-            // FRTestAcq
+            // FRTestAcqNet
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -177,7 +189,7 @@
             this.Controls.Add(this.btnStop);
             this.Controls.Add(this.btnStart);
             this.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.Name = "FRTestAcq";
+            this.Name = "FRTestAcqNet";
             this.Text = "Чтение платы";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FRTestAcq_FormClosing);
             this.Resize += new System.EventHandler(this.FRTestAcq_Resize);

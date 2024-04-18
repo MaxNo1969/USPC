@@ -6,8 +6,9 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Xml.Serialization;
+using Data;
 
-namespace USPC
+namespace Settings
 {
     /// <summary>
     /// Делегат на смену параметров
@@ -39,6 +40,8 @@ namespace USPC
         /// Настройки установки. Скорость движения трубы
         /// </summary>
         [Category("4.Установка")]
+        [DisplayName("Расстояние до базы(мм):"), Browsable(true), Description("Расстояние до базы (мм)")]
+        public int distanceToBase { get; set; }
         [DisplayName("Скорость(м/с)"), Browsable(true), Description("Скорость движения трубы (м/с)")]
         public double speed { get; set; }
 

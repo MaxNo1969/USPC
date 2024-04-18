@@ -294,6 +294,18 @@ namespace USPC
         public double gate1_level_alarm;
         public double gate2_level_alarm;
     }
+
+        // AscanInfo structre must hold parameters requested to display Ascan and gates
+    [Serializable()]
+    public struct AcqSatus
+    {
+        public Int32 status;
+        public Int32 NumberOfScansAcquired;
+        public Int32 NumberOfScansRead;
+        public Int32 bufferSize;
+        public Int32 scanSize;
+    }
+    
     #endregion Data structures
 
     #region constants

@@ -12,11 +12,14 @@ using FPS;
 using System.Diagnostics;
 using PCIE1730;
 using EMUL;
+using Settings;
+using Data;
+using CHART;
 
 
 namespace USPC
 {
-    public enum BoardState { NotOpened, Opened, loaded, error }; 
+    public enum BoardState { NotOpened, Opened, loaded, error };
     public partial class FRMain : Form
     {
         //public PCXUS pcxus = null;
@@ -39,25 +42,15 @@ namespace USPC
         private workThread wrkTh = null;
 
         /// <summary>
-        ///Флаг работы основного рабочего потока
-        /// </summary>
-        bool isWorked = false;
-
-        /// <summary>
         ///Время начала работы
         /// </summary>
-         static DateTime startWorkTime;
-
-        /// <summary>
-        /// Счетчик труб
-        /// </summary>
-        int tubeCount = 0;
+        static DateTime startWorkTime;
 
         /// <summary>
         /// Признак прерывания на просмотр
         /// </summary>
         public bool bStopForView { get; private set; }
-        
+
         public FRMain()
         {
             Thread.CurrentThread.Name = "MainWindow";
@@ -120,45 +113,35 @@ namespace USPC
             sb.Items["Info"].Text = "Для начала работы нажмите F5";
         }
 
+
+        public void setStartStopMenu(bool _start)
+        {
+            miStart.Text = (_start) ? "Старт" : "Стоп";
+        }
+
         /// <summary>
         /// Запуск/остановка рабочего потока
         /// (В workThread вызывается из другого потока)
         /// </summary>
         public void startStop()
         {
-            log.add(LogRecord.LogReason.info, "{0}: {1}: IsWorked={0}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, isWorked.ToString());
-            if (!isWorked)
+            log.add(LogRecord.LogReason.info, "{0}: {1}: {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, miStart.Text);
+            if (miStart.Text == "Старт")
             {
                 startWorkTime = DateTime.UtcNow;
                 //SL.getInst().oPEREKL.Val = true;
                 //Thread.Sleep(100);
+                SL.getInst().oPEREKL.Val = true;
+                Thread.Sleep(100);
                 wrkTh.start();
+                setSb("Info", "Работа");
+                setStartStopMenu(false);
             }
             else
             {
-                //Если вышли из потока с ошибкой
-                if (wrkTh.curState == workThread.WrkStates.error)
-                {
-                }
-                else
-                {
-                    lblTubesCount.Text = string.Format("{0}", ++tubeCount);
-                }
-                wrkTh.stop();
+                if (wrkTh.isRunning) wrkTh.stop();
                 setSb("Info", "Нажмите F5 для начала работы");
-            }
-            isWorked = !isWorked;
-            //Обрабатываем запуск из другого потока
-            if (InvokeRequired)
-            {
-                BeginInvoke(new Action(() =>
-                {
-                    miStart.Text = isWorked ? "Стоп" : "Старт";
-                }));
-            }
-            else
-            {
-                miStart.Text = isWorked ? "Стоп" : "Старт";
+                setStartStopMenu(true);
             }
         }
 
@@ -188,7 +171,7 @@ namespace USPC
             {
                 PCXUSNetworkClient client = new PCXUSNetworkClient(strNetServer);
                 Object obj = new object();
-                int res = client.callNetworkFunction("open,2",out obj);
+                int res = client.callNetworkFunction("open,2", out obj);
                 if (res != 0)
                 {
                     boardState = BoardState.error;
@@ -258,22 +241,6 @@ namespace USPC
             }
         }
 
-        Dictionary<string, List<int>> data = null;
-        
-        private void miLoadFile_Click(object sender, EventArgs e)
-        {
-            data = CSVHelper.readCsv();
-        }
-
-        private void miSaveFile_Click(object sender, EventArgs e)
-        {
-            if (data != null) CSVHelper.writeCsv(data);
-        }
-
-        private void miBoardTest_Click(object sender, EventArgs e)
-        {
-        }
-
         private void miBoardInfo_Click(object sender, EventArgs e)
         {
             FRUspcInfo frm = new FRUspcInfo(this);
@@ -284,6 +251,8 @@ namespace USPC
         {
             long usedMem = GC.GetTotalMemory(false);
             sb.Items["heap"].Text = string.Format("{0,6}M", usedMem / (1024 * 1024));
+            sb.Items["speed"].Text = string.Format("{0} м/с", AppSettings.s.speed);
+
         }
 
         private void tCPServerToolStripMenuItem_Click(object sender, EventArgs e)
@@ -338,5 +307,137 @@ namespace USPC
             frm.MdiParent = this;
             frm.Show();
         }
+
+        private void miTestUSPCAscan_Click(object sender, EventArgs e)
+        {
+            FRTestAcqNet frm = new FRTestAcqNet(this);
+            frm.Show();
+        }
+
+        private void testChartToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            FRResultView frm = new FRResultView(this);
+            frm.Show();
+        }
+        #region Обработчики меню
+        public struct WorkerArgs
+        {
+            public string action;
+            public string fileName;
+            public int zones;
+            public int sensors;
+            public int measCount;
+            public int measSize;
+            public WorkerArgs(string _action, string _fileName, int _zones = 0, int _sensors = 0, int _measCount = 0, int _measSize = 0)
+            {
+                action = _action;
+                fileName = _fileName;
+                zones = _zones;
+                sensors = _sensors;
+                measCount = _measCount;
+                measSize = _measSize;
+            }
+        }
+        //! @brief Загрузка данных из файла
+        //! Данные->Загрузить
+        private void openToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog ofd = new OpenFileDialog();
+            ofd.Filter = "Файлы данных (*.bintube)|*.bintube|Все файлы (*.*)|*.*";
+            if (ofd.ShowDialog() == DialogResult.OK)
+            {
+                try
+                {
+                    BackgroundWorker w = new BackgroundWorker();
+                    w.WorkerReportsProgress = true;
+                    w.WorkerSupportsCancellation = true;
+                    w.DoWork += new DoWorkEventHandler(w_DoWork);
+                    w.RunWorkerCompleted += new RunWorkerCompletedEventHandler(w_RunWorkerCompleted);
+                    w.ProgressChanged += new ProgressChangedEventHandler(w_ProgressChanged);
+                    pb.Visible = true;
+                    w.RunWorkerAsync(new WorkerArgs("Загрузка", ofd.FileName));
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
+                }
+            }
+        }
+        //! @brief Генерация данных
+        //! Труба->Генерировать
+        private void genToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            BackgroundWorker w = new BackgroundWorker();
+            w.WorkerReportsProgress = true;
+            w.WorkerSupportsCancellation = true;
+            w.DoWork += new DoWorkEventHandler(w_DoWork);
+            w.RunWorkerCompleted += new RunWorkerCompletedEventHandler(w_RunWorkerCompleted);
+            w.ProgressChanged += new ProgressChangedEventHandler(w_ProgressChanged);
+            pb.Visible = true;
+            w.RunWorkerAsync(new WorkerArgs("Генерация", null, 50, 8, 500, 484));
+        }
+        //! @brief Сохранение трубы
+        //! Данных->Сохранить  
+        private void saveToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            SaveFileDialog sfd = new SaveFileDialog();
+            sfd.Filter = "Файлы данных (*.bintube)|*.bintube|Все файлы (*.*)|*.*";
+            if (sfd.ShowDialog() == DialogResult.OK)
+            {
+                try
+                {
+                    BackgroundWorker w = new BackgroundWorker();
+                    w.WorkerReportsProgress = true;
+                    w.WorkerSupportsCancellation = true;
+                    w.DoWork += new DoWorkEventHandler(w_DoWork);
+                    w.RunWorkerCompleted += new RunWorkerCompletedEventHandler(w_RunWorkerCompleted);
+                    w.ProgressChanged += new ProgressChangedEventHandler(w_ProgressChanged);
+                    pb.Visible = true;
+                    w.RunWorkerAsync(new WorkerArgs("Сохранение", sfd.FileName));
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
+                }
+            }
+        }
+        #endregion Обработчики меню
+
+        #region Обработчики для BackgroundWorker-ов загрузки, сохранения, генерации
+        void w_ProgressChanged(object sender, ProgressChangedEventArgs e)
+        {
+            BackgroundWorker w = (BackgroundWorker)sender;
+            pb.Value = e.ProgressPercentage;
+        }
+
+        void w_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            BackgroundWorker w = (BackgroundWorker)sender;
+            //chartResult.putDataOnChart(stick.finalThickness.ToArray());
+            //chartResult.putColorDecision(stick);
+            pb.Visible = false;
+        }
+
+        void w_DoWork(object sender, DoWorkEventArgs e)
+        {
+            BackgroundWorker w = (BackgroundWorker)sender;
+            WorkerArgs args = (WorkerArgs)e.Argument;
+            switch (args.action)
+            {
+                case "Загрузка":
+                    USPCData.load(args.fileName);
+                    break;
+                case "Сохранение":
+                    Program.data.save((Object)args.fileName);
+                    break;
+                case "Генерация":
+                    DataGenerator.GenerateThicknessData(4);
+                    break;
+                case "Пересчет":
+                    //stick.recalc(w, e);
+                    break;
+            }
+        }
+        #endregion
     }
 }

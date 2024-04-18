@@ -3,8 +3,10 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using USPC;
+using Settings;
 
-namespace USPC
+namespace Data
 {
     /// <summary>
     /// Типоразмер для сериализации

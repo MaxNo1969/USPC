@@ -7,6 +7,7 @@ using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
 using USPC;
+using Settings;
 
 namespace PCIE1730
 {

@@ -4,7 +4,7 @@ using System.Diagnostics;
 using System.Windows.Forms;
 using FPS;
 
-namespace USPC
+namespace Settings
 {
     /// <summary>
     /// Форма для редактирования параметров приложения

@@ -7,12 +7,28 @@ using System.Diagnostics;
 using System.Threading;
 using FPS;
 using PCIE1730;
+using Data;
 
 namespace USPC
 {
     static class Program
     {
+        public const int countZones = 300;
+        public const int countSensors = 8;
+        public const int zoneLength = 50;
+
+        public const int countFrames = 900000;
+        //public const int countFrames = 9000;
+        public const int countFramesPerChannel = countFrames / countSensors;
+
+        public const int scopeVelocity = 6400;
+        
         public static Dictionary<string, string> cmdLineArgs = null;
+        public static int lengthCaretka;
+
+
+        public static USPCData data = new USPCData();
+
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
@@ -30,7 +46,7 @@ namespace USPC
             new UnhandledExceptionEventHandler(CurrentDomain_UnhandledException);
             int ret = 0;
             //В первую очередь запускаем логирование
-            log.add(LogRecord.LogReason.info,@"Program: Начало выполнения программы.",null);
+            log.add(LogRecord.LogReason.info,@"Program: Начало выполнения программы.");
             try
             {
                 cmdLineArgs = getCmdStr(args);

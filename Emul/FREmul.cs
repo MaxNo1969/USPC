@@ -118,6 +118,7 @@ namespace EMUL
         /// </summary>
         const int signalWaitCycleTime = 100;
         const int updateCountersPeriod = 1000;
+        const int tubeMoveTime = 1000*15;
         void worker_DoWork(object sender, DoWorkEventArgs e)
         {
             log.add(LogRecord.LogReason.info, "{0}: {1}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name);
@@ -136,7 +137,7 @@ namespace EMUL
                     return;
                 }
                 //Ждем выставления сигнала "Перекладка"
-                worker.ReportProgress(102, "Ждем выставления сигнала \"ПЕРЕКЛАДКА\"...");
+                worker.ReportProgress(101, "Ждем выставления сигнала \"ПЕРЕКЛАДКА\"...");
                 while (SL.getInst().oPEREKL.Val == false)
                 {
                     //Проверяем кнопку СТОП
@@ -190,7 +191,8 @@ namespace EMUL
                 SL.getInst().set(SL.getInst().iCNTR, true);
                 //Ждем пока труба проедет до конца
                 startWait = sw.ElapsedMilliseconds;
-                while (true)
+                bool iBaseSet = false;
+                while (sw.ElapsedMilliseconds -startWait < 20000)
                 {
                     //Проверяем кнопку СТОП
                     if (worker.CancellationPending)
@@ -198,15 +200,16 @@ namespace EMUL
                         e.Cancel = true;
                         return;
                     }
-                    if(sw.ElapsedMilliseconds-startWait>updateCountersPeriod)
+                    if (sw.ElapsedMilliseconds - startWait >= 3000 && !iBaseSet)
                     {
-                        //worker.ReportProgress(tm.Position * 100 / tm.Width,0);
-                        startWait = sw.ElapsedMilliseconds;
+                        worker.ReportProgress(101, "Доехали до базы...");
+                        SL.getInst().set(SL.getInst().iBASE, true);
+                        iBaseSet = true;
                     }
                     Thread.Sleep(signalWaitCycleTime);
                 }
                 //worker.ReportProgress(tm.Position * 100 / tm.Width, 0);
-                worker.ReportProgress(101, "Труба вышла из МНК3...");
+                worker.ReportProgress(101, "Труба вышла из ЛУЗК...");
                 worker.ReportProgress(101, "Снимаем сигнал \"КОНТРОЛЬ3\"...");
                 SL.getInst().set(SL.getInst().iCNTR, false);
             }

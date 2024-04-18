@@ -1,4 +1,4 @@
-﻿namespace USPC
+﻿namespace Settings
 {
     partial class FRSettings
     {

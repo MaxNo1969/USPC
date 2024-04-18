@@ -37,8 +37,9 @@
             this.настройкиToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.miSettings = new System.Windows.Forms.ToolStripMenuItem();
             this.miView = new System.Windows.Forms.ToolStripMenuItem();
-            this.miLoadFile = new System.Windows.Forms.ToolStripMenuItem();
-            this.miSaveFile = new System.Windows.Forms.ToolStripMenuItem();
+            this.openToolStreepMenuItemClick = new System.Windows.Forms.ToolStripMenuItem();
+            this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.testChartToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.miTest = new System.Windows.Forms.ToolStripMenuItem();
             this.miBoardTest = new System.Windows.Forms.ToolStripMenuItem();
             this.miTestUSPCAscan = new System.Windows.Forms.ToolStripMenuItem();
@@ -53,16 +54,19 @@
             this.miCloseUSPC = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripSeparator();
             this.miBoardInfo = new System.Windows.Forms.ToolStripMenuItem();
+            this.miEmul = new System.Windows.Forms.ToolStripMenuItem();
             this.sb = new System.Windows.Forms.StatusStrip();
             this.info = new System.Windows.Forms.ToolStripStatusLabel();
             this.dataSize = new System.Windows.Forms.ToolStripStatusLabel();
             this.tubePos = new System.Windows.Forms.ToolStripStatusLabel();
+            this.speed = new System.Windows.Forms.ToolStripStatusLabel();
             this.duration = new System.Windows.Forms.ToolStripStatusLabel();
             this.heap = new System.Windows.Forms.ToolStripStatusLabel();
             this.timerUpdUI = new System.Windows.Forms.Timer(this.components);
             this.tb = new System.Windows.Forms.ToolStrip();
             this.lblTubesCount = new System.Windows.Forms.ToolStripLabel();
-            this.miEmul = new System.Windows.Forms.ToolStripMenuItem();
+            this.pb = new System.Windows.Forms.ToolStripProgressBar();
+            this.genToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menu.SuspendLayout();
             this.sb.SuspendLayout();
             this.tb.SuspendLayout();
@@ -98,20 +102,20 @@
             // 
             this.miStart.Name = "miStart";
             this.miStart.ShortcutKeys = System.Windows.Forms.Keys.F5;
-            this.miStart.Size = new System.Drawing.Size(152, 22);
-            this.miStart.Text = "Запуск";
+            this.miStart.Size = new System.Drawing.Size(146, 22);
+            this.miStart.Text = "Старт";
             this.miStart.Click += new System.EventHandler(this.miStart_Click);
             // 
             // toolStripMenuItem1
             // 
             this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-            this.toolStripMenuItem1.Size = new System.Drawing.Size(149, 6);
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(143, 6);
             // 
             // miExit
             // 
             this.miExit.Name = "miExit";
             this.miExit.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.X)));
-            this.miExit.Size = new System.Drawing.Size(152, 22);
+            this.miExit.Size = new System.Drawing.Size(146, 22);
             this.miExit.Text = "Выход";
             this.miExit.Click += new System.EventHandler(this.miExit_Click);
             // 
@@ -133,25 +137,34 @@
             // miView
             // 
             this.miView.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.miLoadFile,
-            this.miSaveFile});
+            this.openToolStreepMenuItemClick,
+            this.saveToolStripMenuItem,
+            this.testChartToolStripMenuItem,
+            this.genToolStripMenuItem});
             this.miView.Name = "miView";
             this.miView.Size = new System.Drawing.Size(76, 20);
             this.miView.Text = "Просмотр";
             // 
-            // miLoadFile
+            // openToolStreepMenuItemClick
             // 
-            this.miLoadFile.Name = "miLoadFile";
-            this.miLoadFile.Size = new System.Drawing.Size(163, 22);
-            this.miLoadFile.Text = "Загрузить файл";
-            this.miLoadFile.Click += new System.EventHandler(this.miLoadFile_Click);
+            this.openToolStreepMenuItemClick.Name = "openToolStreepMenuItemClick";
+            this.openToolStreepMenuItemClick.Size = new System.Drawing.Size(163, 22);
+            this.openToolStreepMenuItemClick.Text = "Загрузить файл";
+            this.openToolStreepMenuItemClick.Click += new System.EventHandler(this.openToolStripMenuItem_Click);
             // 
-            // miSaveFile
+            // saveToolStripMenuItem
             // 
-            this.miSaveFile.Name = "miSaveFile";
-            this.miSaveFile.Size = new System.Drawing.Size(163, 22);
-            this.miSaveFile.Text = "Выгрузить файл";
-            this.miSaveFile.Click += new System.EventHandler(this.miSaveFile_Click);
+            this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
+            this.saveToolStripMenuItem.Size = new System.Drawing.Size(163, 22);
+            this.saveToolStripMenuItem.Text = "Выгрузить файл";
+            this.saveToolStripMenuItem.Click += new System.EventHandler(this.saveToolStripMenuItem_Click);
+            // 
+            // testChartToolStripMenuItem
+            // 
+            this.testChartToolStripMenuItem.Name = "testChartToolStripMenuItem";
+            this.testChartToolStripMenuItem.Size = new System.Drawing.Size(163, 22);
+            this.testChartToolStripMenuItem.Text = "TestChart";
+            this.testChartToolStripMenuItem.Click += new System.EventHandler(this.testChartToolStripMenuItem_Click);
             // 
             // miTest
             // 
@@ -169,13 +182,13 @@
             this.miBoardTest.Name = "miBoardTest";
             this.miBoardTest.Size = new System.Drawing.Size(173, 22);
             this.miBoardTest.Text = "Плата";
-            this.miBoardTest.Click += new System.EventHandler(this.miBoardTest_Click);
             // 
             // miTestUSPCAscan
             // 
             this.miTestUSPCAscan.Name = "miTestUSPCAscan";
             this.miTestUSPCAscan.Size = new System.Drawing.Size(173, 22);
-            this.miTestUSPCAscan.Text = "TestUSPCAscan";
+            this.miTestUSPCAscan.Text = "TestAcqFromNet";
+            this.miTestUSPCAscan.Click += new System.EventHandler(this.miTestUSPCAscan_Click);
             // 
             // tCPServerToolStripMenuItem
             // 
@@ -261,12 +274,21 @@
             this.miBoardInfo.Text = "Информация";
             this.miBoardInfo.Click += new System.EventHandler(this.miBoardInfo_Click);
             // 
+            // miEmul
+            // 
+            this.miEmul.Name = "miEmul";
+            this.miEmul.Size = new System.Drawing.Size(74, 20);
+            this.miEmul.Text = "Эмуляция";
+            this.miEmul.Click += new System.EventHandler(this.эмуляцияToolStripMenuItem_Click);
+            // 
             // sb
             // 
             this.sb.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.info,
+            this.pb,
             this.dataSize,
             this.tubePos,
+            this.speed,
             this.duration,
             this.heap});
             this.sb.Location = new System.Drawing.Point(0, 517);
@@ -280,7 +302,7 @@
             this.info.AutoSize = false;
             this.info.BorderSides = System.Windows.Forms.ToolStripStatusLabelBorderSides.Right;
             this.info.Name = "info";
-            this.info.Size = new System.Drawing.Size(747, 17);
+            this.info.Size = new System.Drawing.Size(495, 17);
             this.info.Spring = true;
             this.info.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
@@ -297,6 +319,13 @@
             this.tubePos.BorderSides = System.Windows.Forms.ToolStripStatusLabelBorderSides.Right;
             this.tubePos.Name = "tubePos";
             this.tubePos.Size = new System.Drawing.Size(48, 17);
+            // 
+            // speed
+            // 
+            this.speed.AutoSize = false;
+            this.speed.BorderSides = System.Windows.Forms.ToolStripStatusLabelBorderSides.Right;
+            this.speed.Name = "speed";
+            this.speed.Size = new System.Drawing.Size(50, 17);
             // 
             // duration
             // 
@@ -336,12 +365,18 @@
             this.lblTubesCount.Text = "0";
             this.lblTubesCount.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
-            // miEmul
+            // pb
             // 
-            this.miEmul.Name = "miEmul";
-            this.miEmul.Size = new System.Drawing.Size(74, 20);
-            this.miEmul.Text = "Эмуляция";
-            this.miEmul.Click += new System.EventHandler(this.эмуляцияToolStripMenuItem_Click);
+            this.pb.AutoSize = false;
+            this.pb.Name = "pb";
+            this.pb.Size = new System.Drawing.Size(200, 16);
+            // 
+            // genToolStripMenuItem
+            // 
+            this.genToolStripMenuItem.Name = "genToolStripMenuItem";
+            this.genToolStripMenuItem.Size = new System.Drawing.Size(163, 22);
+            this.genToolStripMenuItem.Text = "Генерировать";
+            this.genToolStripMenuItem.Click += new System.EventHandler(this.genToolStripMenuItem_Click);
             // 
             // FRMain
             // 
@@ -382,8 +417,8 @@
         private System.Windows.Forms.ToolStripStatusLabel info;
         private System.Windows.Forms.ToolStripMenuItem miWindows;
         private System.Windows.Forms.ToolStripMenuItem miWindowsProt;
-        private System.Windows.Forms.ToolStripMenuItem miLoadFile;
-        private System.Windows.Forms.ToolStripMenuItem miSaveFile;
+        private System.Windows.Forms.ToolStripMenuItem openToolStreepMenuItemClick;
+        private System.Windows.Forms.ToolStripMenuItem saveToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem miUSPC;
         private System.Windows.Forms.ToolStripMenuItem miOpenUSPC;
         private System.Windows.Forms.ToolStripMenuItem miLoadUSPC;
@@ -404,6 +439,10 @@
         private System.Windows.Forms.ToolStrip tb;
         private System.Windows.Forms.ToolStripLabel lblTubesCount;
         private System.Windows.Forms.ToolStripMenuItem miEmul;
+        private System.Windows.Forms.ToolStripStatusLabel speed;
+        private System.Windows.Forms.ToolStripMenuItem testChartToolStripMenuItem;
+        private System.Windows.Forms.ToolStripProgressBar pb;
+        private System.Windows.Forms.ToolStripMenuItem genToolStripMenuItem;
 
     }
 }

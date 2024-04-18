@@ -14,6 +14,8 @@ namespace USPC
     class PCXUSNetworkServer
     {
         const int CMD_SIZE = 512;
+        const int bufferSize = 1024 * 100;
+        static AcqAscan[] data = new AcqAscan[bufferSize];
 
         TCPServer server = null;
         PCXUS pcxus = null;
@@ -164,6 +166,75 @@ namespace USPC
                                 //XmlSerializer formatter = new XmlSerializer(typeof(Ascan));
                                 formatter.Serialize(_stream, ascan);
                             }
+                            _stream.Close();
+                            return;
+                        }
+                    case "config":
+                        {
+                            int board = (cmdAndParams.Length>2)?ConvertToInt(cmdAndParams[1]):0;
+                            //int bufferSize = (cmdAndParams.Length>3)?ConvertToInt(cmdAndParams[2]):bufferSize;
+                            ret = (pcxus.config(board,bufferSize)) ? 0 : (UInt32)pcxus.Err;
+                            _stream.Write(BitConverter.GetBytes(ret), 0, sizeof(UInt32));
+                            _stream.Close();
+                            return;
+                        }
+                    case "status":
+                        {
+                            int board = (cmdAndParams.Length>2)?ConvertToInt(cmdAndParams[1]):0;
+                            AcqSatus packet = new AcqSatus();
+                            Int32 status = (Int32)ACQ_STATUS.ACQ_NO_CONFIGURED;
+                            Int32 NumberOfScansAcqured = 0;
+                            Int32 NumberOfScansRead = 0;
+                            Int32 bufferSize = 0;
+                            Int32 scanSize = 0;
+                            ret = (pcxus.status(board,ref status,ref NumberOfScansAcqured,ref NumberOfScansRead,ref bufferSize,ref scanSize)) ? 0 : (UInt32)pcxus.Err;
+                            _stream.Write(BitConverter.GetBytes(ret), 0, sizeof(UInt32));
+                            packet.status = status;
+                            packet.NumberOfScansAcquired = NumberOfScansAcqured;
+                            packet.NumberOfScansRead = NumberOfScansRead;
+                            packet.bufferSize = bufferSize;
+                            packet.scanSize = scanSize;
+                            IFormatter formatter = new BinaryFormatter();
+                            formatter.Serialize(_stream, packet);
+                            _stream.Close();
+                            return;
+                        }
+                    case "start":
+                        {
+                            int board = (cmdAndParams.Length > 2) ? ConvertToInt(cmdAndParams[1]) : 0;
+                            int NumberOfScansToAcquire = (cmdAndParams.Length > 3) ? ConvertToInt(cmdAndParams[2]) : -1;
+                            ret = (pcxus.start(board)) ? 0 : (UInt32)pcxus.Err;
+                            _stream.Write(BitConverter.GetBytes(ret), 0, sizeof(UInt32));
+                            _stream.Close();
+                            return;
+                        }
+                    case "read":
+                        {
+                            int board = (cmdAndParams.Length > 2) ? ConvertToInt(cmdAndParams[1]) : 0;
+                            ret = (uint)pcxus.read(board, data);
+                            ret = (ret > 0) ? ret : (UInt32)pcxus.Err;
+                            _stream.Write(BitConverter.GetBytes(ret), 0, sizeof(UInt32));
+                            AcqAscan[] retarray = new AcqAscan[ret];
+                            Array.Copy(data, retarray, ret);
+                            log.add(LogRecord.LogReason.debug, "retarray.Length = {0}", retarray.Length);
+                            IFormatter formatter = new BinaryFormatter();
+                            formatter.Serialize(_stream, retarray);
+                            _stream.Close();
+                            return;
+                        }
+                    case "stop":
+                        {
+                            int board = (cmdAndParams.Length > 2) ? ConvertToInt(cmdAndParams[1]) : 0;
+                            ret = (pcxus.stop(board)) ? 0 : (UInt32)pcxus.Err;
+                            _stream.Write(BitConverter.GetBytes(ret), 0, sizeof(UInt32));
+                            _stream.Close();
+                            return;
+                        }
+                    case "clear":
+                        {
+                            int board = (cmdAndParams.Length > 2) ? ConvertToInt(cmdAndParams[1]) : 0;
+                            ret = (pcxus.clear(board)) ? 0 : (UInt32)pcxus.Err;
+                            _stream.Write(BitConverter.GetBytes(ret), 0, sizeof(UInt32));
                             _stream.Close();
                             return;
                         }

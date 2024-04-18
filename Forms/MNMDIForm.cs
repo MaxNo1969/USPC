@@ -2,7 +2,7 @@
 using System.Windows.Forms;
 using FPS;
 
-namespace USPC
+namespace FORMS
 {
     /// <summary>
     /// Форма от которой должны наследоваться все дочерние формы в приложении
