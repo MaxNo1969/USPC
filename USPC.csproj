@@ -54,7 +54,7 @@
     <Compile Include="BytesToStructure.cs" />
     <Compile Include="Chart\ChartExtras.cs" />
     <Compile Include="CSVHelper.cs" />
-    <Compile Include="DataGenerator.cs" />
+    <Compile Include="Data\DataGenerator.cs" />
     <Compile Include="Data\USPCData.cs" />
     <Compile Include="DrawResults.cs" />
     <Compile Include="Emul\FREmul.cs">

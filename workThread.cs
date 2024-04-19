@@ -186,14 +186,25 @@ namespace USPC
                     //Thread.Sleep(100);
                 }
                 log.add(LogRecord.LogReason.info, "{0}: {1}: {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, "Вышли");
-                //Если не установлено прерывание на просмотр и нет ошибки запускаем рабочий цикл по новой
-                frm.setSb("Info", "Вышли из рабочего цикла.");
+                if (frm.InvokeRequired)
+                {
+                    Action action = () => frm.setSb("Info", "Вышли из рабочего цикла.");
+                    frm.Invoke(action);
+                }
+                else
+                    frm.setSb("Info", "Вышли из рабочего цикла.");
             }
             catch (Exception e)
             {
                 curState = WrkStates.error;
                 log.add(LogRecord.LogReason.error, "{0}: {1}: Error: {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, e.Message);
-                frm.setSb("Info", string.Format("Аварийное завершение: {0}",e.Message));
+                if (frm.InvokeRequired)
+                {
+                    Action action = () => frm.setSb("Info", string.Format("Аварийное завершение: {0}", e.Message));
+                    frm.Invoke(action);
+                }
+                else
+                    frm.setSb("Info", string.Format("Аварийное завершение: {0}", e.Message));
                 SL.getInst().ClearAllSignals();
                 isRunning = false;
                 stop();
@@ -210,7 +221,13 @@ namespace USPC
             log.add(LogRecord.LogReason.info, "{0}: {1}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name);
             if (!isRunning)
             {
-                frm.setSb("Info", "Готов к работе");
+                if (frm.InvokeRequired)
+                {
+                    Action action = () => frm.setSb("Info", "Готов к работе");
+                    frm.Invoke(action);
+                }
+                else
+                    frm.setSb("Info", "Готов к работе");
                 isRunning = true;
                 thread = new Thread(threadFunc)
                 {

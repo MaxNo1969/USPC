@@ -20,14 +20,15 @@ namespace USPC
         public const int countFrames = 900000;
         //public const int countFrames = 9000;
         public const int countFramesPerChannel = countFrames / countSensors;
+        public const int countFramesPerZone = countFrames / countZones;
 
         public const int scopeVelocity = 6400;
         
         public static Dictionary<string, string> cmdLineArgs = null;
-        public static int lengthCaretka;
-
+        public static int lengthCaretka = 20;
 
         public static USPCData data = new USPCData();
+        public static int medianFilterWidth = 5;
 
         /// <summary>
         /// The main entry point for the application.

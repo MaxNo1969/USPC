@@ -291,7 +291,7 @@ namespace USPC
         /// Items: info,tubePos,dataSize,duration,heap
         public void setSb(string _sbItem, string _sbText)
         {
-            this.sb.Items[_sbItem].Text = _sbText;
+           sb.Items[_sbItem].Text = _sbText;
         }
 
         private void miStart_Click(object sender, EventArgs e)

@@ -49,7 +49,7 @@ namespace Data
             return (uint)(_mm / (2.5e-6 * Program.scopeVelocity));
         }
 
-        public double[] sensorThick(int _sensor)
+        public double[] sensorThickness(int _sensor)
         {
             double[] ret = new double[Program.countFramesPerChannel];
             for (int i = 0; i < Program.countFrames/Program.countSensors; i ++)
@@ -83,6 +83,30 @@ namespace Data
             return ret;
         }
 
+        //! @brief Возвращает массив толщин по одной зоне, одному датчику с возможностью фильтрации.
+        //! @brief Функция для детального просмотра измерений во ViewTubeDetails
+        //! @param[in] SensorNo Номер датчика
+        //! @param[in] ZoneNo Номер зоны
+        //! @param[in] medianFilter Включать ли медианный фильтр
+        //! @note при расчете трубы, финального результата медианный фильтр включен ВСЕГДА.
+        //! эта функция создана для просмотра фильтрованного и нефильтрованного сигнала по зоне
+        public double[] evalZone(int ZoneNo, int SensorNo, bool medianFilter = true)
+        {
+            //Количество сканов по одному датчику в одной зоне
+            int cnt = 0;
+            if(offsets[ZoneNo+1]-offsets[ZoneNo] > 0)
+            {
+                cnt = offsets[ZoneNo+1]-offsets[ZoneNo];
+            }
+            // вектор толщин для всех измерений в пределах данной зоны _для одного датчика_
+            double[] ths = new double[cnt];
+            for (int i = 0; i < cnt; i++)
+            {
+                ths[i] = TofToMm(ascanBuffer[offsets[ZoneNo] + SensorNo]);
+            }
+            if (medianFilter) ths = Median.Filter(ths, Program.medianFilterWidth);
+            return ths;
+        }
 
 
 
