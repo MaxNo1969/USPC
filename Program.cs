@@ -28,6 +28,8 @@ namespace USPC
         public static int lengthCaretka = 20;
 
         public static USPCData data = new USPCData();
+        public static TypeSize typeSize = new TypeSize();
+
         public static int medianFilterWidth = 5;
 
         /// <summary>

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Drawing;
+using Settings;
 
 namespace USPC
 {
@@ -26,18 +27,28 @@ namespace USPC
         //! Цвет неопределенного измерения
         private static Color NotMeasured = Color.Gray;
 
-        //! Массив порогов - [0] - порог брака, [1] - порог класса 2 и т.д.
-        //public static List<double> borders = new List<double>(2);
+        //! Все пороги берем из текущего типоразмера
         //! Порог брака
-        public static double defectTreshold = 0.0;
+        public static double defectTreshold
+        {
+            get
+            {
+                return Program.typeSize.currentTypeSize.defectTreshold;
+            }
+        }
         //! Порог класса 2
-        public static double class2Treshold = 0.0;
+        public static double class2Treshold
+        {
+            get
+            {
+                return Program.typeSize.currentTypeSize.class2Treshold;
+            }
+        }
+
         //! Минимальный годный участок
         //public static int minGoodLength = 1;
         //! Решение по трубе (Брак, Годно, Класс 2)
         public static string decision = "";
-        //! Резы для годной трубы
-        //public static short cut1, cut2;
         //! Цвет результата (брак -красный и т.д.)
         public static Color ResultColor = Color.White;
         //! Минимальная толщина по всей трубе
@@ -45,23 +56,18 @@ namespace USPC
         //! Зона с минимальной толщиной
         public static int min_thickness_zone = -1;
 
-        //! Максимальная толщина трубы для функции GetColor - берем из INI файла
-        public static double maxThickness;
+        //! Максимальная толщина трубы для функции GetColor - берем из настроек
+        public static double maxThickness
+        {
+            get
+            {
+                return Program.typeSize.currentTypeSize.maxDetected;
+            }
+        }
 
         //! Конструктор
-        public DrawResults(double _maxThickness)
+        public DrawResults()
         {
-            maxThickness = _maxThickness;
-            // задаем цвета, которые хочет юзер
-            //Brack = ini.readColor("Brack", Color.Red);
-            //Class2 = ini.readColor("SecondClass", Color.Yellow);
-            //Good = ini.readColor("Valid", Color.Green);
-            //NotMeasured = ini.readColor("NotMeasured", Color.Gray);
-            // задаем цвета, которые хочет юзер
-            Brack = Color.Red;
-            Class2 = Color.Yellow;
-            Good = Color.Green;
-            NotMeasured = Color.Gray;
         }
         //! Возвращает цвет измерения (зоны, датчика, смещения - чего угодно)
         public static Color GetColor(double measure)

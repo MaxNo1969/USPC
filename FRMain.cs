@@ -110,6 +110,13 @@ namespace USPC
             fSignals.Visible = FormPosSaver.visible(fSignals);
             miWindowsSignals.Checked = fSignals.Visible;
 
+            string[] typeSizeNames = Program.typeSize.allTypesizes();
+            foreach (string s in typeSizeNames)
+            {
+                int ind = cbTypeSize.Items.Add(s);
+                if (s == Program.typeSize.name) cbTypeSize.SelectedIndex = ind;
+            }
+
             sb.Items["Info"].Text = "Для начала работы нажмите F5";
         }
 
@@ -439,5 +446,11 @@ namespace USPC
             }
         }
         #endregion
+
+        private void cbTypeSize_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            ToolStripComboBox cb = (ToolStripComboBox)sender;
+            Program.typeSize.select((string)cb.Items[cb.SelectedIndex]);
+        }
     }
 }

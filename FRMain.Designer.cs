@@ -40,6 +40,7 @@
             this.openToolStreepMenuItemClick = new System.Windows.Forms.ToolStripMenuItem();
             this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.testChartToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.genToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.miTest = new System.Windows.Forms.ToolStripMenuItem();
             this.miBoardTest = new System.Windows.Forms.ToolStripMenuItem();
             this.miTestUSPCAscan = new System.Windows.Forms.ToolStripMenuItem();
@@ -57,6 +58,7 @@
             this.miEmul = new System.Windows.Forms.ToolStripMenuItem();
             this.sb = new System.Windows.Forms.StatusStrip();
             this.info = new System.Windows.Forms.ToolStripStatusLabel();
+            this.pb = new System.Windows.Forms.ToolStripProgressBar();
             this.dataSize = new System.Windows.Forms.ToolStripStatusLabel();
             this.tubePos = new System.Windows.Forms.ToolStripStatusLabel();
             this.speed = new System.Windows.Forms.ToolStripStatusLabel();
@@ -65,8 +67,8 @@
             this.timerUpdUI = new System.Windows.Forms.Timer(this.components);
             this.tb = new System.Windows.Forms.ToolStrip();
             this.lblTubesCount = new System.Windows.Forms.ToolStripLabel();
-            this.pb = new System.Windows.Forms.ToolStripProgressBar();
-            this.genToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.cbTypeSize = new System.Windows.Forms.ToolStripComboBox();
+            this.toolStripLabel1 = new System.Windows.Forms.ToolStripLabel();
             this.menu.SuspendLayout();
             this.sb.SuspendLayout();
             this.tb.SuspendLayout();
@@ -165,6 +167,13 @@
             this.testChartToolStripMenuItem.Size = new System.Drawing.Size(163, 22);
             this.testChartToolStripMenuItem.Text = "TestChart";
             this.testChartToolStripMenuItem.Click += new System.EventHandler(this.testChartToolStripMenuItem_Click);
+            // 
+            // genToolStripMenuItem
+            // 
+            this.genToolStripMenuItem.Name = "genToolStripMenuItem";
+            this.genToolStripMenuItem.Size = new System.Drawing.Size(163, 22);
+            this.genToolStripMenuItem.Text = "Генерировать";
+            this.genToolStripMenuItem.Click += new System.EventHandler(this.genToolStripMenuItem_Click);
             // 
             // miTest
             // 
@@ -306,6 +315,12 @@
             this.info.Spring = true;
             this.info.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
+            // pb
+            // 
+            this.pb.AutoSize = false;
+            this.pb.Name = "pb";
+            this.pb.Size = new System.Drawing.Size(200, 16);
+            // 
             // dataSize
             // 
             this.dataSize.AutoSize = false;
@@ -349,7 +364,9 @@
             // tb
             // 
             this.tb.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.lblTubesCount});
+            this.toolStripLabel1,
+            this.lblTubesCount,
+            this.cbTypeSize});
             this.tb.Location = new System.Drawing.Point(0, 24);
             this.tb.Name = "tb";
             this.tb.Size = new System.Drawing.Size(1020, 33);
@@ -365,18 +382,18 @@
             this.lblTubesCount.Text = "0";
             this.lblTubesCount.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
-            // pb
+            // cbTypeSize
             // 
-            this.pb.AutoSize = false;
-            this.pb.Name = "pb";
-            this.pb.Size = new System.Drawing.Size(200, 16);
+            this.cbTypeSize.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cbTypeSize.Name = "cbTypeSize";
+            this.cbTypeSize.Size = new System.Drawing.Size(121, 33);
+            this.cbTypeSize.SelectedIndexChanged += new System.EventHandler(this.cbTypeSize_SelectedIndexChanged);
             // 
-            // genToolStripMenuItem
+            // toolStripLabel1
             // 
-            this.genToolStripMenuItem.Name = "genToolStripMenuItem";
-            this.genToolStripMenuItem.Size = new System.Drawing.Size(163, 22);
-            this.genToolStripMenuItem.Text = "Генерировать";
-            this.genToolStripMenuItem.Click += new System.EventHandler(this.genToolStripMenuItem_Click);
+            this.toolStripLabel1.Name = "toolStripLabel1";
+            this.toolStripLabel1.Size = new System.Drawing.Size(74, 30);
+            this.toolStripLabel1.Text = "Типоразмер";
             // 
             // FRMain
             // 
@@ -443,6 +460,8 @@
         private System.Windows.Forms.ToolStripMenuItem testChartToolStripMenuItem;
         private System.Windows.Forms.ToolStripProgressBar pb;
         private System.Windows.Forms.ToolStripMenuItem genToolStripMenuItem;
+        private System.Windows.Forms.ToolStripLabel toolStripLabel1;
+        private System.Windows.Forms.ToolStripComboBox cbTypeSize;
 
     }
 }
