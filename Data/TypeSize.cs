@@ -19,81 +19,38 @@ namespace Data
         /// <summary>
         /// Имя типоразмера
         /// </summary>
-        [DisplayName(" 1.Наименование"), Description("Наименование типоразмера в формате <Тип(\"НКТ\" или \"СБТ\">-<Диаметр>-<Дополнительный признак>"), Category("1.Типоразмер")]
+        [DisplayName(" 1.Наименование"), Description("Наименование типоразмера"), Category("1.Типоразмер")]
         public string name { get; set; }
         /// <summary>
         /// Признак типа трубы НКТ или СБТ
         /// </summary>
-        [DisplayName(" 2.Тип"), Description("Тип \"НКТ\" или \"СБТ\""), Category("1.Типоразмер")]
-        public string type 
-        { 
-            get
-            {
-                string _t,_dop;
-                int _d;
-                if (parseName(name, out _t, out _d, out _dop))
-                    return _t;
-                else
-                    return null;                
-            } 
-        }
-        /// <summary>
-        /// Диаметр
-        /// </summary>
-        [DisplayName(" 3.Диаметр"), Description("Диаметр"), Category("1.Типоразмер")]
-        public int diameter
-        {
-            get
-            {
-                string _t,_dop;
-                int _d;
-                if (parseName(name, out _t, out _d, out _dop))
-                    return _d;
-                else
-                    return -1;
-            }
-        }
-        /// <summary>
-        /// Дополнительные признаки из названия типоразмера (до первого разделителя)
-        /// </summary>
-        [DisplayName(" 4.Дополнительно"), Description("Дополнительные признаки"), Category("1.Типоразмер")]
-        public string dop
-        {
-            get
-            {
-                string _t,_dop;
-                int _d;
-                if (parseName(name, out _t, out _d, out _dop))
-                    return _dop;
-                else
-                    return null;
-            }
-        }
+        [DisplayName(" 2.Диаметр"), Description("Диаметр"), Category("1.Типоразмер")]
+        public double diameter {get;set;}
         /// <summary>
         /// Минимальный годный участок
         /// </summary>
-        [DisplayName(" 4.Минимальный годный участок"), Description("Минимальный годный участок"), Category("1.Типоразмер")]
+        [DisplayName(" 3.Минимальный годный участок"), Description("Минимальный годный участок"), Category("1.Типоразмер")]
         public int minGoodLength { get; set; }
         /// <summary>
         /// Порог класса 1
         /// </summary>
-        [DisplayName(" 5.Порог класса 1"), Description("Порог класса 1"), Category("2.Пороги")]
-        public double border1 { get; set; }
+        [DisplayName(" 4.Порог брака"), Description("Порог класса 1"), Category("2.Пороги")]
+        public double defectTreshold { get; set; }
         /// <summary>
         /// Порог класса 2
         /// </summary>
-        [DisplayName(" 6.Порог класса 2"), Description("Порог класса 2"), Category("2.Пороги")]
-        public double border2 { get; set; }
+        [DisplayName(" 5.Порог класса 2"), Description("Порог класса 2"), Category("2.Пороги")]
+        public double class2Treshold { get; set; }
         /// <summary>
         /// Порог класса 1 внутрений
         /// </summary>
-        [DisplayName(" 7.Порог класса 1 внутрений"), Description("Порог класса 1 внутрений"), Category("2.Пороги")]
-        public double border1In { get; set; }
+        [DisplayName(" 6.Минимальная толщина"), Description("Минимальная толщина"), Category("2.Пороги")]
+        public double minDetected { get; set; }
         /// <summary>
         /// Порог класса 2 внутрений
         /// </summary>
-        [DisplayName(" 8.Порог класса 2 внутрений"), Description("Порог класса 2 внутрений"), Category("2.Пороги")]
-        public double border2In { get; set; }
+        [DisplayName(" 7.Максимальная толщина"), Description("Максимальная толщина"), Category("2.Пороги")]
+        public double maxDetected { get; set; }
         /// <summary>
         /// Мервая зона в начале трубы
         /// </summary>
@@ -112,59 +69,6 @@ namespace Data
         {
             return name;
         }
-        #region Разбор имени типоразмера
-        /// <summary>
-        /// Возможные типы труб
-        /// </summary>
-        private static readonly string[] _types = { "НКТ", "СБТ" };
-        /// <summary>
-        /// Возможные диаметры для НКТ
-        /// </summary>
-        private static readonly int[] _dNKT = { 73, 89, 102, 114 };
-        /// <summary>
-        /// Возможные диаметры для СБТ
-        /// </summary>
-        private static readonly int[] _dSBT = { 73, 89, 102, 114, 127 };
-        /// <summary>
-        /// Проверка имени типоразмера на соответствие для разбора
-        /// разобранные части записываются в выходные переменные
-        /// </summary>
-        /// <param name="_str">Строка для разбора</param>
-        /// <param name="_type">out: тип трубы НКТ или СБТ</param>
-        /// <param name="_diameter">out: Диаметр трубы</param>
-        /// <param name="_dop">out: оставшаяся часть в имени типоразмера</param>
-        /// <returns>true - если удалось разобрать имя типоразмера</returns>
-        public static bool parseName(string _str, out string _type, out int _diameter, out string _dop)
-        {
-            //Имя задаем в виде (НКТ|СБТ)-(диаметр)-(доп.признак) 
-            _type = string.Empty;
-            _diameter = 0;
-            _dop = string.Empty;
-            if (_str == null) return false;
-            string[] parsedTypeSize = _str.Split(new char[] { '-', ' ' });
-            if (parsedTypeSize.Length < 2) return false;
-            if (parsedTypeSize[0] == "НКТ" || parsedTypeSize[0] == "СБТ")
-            {
-                _type = parsedTypeSize[0];
-                int diam;
-                try
-                {
-                    diam = Convert.ToInt32(parsedTypeSize[1]);
-                }
-                catch
-                {
-                    return false;
-                }
-                //Проверка допустимых параметров для типов труб
-                if ((_type == "НКТ" && !Array.Exists<int>(_dNKT, el => el == diam))
-                    || (_type == "СБТ" && !Array.Exists<int>(_dSBT, el => el == diam))) return false;
-                _diameter = diam;
-                if (parsedTypeSize.Length > 2) _dop = parsedTypeSize[2];
-                return true;
-            }
-            return false;
-        }
-        #endregion
     };
 
     /// <summary>
@@ -243,11 +147,11 @@ namespace Data
         /// <summary>
         /// Порог брака
         /// </summary>
-        public double defectTreshold { get { return currentTypeSize.border1; } }
+        public double defectTreshold { get { return currentTypeSize.defectTreshold; } }
         /// <summary>
         /// Порог класса2
         /// </summary>
-        public double class2Treshold { get { return currentTypeSize.border2; } }
+        public double class2Treshold { get { return currentTypeSize.class2Treshold; } }
         /// <summary>
         /// Флаг, что типоразмер выбран
         /// </summary>
