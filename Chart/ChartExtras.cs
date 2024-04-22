@@ -113,23 +113,31 @@ namespace CHART
         public static void putColorDecision(this Chart chart, USPCData uspcData, int zone, int sensor)
         {
             if (chart.Series[0].Points == null || chart.Series[0].Points.Count == 0) return;
+            double[] res = uspcData.evalZone(zone, sensor);
             for (int i = 0; i < chart.Series[0].Points.Count; i++)
             {
-                //chart.Series[0].Points[i].Color = DrawResults.GetColor(stick.evalZone(zone, sensor)[i], stick.status(zone, sensor, i));
+                chart.Series[0].Points[i].Color = DrawResults.GetColor(res[i]);
             }
         }
-
+        /*
         public static void putColorDecision(this Chart chart, USPCData uspcData, int sensor)
         {
             if (chart.Series[0].Points == null || chart.Series[0].Points.Count == 0) return;
             for (int i = 0; i < chart.Series[0].Points.Count; i++)
-                chart.Series[0].Points[i].Color = DrawResults.GetColor(uspcData.offsets[i]*Program.countSensors+uspcData.offsSensor[sensor]);
+                chart.Series[0].Points[i].Color = DrawResults.GetColor(uspcData.offsets[i]*USPCData.countSensors+uspcData.offsSensor[sensor]);
+        }
+        */
+        public static void putColorDecision(this Chart chart, double[] minTh, int sensor)
+        {
+            if (chart.Series[0].Points == null || chart.Series[0].Points.Count == 0) return;
+            for (int i = 0; i < chart.Series[0].Points.Count; i++)
+                chart.Series[0].Points[i].Color = DrawResults.GetColor(minTh[i]);
         }
         public static void putColorDecision(this Chart chart, USPCData uspcData)
         {
             if (chart.Series[0].Points == null || chart.Series[0].Points.Count == 0) return;
             for (int i = 0; i < chart.Series[0].Points.Count; i++)
-                chart.Series[0].Points[i].Color = DrawResults.GetColor(uspcData.commonStatus[i]);
+                chart.Series[0].Points[i].Color = DrawResults.GetColor(uspcData.minZoneThickness[i]);
         }
     }
 }

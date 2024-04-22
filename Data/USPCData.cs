@@ -16,16 +16,28 @@ namespace Data
     [Serializable]
     class USPCData
     {
+        public const int countZones = 300;
+        public const int countSensors = 8;
+        public const int zoneLength = 50;
+        public const int countFrames = 900000;
+        //public const int countFrames = 9000;
+        //public const int countFramesPerChannel = countFrames / countSensors;
+        //public const int countFramesPerZone = countFrames / countZones;
+
+        public const int scopeVelocity = 6400;
+
+        public static int lengthCaretka = 20;
+        
         public int currentOffsetFrames;     //Номер последнего кадра 
         public int currentOffsetZones;	    //номер смещения кадра в зоне
     	public AcqAscan[] ascanBuffer;	    //собранные кадры
 	    public int[] offsets;               //смещение кадров по зонам
         public int[] offsSensor;            //смещение кадров по датчикам
-	    public int[] commonStatus;			//общий статус по зонам
-	    public double samplesPerZone;
+	    public double[] minZoneThickness;	//Минимальная толщина по зоне
+	    public int samplesPerZone;
 	    public int deadZoneSamplesBeg;
         public int deadZoneSamplesEnd;
-        public void Start()                        // Выполнить перед началом цикла сбора кадров с платы
+        public void Start()                     // Выполнить перед началом цикла сбора кадров с платы
         {
             currentOffsetFrames = 0;
         }
@@ -36,7 +48,7 @@ namespace Data
 
         public double TofToMm(int _tof)
         {
-            return 2.5e-6 * _tof * Program.scopeVelocity;
+            return 2.5e-6 * _tof * scopeVelocity;
         }
 
         public double TofToMm(AcqAscan _scan)
@@ -46,17 +58,17 @@ namespace Data
 
         public uint MmToTof(double _mm)
         {
-            return (uint)(_mm / (2.5e-6 * Program.scopeVelocity));
+            return (uint)(_mm / (2.5e-6 * scopeVelocity));
         }
 
         public double[] sensorThickness(int _sensor)
         {
-            double[] ret = new double[Program.countFramesPerChannel];
-            for (int i = 0; i < Program.countFrames/Program.countSensors; i ++)
+            double[] ret = new double[countFrames/countSensors];
+            for (int i = 0; i < countFrames / countSensors; i++)
             {
-                if (ascanBuffer[i * Program.countSensors + _sensor].Channel == _sensor)
+                if (ascanBuffer[i * countSensors + _sensor].Channel == _sensor)
                 {
-                    ret[i] = TofToMm(ascanBuffer[i * Program.countSensors + _sensor]);
+                    ret[i] = TofToMm(ascanBuffer[i * countSensors + _sensor]);
                 }
                 else
                 {
@@ -66,14 +78,61 @@ namespace Data
             return ret;
         }
 
-        public int[] sensorDefects(int _sensor)
+        public double getMinThickness(int _sensor, int _zone)
         {
-            int[] ret = new int[Program.countFramesPerChannel];
-            for (int i = 0; i < Program.countFrames / Program.countSensors; i++)
+            if (_sensor > countSensors - 1) return 0;
+            if (_zone > countZones - 2) return 0;
+            int countFrames = (offsets[_zone + 1] - offsets[_zone]) / countSensors;
+            double ret = Program.typeSize.maxDetected;
+            for (int i = 0; i < countFrames; i++)
             {
-                if (ascanBuffer[i * Program.countSensors + _sensor].Channel == _sensor)
+                AcqAscan scan = ascanBuffer[offsets[_zone] + i * countSensors + _sensor];
+                if (scan.Channel == _sensor)
                 {
-                    ret[i] = ascanBuffer[i * Program.countSensors + _sensor].G1Amp;
+                    double val = TofToMm(ascanBuffer[offsets[_zone] + i * countSensors + _sensor]);
+                    if (val < ret)
+                        ret = val;
+                }
+                else
+                {
+                    throw new Exception("Номер канала не совпадает с требуемым");
+                }
+            }
+            return ret;
+        }
+
+
+        public double[] sensorThickness(int _sensor, int _zone)
+        {
+            if (_sensor > countSensors - 1) return null;
+            if (_zone > countZones - 2) return null;
+            int countFrames = (offsets[_zone + 1] - offsets[_zone]) / countSensors;
+            double[] ret = new double[countFrames];
+            for (int i = 0; i < countFrames; i++)
+            {
+                if (ascanBuffer[offsets[_zone] + i * countSensors + _sensor].Channel == _sensor)
+                {
+                    ret[i] = TofToMm(ascanBuffer[i * countSensors + _sensor]);
+                }
+                else
+                {
+                    throw new Exception("Номер канала не совпадает с требуемым");
+                }
+            }
+            return ret;
+        }
+
+        public int[] sensorDefects(int _sensor, int _zone)
+        {
+            if (_sensor > countSensors - 1) return null;
+            if (_zone > countZones - 2) return null;
+            int countFrames = (offsets[_zone + 1] - offsets[_zone]) / countSensors;
+            int[] ret = new int[countFrames];
+            for (int i = 0; i < countFrames; i++)
+            {
+                if (ascanBuffer[offsets[_zone] + i * countSensors + _sensor].Channel == _sensor)
+                {
+                    ret[i] = ascanBuffer[i * countSensors + _sensor].G1Amp;
                 }
                 else
                 {
@@ -90,72 +149,30 @@ namespace Data
         //! @param[in] medianFilter Включать ли медианный фильтр
         //! @note при расчете трубы, финального результата медианный фильтр включен ВСЕГДА.
         //! эта функция создана для просмотра фильтрованного и нефильтрованного сигнала по зоне
-        public double[] evalZone(int ZoneNo, int SensorNo, bool medianFilter = true)
+        public double[] evalZone(int _zone, int _sensor, bool medianFilter = true)
         {
             //Количество сканов по одному датчику в одной зоне
             int cnt = 0;
-            if(offsets[ZoneNo+1]-offsets[ZoneNo] > 0)
+            if(offsets[_zone+1]-offsets[_zone] > 0)
             {
-                cnt = offsets[ZoneNo+1]-offsets[ZoneNo];
+                cnt = (offsets[_zone+1]-offsets[_zone])/USPCData.countSensors;
             }
             // вектор толщин для всех измерений в пределах данной зоны _для одного датчика_
             double[] ths = new double[cnt];
             for (int i = 0; i < cnt; i++)
             {
-                ths[i] = TofToMm(ascanBuffer[offsets[ZoneNo] + SensorNo]);
+                ths[i] = TofToMm(ascanBuffer[offsets[_zone] + i * USPCData.countSensors + _sensor]);
             }
             if (medianFilter) ths = Median.Filter(ths, Program.medianFilterWidth);
             return ths;
         }
 
-
-
-	    public void SamplesPerZone(int tubeLength, int deadArea0, int deadArea1)
-        {
-            samplesPerZone = (double)Program.zoneLength * currentOffsetFrames / (tubeLength + Program.lengthCaretka);
-            for(int i =0 ; i < offsets.Length;i++)offsets[i]=0;
-            for(int i = 0; i < Program.countZones; ++i)
-            {
-                offsets[i] = (int)(samplesPerZone * i);
-            }
-            currentOffsetZones = (int)((double)(tubeLength) / Program.zoneLength);
-	        int lastZoneSize = tubeLength - currentOffsetZones * Program.zoneLength;
-            if(lastZoneSize > Program.zoneLength / 3)  ++currentOffsetZones;
-	        //число отчётов в мёртвой зоне начало
-	        double t = deadArea0;
-            t *= samplesPerZone;
-            t /=  Program.zoneLength;
-            deadZoneSamplesBeg  = (int)t;
-            deadZoneSamplesBeg /= Program.countSensors;
-	        deadZoneSamplesBeg *= Program.countSensors;
-	        //число отчётов в мёртвой зоне конец
-	        t = tubeLength - deadArea1;
-	        t *= samplesPerZone;
-	        t /=  Program.zoneLength;
-            deadZoneSamplesEnd  = (int)t;
-            deadZoneSamplesEnd /= Program.countSensors;
-	        --deadZoneSamplesEnd;
-            deadZoneSamplesEnd *= Program.countSensors;
-
-	        for(int i = 0; i < Program.countZones; ++i)
-	        {
-                offsets[i] /= Program.countSensors;
-		        offsets[i] *= Program.countSensors;
-            }
-        }
-        
         public USPCData()
         {
-            ascanBuffer = new AcqAscan[Program.countFrames];
-            int ascanBufferMemoryUsed = ascanBuffer.Length*8*4;
-            offsets = new int[Program.countZones];
-            int offsetsMemoryUsed = offsets.Length * sizeof(int);
-            offsSensor = new int[Program.countSensors];
-            int offsSensorMemoryUsed = offsSensor.Length * sizeof(int);
-            commonStatus = new int[Program.countZones];
-            int commonStatusMemoryUsed = commonStatus.Length * sizeof(char); ;
-            log.add(LogRecord.LogReason.info, "{0}: {1}: ascanBufferMemoryUsed={2}, offsetsMemoryUsed={3}, offsSensorMemoryUsed={4}, commonStatusMemoryUsed={5}",
-                GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ascanBufferMemoryUsed, offsetsMemoryUsed, offsSensorMemoryUsed, commonStatusMemoryUsed);
+            ascanBuffer = new AcqAscan[countFrames];
+            offsets = new int[countZones];
+            offsSensor = new int[countSensors];
+            minZoneThickness = new double[countZones];
         }
 
 
@@ -166,6 +183,42 @@ namespace Data
             return true;
         }
         
+        public void SamplesPerZone(int tubeLength, int deadArea0, int deadArea1)
+        {
+            //samplesPerZone = (double)zoneLength * currentOffsetFrames / (tubeLength + lengthCaretka);
+            samplesPerZone = (int) ((double)zoneLength * currentOffsetFrames / tubeLength);	
+	        for(int i = 0; i < countZones; ++i)
+            {
+                offsets[i] = samplesPerZone * i;
+            }
+	        //смещение в отчётах датчиков на каретке
+	        //TL::foreach<OffsetsTable::items_list, __sensors_offset_in_samples__>()(&Singleton<OffsetsTable>::Instance().items, this);
+	        currentOffsetZones = (int)((double)(tubeLength) / zoneLength);
+	        int lastZoneSize = tubeLength - currentOffsetZones * zoneLength;
+	        if(lastZoneSize > zoneLength / 3)  ++currentOffsetZones;
+	        //число отчётов в мёртвой зоне начало
+	        double t = deadArea0;
+	        t *= samplesPerZone;
+	        t /=  zoneLength;
+            deadZoneSamplesBeg  = (int)t;
+	        deadZoneSamplesBeg /= countSensors;
+	        deadZoneSamplesBeg *= countSensors;
+	        //число отчётов в мёртвой зоне конец
+	        t = tubeLength - deadArea1;
+	        t *= samplesPerZone;
+	        t /=  zoneLength;
+            deadZoneSamplesEnd  = (int)t;
+            deadZoneSamplesEnd /= countSensors;
+	        --deadZoneSamplesEnd;
+	        deadZoneSamplesEnd *= countSensors;
+
+	        for(int i = 0; i < countZones; ++i)
+            {
+                offsets[i] /= countSensors;
+		        offsets[i] *= countSensors;
+            }
+        }
+
         public void save(Object obj)
         {
             string fileName = (string)obj;

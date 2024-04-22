@@ -52,7 +52,18 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BytesToStructure.cs" />
+    <Compile Include="Chart\CGraphChart.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Chart\CGraphChart.designer.cs">
+      <DependentUpon>CGraphChart.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Chart\ChartCursorColumn.cs" />
+    <Compile Include="Chart\ChartCursorLine.cs" />
     <Compile Include="Chart\ChartExtras.cs" />
+    <Compile Include="Chart\MeasChart.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="CSVHelper.cs" />
     <Compile Include="Data\DataGenerator.cs" />
     <Compile Include="Data\USPCData.cs" />
@@ -63,17 +74,23 @@
     <Compile Include="Emul\FREmul.designer.cs">
       <DependentUpon>FREmul.cs</DependentUpon>
     </Compile>
-    <Compile Include="Chart\FRChart.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Chart\FRChart.designer.cs">
-      <DependentUpon>FRChart.cs</DependentUpon>
-    </Compile>
     <Compile Include="FRResultView.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="FRResultView.Designer.cs">
       <DependentUpon>FRResultView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FRSensorView.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FRSensorView.designer.cs">
+      <DependentUpon>FRSensorView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FRDetails.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FRDetails.designer.cs">
+      <DependentUpon>FRDetails.cs</DependentUpon>
     </Compile>
     <Compile Include="FRTestAcqNet.cs">
       <SubType>Form</SubType>
@@ -163,14 +180,17 @@
     <EmbeddedResource Include="Emul\FREmul.resx">
       <DependentUpon>FREmul.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Chart\FRChart.resx">
-      <DependentUpon>FRChart.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="FRMain.resx">
       <DependentUpon>FRMain.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="FRResultView.resx">
       <DependentUpon>FRResultView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FRSensorView.resx">
+      <DependentUpon>FRSensorView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FRDetails.resx">
+      <DependentUpon>FRDetails.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="FRTestAcqNet.resx">
       <DependentUpon>FRTestAcqNet.cs</DependentUpon>

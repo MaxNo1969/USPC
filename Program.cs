@@ -13,23 +13,11 @@ namespace USPC
 {
     static class Program
     {
-        public const int countZones = 300;
-        public const int countSensors = 8;
-        public const int zoneLength = 50;
-
-        public const int countFrames = 900000;
-        //public const int countFrames = 9000;
-        public const int countFramesPerChannel = countFrames / countSensors;
-        public const int countFramesPerZone = countFrames / countZones;
-
-        public const int scopeVelocity = 6400;
-        
         public static Dictionary<string, string> cmdLineArgs = null;
-        public static int lengthCaretka = 20;
-
+        
         public static USPCData data = new USPCData();
         public static TypeSize typeSize = new TypeSize();
-
+        public static FRMain frMain = null;
         public static int medianFilterWidth = 5;
 
         /// <summary>
@@ -82,7 +70,8 @@ namespace USPC
             try
             {
                 FormPosSaver.deser();
-                Application.Run(new FRMain());
+                frMain = new FRMain();
+                Application.Run(frMain);
             }
             catch (Exception e)
             {

@@ -6,6 +6,7 @@ using System.ComponentModel;
 using PROTOCOL;
 using System.Diagnostics;
 using System.Threading;
+using Data;
 
 namespace USPC
 {
@@ -54,7 +55,7 @@ namespace USPC
                 {
                     int countFrames = (int)e.UserState;
                     frTestAcq.updateGraph(countFrames, data);
-                    if (Program.data.currentOffsetFrames + countFrames <= Program.data.ascanBuffer.Length)
+                    if (Program.data.currentOffsetFrames + countFrames <= USPCData.countFrames)
                     {
                         Array.Copy(data, 0, Program.data.ascanBuffer, Program.data.currentOffsetFrames, countFrames);
                         Program.data.OffsetCounter(countFrames);

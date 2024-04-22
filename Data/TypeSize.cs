@@ -153,6 +153,16 @@ namespace Data
         /// </summary>
         public double class2Treshold { get { return currentTypeSize.class2Treshold; } }
         /// <summary>
+        /// Минимальная толщина
+        /// </summary>
+        public double minDetected { get { return currentTypeSize.minDetected; } }
+        /// <summary>
+        /// Максимальная толщина
+        /// </summary>
+        public double maxDetected { get { return currentTypeSize.maxDetected; } }
+
+
+        /// <summary>
         /// Флаг, что типоразмер выбран
         /// </summary>
         public bool selected { get { return currentTypeSize != null; } }

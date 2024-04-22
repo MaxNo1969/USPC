@@ -89,7 +89,7 @@ namespace USPC
             // всё время работы программы
             pr = new FRProt(this)
             {
-                MdiParent = this,
+                MdiParent = Program.frMain,
                 Dock = DockStyle.Bottom,
                 saveMethod = FRProt.SaveMethod._tofile,
             };
@@ -104,7 +104,7 @@ namespace USPC
             // всё время работы программы
             fSignals = new FRSignals(SL.getInst())
             {
-                MdiParent = this,
+                MdiParent = Program.frMain,
             };
             fSignals.onHide += new FRSignals.OnHideForm(() => { miWindowsSignals.Checked = false; });
             fSignals.Visible = FormPosSaver.visible(fSignals);
@@ -420,8 +420,6 @@ namespace USPC
         void w_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             BackgroundWorker w = (BackgroundWorker)sender;
-            //chartResult.putDataOnChart(stick.finalThickness.ToArray());
-            //chartResult.putColorDecision(stick);
             pb.Visible = false;
         }
 
@@ -438,7 +436,7 @@ namespace USPC
                     Program.data.save((Object)args.fileName);
                     break;
                 case "Генерация":
-                    DataGenerator.GenerateThicknessData(4);
+                    DataGenerator.GenerateThicknessData(15, 900000);
                     break;
                 case "Пересчет":
                     //stick.recalc(w, e);
