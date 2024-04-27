@@ -244,9 +244,9 @@ namespace USPC
         public UInt32 GIFTof;		    // In steps of 5 [ns].
         // Warning: This UInt32 is shared with Channel index.
         // MyTofWt = Ascan.GIFTofWt & AcqCscan.TOF_MASK;
-        [FieldOffset(32)]
+        [FieldOffset(31)]
         public Byte GIFWTDac;		// Output DAC
-        [FieldOffset(32)]
+        [FieldOffset(31)]
         public Byte GIFWTlsb;		// WallThickness (msb) [time]
     }
 
