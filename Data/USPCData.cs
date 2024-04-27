@@ -31,19 +31,23 @@ namespace Data
         public int currentOffsetFrames;     //Номер последнего кадра 
         public int currentOffsetZones;	    //номер смещения кадра в зоне
     	public AcqAscan[] ascanBuffer;	    //собранные кадры
+        public TimeLabels labels;
 	    public int[] offsets;               //смещение кадров по зонам
         public int[] offsSensor;            //смещение кадров по датчикам
 	    public double[] minZoneThickness;	//Минимальная толщина по зоне
-	    public int samplesPerZone;
+        public double[][] minZoneSensorThickness;	//Минимальная толщина по зоне/датчику
+        public int samplesPerZone;
 	    public int deadZoneSamplesBeg;
         public int deadZoneSamplesEnd;
         public void Start()                     // Выполнить перед началом цикла сбора кадров с платы
         {
             currentOffsetFrames = 0;
+            labels.Clear();
         }
         public void OffsetCounter(int offs)
         {
             currentOffsetFrames += offs;
+            labels.Add(new BufferStamp(DateTime.Now,currentOffsetFrames));
         }
 
         public double TofToMm(int _tof)
@@ -173,6 +177,10 @@ namespace Data
             offsets = new int[countZones];
             offsSensor = new int[countSensors];
             minZoneThickness = new double[countZones];
+            minZoneSensorThickness = new double[countZones][];
+            for (int i = 0; i < countZones; i++)
+                minZoneSensorThickness[i] = new double[countSensors];
+            labels = new TimeLabels();
         }
 
 

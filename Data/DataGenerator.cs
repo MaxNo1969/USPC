@@ -31,7 +31,7 @@ namespace Data
                     for (int sensor = 0; sensor < USPCData.countSensors; sensor++)
                     {
                         scans[frame + sensor].Channel = (byte)sensor;
-                        double val = _thick + (r.NextDouble() - 0.5)*10;
+                        double val = _thick + (r.NextDouble() - 0.5)*2;
                         uint G1Tof = (uint)(val / (2.5e-6 * USPCData.scopeVelocity));
                         scans[frame + sensor].G1Tof = G1Tof;
                     }
@@ -50,7 +50,8 @@ namespace Data
                 double minZoneThickness = Program.typeSize.maxDetected;
                 for (int sensor = 0; sensor < USPCData.countSensors; sensor++)
                 {
-                    double min = Program.data.getMinThickness(sensor, zone);
+                    Program.data.minZoneSensorThickness[zone] = Program.data.sensorThickness(sensor,zone);
+                    double min = Program.data.minZoneSensorThickness[sensor][zone];
                     if (minZoneThickness > min) minZoneThickness = min;
                 }
                 Program.data.minZoneThickness[zone] = minZoneThickness;
