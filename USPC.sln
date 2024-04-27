@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "uspcserver", "uspcserver\us
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "pcxus", "pcxus\pcxus.csproj", "{67A750E4-166C-486B-B50F-F68215C226D6}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestStructHelper", "ScanToCsv\TestStructHelper.csproj", "{B316676D-A4BF-467B-87B1-8E563CAF7BE5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -71,6 +73,16 @@ Global
 		{67A750E4-166C-486B-B50F-F68215C226D6}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{67A750E4-166C-486B-B50F-F68215C226D6}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{67A750E4-166C-486B-B50F-F68215C226D6}.Release|x86.ActiveCfg = Release|Any CPU
+		{B316676D-A4BF-467B-87B1-8E563CAF7BE5}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{B316676D-A4BF-467B-87B1-8E563CAF7BE5}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
+		{B316676D-A4BF-467B-87B1-8E563CAF7BE5}.Debug|Mixed Platforms.Build.0 = Debug|x86
+		{B316676D-A4BF-467B-87B1-8E563CAF7BE5}.Debug|x86.ActiveCfg = Debug|x86
+		{B316676D-A4BF-467B-87B1-8E563CAF7BE5}.Debug|x86.Build.0 = Debug|x86
+		{B316676D-A4BF-467B-87B1-8E563CAF7BE5}.Release|Any CPU.ActiveCfg = Release|x86
+		{B316676D-A4BF-467B-87B1-8E563CAF7BE5}.Release|Mixed Platforms.ActiveCfg = Release|x86
+		{B316676D-A4BF-467B-87B1-8E563CAF7BE5}.Release|Mixed Platforms.Build.0 = Release|x86
+		{B316676D-A4BF-467B-87B1-8E563CAF7BE5}.Release|x86.ActiveCfg = Release|x86
+		{B316676D-A4BF-467B-87B1-8E563CAF7BE5}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

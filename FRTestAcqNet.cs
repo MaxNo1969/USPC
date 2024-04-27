@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using PROTOCOL;
+using Data;
 
 namespace USPC
 {
@@ -16,8 +17,12 @@ namespace USPC
         //public PCXUS pcxus;
         public string serverAddr;
         public AcqAscan[] data = new AcqAscan[1024*100];
-        UspcNetDataReader dataReader = null;
-
+        UspcNetDataReaderForTest dataReader = null;
+        void StartStopToggle(bool _start)
+        {
+            btnStart.Enabled = _start;
+            btnStop.Enabled = !_start;
+        }
         public FRTestAcqNet(FRMain _frMain)
         {
             InitializeComponent();
@@ -35,51 +40,44 @@ namespace USPC
                 log.add(LogRecord.LogReason.warning, "Parameter \"Server\" not assigned. Use \"127.0.0.1\"");
                 serverAddr = "127.0.0.1";
             }
-            dataReader = new UspcNetDataReader(this);
+            dataReader = new UspcNetDataReaderForTest(this);
+            StartStopToggle(true);
+
         }
 
         public void updateGraph(int _numberOfScans,AcqAscan[] _data)
         {
             try
             {
-                // Clear previous data
-                //AcqChart.Series["Gate1TOF"].Points.Clear();
+                AcqChart.Series["Gate1TOF"].Points.Clear();
                 //AcqChart.Series["Gate2TOF"].Points.Clear();
-                //AcqChart.Series["GateIFTOF"].Points.Clear();
                 
-                
-                //double[] Gate1Amp = new double[_numberOfScans];
-                //double[] Gate2Amp = new double[_numberOfScans];
-                //for (int i = 0; i < _numberOfScans; i++)
-                //{
-                //    Gate1Amp[i] = (double)_data[i].G1Amp;
-                //    Gate2Amp[i] = (double)_data[i].G2Amp;
-                //}
-
-                //double[] Gate1AmpFiltered = Median.Filter(Gate1Amp, 5);
-                //double[] Gate2AmpFiltered = Median.Filter(Gate2Amp, 5);
-
-
-                AcqChart.Series["Gate1Amp"].Points.Clear();
-                AcqChart.Series["Gate2Amp"].Points.Clear();
-
-                AcqChart.ChartAreas["Default"].AxisY.Maximum = 100.0;
-                AcqChart.ChartAreas["Default"].AxisY.Interval = 10.0;
+                //AcqChart.ChartAreas["Default"].AxisY.Minimum = 0.0;
+                //AcqChart.ChartAreas["Default"].AxisY.Maximum = 200.0;
+                //AcqChart.ChartAreas["Default"].AxisY.Interval = 10.0;
 
                 AcqChart.ChartAreas["Default"].AxisX.Minimum = 0;
                 AcqChart.ChartAreas["Default"].AxisX.Maximum = _numberOfScans;
 
+                double gate1max = Program.typeSize.minDetected;
+                //double gate2max = Program.typeSize.minDetected;
                 for (int iPoint = 0; iPoint < _numberOfScans; iPoint++)
                 {
-                    //AcqChart.Series["Gate1TOF"].Points.AddXY(iPoint, _data[iPoint].G1QofC);
-                    //AcqChart.Series["Gate2TOF"].Points.AddXY(iPoint, _data[iPoint].G2QofC);
-                    //AcqChart.Series["GateIFTOF"].Points.AddXY(iPoint, _data[iPoint].GIFCouplingAlarm);
-
-                    AcqChart.Series["Gate1Amp"].Points.AddXY(iPoint, _data[iPoint].G1Amp);
-                    AcqChart.Series["Gate2Amp"].Points.AddXY(iPoint, _data[iPoint].G2Amp);
-
-                    //AcqChart.Series["Gate1Amp"].Points.AddXY(iPoint, Gate1AmpFiltered[iPoint]);
-                    //AcqChart.Series["Gate2Amp"].Points.AddXY(iPoint, Gate2AmpFiltered[iPoint]);
+                    {
+                        uint tof = _data[iPoint].G1Tof & AcqAscan.TOF_MASK;
+                        //double val = 2.5e-6 * tof * USPCData.scopeVelocity;
+                        double val = tof;
+                        AcqChart.Series["Gate1TOF"].Points.AddXY(iPoint, val);
+                        lblGate1MaxTof.Text = val.ToString();
+                    }
+                    /*
+                    {
+                        uint tof = _data[iPoint].G2Tof & AcqAscan.TOF_MASK;
+                        double val = 2.5e-6 * tof * USPCData.scopeVelocity;
+                        AcqChart.Series["Gate2TOF"].Points.AddXY(iPoint, val);
+                        lblGate2MaxTof.Text = val.ToString();
+                    }
+                    */ 
                 }
             }
             catch (Exception ex)
@@ -91,11 +89,13 @@ namespace USPC
 
         private void btnStart_Click(object sender, EventArgs e)
         {
+            StartStopToggle(false);
             if (dataReader != null) dataReader.RunWorkerAsync();
         }
 
         private void btnStop_Click(object sender, EventArgs e)
         {
+            StartStopToggle(true);
             if (dataReader != null)dataReader.CancelAsync();
             //Program.data.saveAsync("data.bin");
         }
