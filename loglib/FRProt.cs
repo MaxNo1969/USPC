@@ -205,9 +205,12 @@ namespace PROTOCOL
             while (log.size() > 0)
             {
                 LogRecord rec = log.get();
-                string[] subitems = { rec.dt.ToString("dd/MM/yy HH:mm:ss.ff"), rec.text };
-                ListViewItem item = new ListViewItem(subitems, (int)rec.reason);
-                lvProt.EnsureVisible(lvProt.Items.Add(item).Index);
+                if (rec != null)
+                {
+                    string[] subitems = { rec.dt.ToString("dd/MM/yy HH:mm:ss.ff"), rec.text };
+                    ListViewItem item = new ListViewItem(subitems, (int)rec.reason);
+                    lvProt.EnsureVisible(lvProt.Items.Add(item).Index);
+                }
             }
         }
         void timer_Tick(object sender, EventArgs e)
