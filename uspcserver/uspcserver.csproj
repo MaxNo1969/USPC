@@ -79,6 +79,8 @@
     <Compile Include="PCXUSNetworkServer.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="StructHelper.cs" />
+    <Compile Include="StructToCsv.cs" />
     <Compile Include="TCPServer.cs" />
     <Compile Include="TestUSPCGetAscan.cs">
       <SubType>Form</SubType>

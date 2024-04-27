@@ -44,7 +44,11 @@ namespace USPC
         {
             if (e.ProgressPercentage == 0)
             {
-                frTestAcq.updateGraph((int)e.UserState, data);
+                int countFrames = (int)e.UserState;
+                frTestAcq.updateGraph(countFrames, data);
+                //AcqAscan[] buffer = new AcqAscan[countFrames];
+                //Array.Copy(data, buffer, countFrames);
+                //StructToCsv.writeCsv<AcqAscan>("acqscans.csv", buffer); 
             }
         }
 
