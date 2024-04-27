@@ -66,9 +66,9 @@
             this.heap = new System.Windows.Forms.ToolStripStatusLabel();
             this.timerUpdUI = new System.Windows.Forms.Timer(this.components);
             this.tb = new System.Windows.Forms.ToolStrip();
+            this.toolStripLabel1 = new System.Windows.Forms.ToolStripLabel();
             this.lblTubesCount = new System.Windows.Forms.ToolStripLabel();
             this.cbTypeSize = new System.Windows.Forms.ToolStripComboBox();
-            this.toolStripLabel1 = new System.Windows.Forms.ToolStripLabel();
             this.menu.SuspendLayout();
             this.sb.SuspendLayout();
             this.tb.SuspendLayout();
@@ -320,6 +320,7 @@
             this.pb.AutoSize = false;
             this.pb.Name = "pb";
             this.pb.Size = new System.Drawing.Size(200, 16);
+            this.pb.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
             // 
             // dataSize
             // 
@@ -372,6 +373,12 @@
             this.tb.Size = new System.Drawing.Size(1020, 33);
             this.tb.TabIndex = 4;
             // 
+            // toolStripLabel1
+            // 
+            this.toolStripLabel1.Name = "toolStripLabel1";
+            this.toolStripLabel1.Size = new System.Drawing.Size(74, 30);
+            this.toolStripLabel1.Text = "Типоразмер";
+            // 
             // lblTubesCount
             // 
             this.lblTubesCount.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
@@ -388,12 +395,6 @@
             this.cbTypeSize.Name = "cbTypeSize";
             this.cbTypeSize.Size = new System.Drawing.Size(121, 33);
             this.cbTypeSize.SelectedIndexChanged += new System.EventHandler(this.cbTypeSize_SelectedIndexChanged);
-            // 
-            // toolStripLabel1
-            // 
-            this.toolStripLabel1.Name = "toolStripLabel1";
-            this.toolStripLabel1.Size = new System.Drawing.Size(74, 30);
-            this.toolStripLabel1.Text = "Типоразмер";
             // 
             // FRMain
             // 
