@@ -95,7 +95,12 @@ namespace CHART
         }
         public double y
         {
-            get { return chart.Series[0].Points[x].YValues[0]; }
+            get {
+                if (chart.Series[0].Points.Count > 0)
+                    return chart.Series[0].Points[x].YValues[0];
+                else
+                    return 0.0;
+            }
         }
         public void moveTo(int x)
         {

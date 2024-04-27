@@ -61,6 +61,7 @@ namespace CHART
         
         public static void putDataOnChart(this Chart chart, System.Array data)
         {
+            if (data == null) return;
             chart.Series[0].Points.Clear();
             for (int i = 0; i < data.Length; i++)
             {
