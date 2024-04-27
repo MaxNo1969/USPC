@@ -37,9 +37,9 @@ namespace USPC
         private FRProt pr;
 
         /// <summary>
-        ///рабочий поток
+        ///рабочий воркер
         /// </summary>
-        private workThread wrkTh = null;
+        MainWorker worker=null;
 
         /// <summary>
         ///Время начала работы
@@ -76,7 +76,7 @@ namespace USPC
             bStopForView = false;
 
             // Рабочий поток
-            wrkTh = new workThread(this);
+            worker = new MainWorker(this);
             timerUpdUI.Start();
         }
 
@@ -117,7 +117,7 @@ namespace USPC
                 if (s == Program.typeSize.name) cbTypeSize.SelectedIndex = ind;
             }
 
-            sb.Items["Info"].Text = "Для начала работы нажмите F5";
+            setSb("Info", "Для начала работы нажмите F5");
         }
 
 
@@ -136,17 +136,16 @@ namespace USPC
             if (miStart.Text == "Старт")
             {
                 startWorkTime = DateTime.UtcNow;
-                //SL.getInst().oPEREKL.Val = true;
-                //Thread.Sleep(100);
                 SL.getInst().oPEREKL.Val = true;
                 Thread.Sleep(100);
-                wrkTh.start();
+                worker.RunWorkerAsync();               
                 setSb("Info", "Работа");
                 setStartStopMenu(false);
             }
             else
             {
-                if (wrkTh.isRunning) wrkTh.stop();
+                worker.CancelAsync();
+                //while (worker.IsBusy) Thread.Sleep(100);
                 setSb("Info", "Нажмите F5 для начала работы");
                 setStartStopMenu(true);
             }
@@ -293,12 +292,20 @@ namespace USPC
         /// <summary>
         /// Обновление статусбара
         /// </summary>
-        /// <param name="_sbItem">Имя пля в статусбаре</param>
+        /// <param name="_sbItem">Имя поля в статусбаре</param>
         /// <param name="_sbText">Выводимая строка</param>
         /// Items: info,tubePos,dataSize,duration,heap
         public void setSb(string _sbItem, string _sbText)
         {
            sb.Items[_sbItem].Text = _sbText;
+        }
+        /// <summary>
+        /// Обновление прогресбара
+        /// </summary>
+        /// <param name="_percent">Просент</param>
+        public void setPb(int _percent)
+        {
+            pb.Value = _percent;
         }
 
         private void miStart_Click(object sender, EventArgs e)
@@ -436,7 +443,7 @@ namespace USPC
                     Program.data.save((Object)args.fileName);
                     break;
                 case "Генерация":
-                    DataGenerator.GenerateThicknessData(15, 900000);
+                    DataGenerator.GenerateThicknessData(16, 900000);
                     break;
                 case "Пересчет":
                     //stick.recalc(w, e);
