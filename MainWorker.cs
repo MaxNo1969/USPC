@@ -14,13 +14,13 @@ namespace USPC
     class MainWorker:BackgroundWorker
     {
         private FRMain frMain = null;
-        UspcNetDataReaderForTest dataReader = null;
+        UspcNetDataReader dataReader = null;
         
         public MainWorker(FRMain _frMain)
         {
             frMain = _frMain;
 
-            //dataReader = new UspcNetDataReaderForTest();
+            dataReader = new UspcNetDataReader();
 
             WorkerReportsProgress = true;
             WorkerSupportsCancellation = true;
@@ -234,7 +234,7 @@ namespace USPC
                                 //Включить сбор данных с модуля контроля. Ожидать пропадания сигнала КОНТРОЛЬ. 
                                 {
                                     //Запускаем поток чтения данных
-
+                                    dataReader.RunWorkerAsync();
                                 }
                             }
                             break;
@@ -242,6 +242,8 @@ namespace USPC
                             //Пропал сигнал контроль
                             if (SL.getInst().iCNTR.Val == false)
                             {
+                                //Останавливаем сбор
+                                dataReader.CancelAsync();
                                 SL.getInst().oWRK.Val = false;
                                 curState = WrkStates.endWork;
                                 break;
@@ -253,7 +255,7 @@ namespace USPC
                                 controlIsSet = TimeSpan.Zero;
                                 //Получаем значение скорости трубы
                                 AppSettings.s.speed = AppSettings.s.distanceToBase / timeToBase.Milliseconds;
-                                setSb("speed",string.Format("{0} м/с", AppSettings.s.speed));
+                                log.add(LogRecord.LogReason.info, "Рассчитаная скорость: {0}", AppSettings.s.speed);
                             }
                             break;
                         case WrkStates.endWork:

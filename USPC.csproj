@@ -106,12 +106,6 @@
     <Compile Include="FRTestTcp.Designer.cs">
       <DependentUpon>FRTestTcp.cs</DependentUpon>
     </Compile>
-    <Compile Include="FRUSPCBoard.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="FRUSPCBoard.Designer.cs">
-      <DependentUpon>FRUSPCBoard.cs</DependentUpon>
-    </Compile>
     <Compile Include="FRUspcInfo.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -179,6 +173,9 @@
       <DependentUpon>TestGetAscanFromNet.cs</DependentUpon>
     </Compile>
     <Compile Include="Data\TypeSize.cs" />
+    <Compile Include="UspcNetDataReader.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="UspcNetDataReaderForTest.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -203,9 +200,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="FRTestTcp.resx">
       <DependentUpon>FRTestTcp.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="FRUSPCBoard.resx">
-      <DependentUpon>FRUSPCBoard.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="FRUspcInfo.resx">
       <DependentUpon>FRUspcInfo.cs</DependentUpon>
