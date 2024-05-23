@@ -31,7 +31,7 @@ namespace Data
                     for (int sensor = 0; sensor < USPCData.countSensors; sensor++)
                     {
                         scans[frame + sensor].Channel = (byte)sensor;
-                        double val = _thick + (r.NextDouble() - 0.5)*2;
+                        double val = _thick + (r.NextDouble() - 0.5) * 2;
                         uint G1Tof = (uint)(val / (2.5e-6 * USPCData.scopeVelocity));
                         scans[frame + sensor].G1Tof = G1Tof;
                     }
@@ -44,13 +44,13 @@ namespace Data
                 countFramesPerZone *= USPCData.countSensors;
                 Program.data.offsets[zone] = zone * countFramesPerZone;
             }
-            Program.data.samplesPerZone = (int)((double)AppSettings.s.zoneSize * USPCData.countFrames / AppSettings.s.tubeLength);	
+            Program.data.samplesPerZone = (int)((double)AppSettings.s.zoneSize * USPCData.countFrames / AppSettings.s.tubeLength);
             for (int zone = 0; zone < USPCData.countZones; zone++)
             {
                 double minZoneThickness = Program.typeSize.maxDetected;
                 for (int sensor = 0; sensor < USPCData.countSensors; sensor++)
                 {
-                    Program.data.minZoneSensorThickness[zone] = Program.data.sensorThickness(sensor,zone);
+                    Program.data.minZoneSensorThickness[zone] = Program.data.sensorThickness(sensor, zone);
                     double min = Program.data.minZoneSensorThickness[sensor][zone];
                     if (minZoneThickness > min) minZoneThickness = min;
                 }
@@ -66,10 +66,47 @@ namespace Data
             {
                 for (int sensor = 0; sensor < USPCData.countSensors; sensor++)
                 {
-                    scans[frame * USPCData.countSensors + sensor].Channel = (byte)sensor; int val = _percent + r.Next(-10, 10);
+                    scans[frame * USPCData.countSensors + sensor].Channel = (byte)sensor;
+                    int val = _percent + r.Next(-10, 10);
                     scans[frame * USPCData.countSensors + sensor].G1Amp = (byte)val;
                 }
             }
+        }
+        public static AcqAscan thickScan(double _thick)
+        {
+            AcqAscan scan = new AcqAscan();
+            double val = _thick + (r.NextDouble() - 0.5) * 2;
+            uint G1Tof = (uint)(val / (2.5e-6 * USPCData.scopeVelocity));
+            scan.G1Tof = G1Tof;
+            return scan;
+        }
+        public static AcqAscan defScan(int _percent)
+        {
+            AcqAscan scan = new AcqAscan();
+            byte G1Amp = (byte)(_percent + r.Next(-10, 10));
+            scan.G1Amp = G1Amp;
+            return scan;
+        }
+
+        public static AcqAscan[] thickPacket(double _thick, int _size)
+        {
+            int numberOfScans = _size + r.Next(-10, 10);
+            AcqAscan[] scans = new AcqAscan[numberOfScans];
+            for (int i = 0; i < numberOfScans;i++)
+            {
+                scans[i] = thickScan(_thick);
+            }
+            return scans;
+        }
+        public static AcqAscan[] defPacket(int _percent, int _size)
+        {
+            int numberOfScans = _size + r.Next(-10, 10);
+            AcqAscan[] scans = new AcqAscan[numberOfScans];
+            for (int i = 0; i < numberOfScans; i++)
+            {
+                scans[i] = defScan(_percent);
+            }
+            return scans;
         }
     }
 }
