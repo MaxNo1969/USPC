@@ -14,7 +14,7 @@ namespace USPC
         USPCData data = null;
         PCXUSNetworkClient client = null;
         Object retval = null;
-        int[] Boards = { 0, 1 };
+        int[] Boards = { 0 };
 
         public OnDataAcquired dataAcquired = null;
         public UspcNetDataReader()
@@ -23,6 +23,9 @@ namespace USPC
             data = Program.data;
             client = new PCXUSNetworkClient(serverAddr);
             retval = new object();
+
+            WorkerReportsProgress = true;
+            WorkerSupportsCancellation = true;
 
             DoWork += new DoWorkEventHandler(worker_DoWork);
             ProgressChanged += new ProgressChangedEventHandler(worker_ProgressChanged);
