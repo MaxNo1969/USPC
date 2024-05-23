@@ -50,6 +50,8 @@ namespace USPC
             try
             {
                 AcqChart.Series["Gate1TOF"].Points.Clear();
+                AcqChart.Series["Gate2TOF"].Points.Clear();
+                AcqChart.Series["GateIFTOF"].Points.Clear();
                 //AcqChart.Series["Gate2TOF"].Points.Clear();
                 
                 //AcqChart.ChartAreas["Default"].AxisY.Minimum = 0.0;
@@ -59,7 +61,7 @@ namespace USPC
                 AcqChart.ChartAreas["Default"].AxisX.Minimum = 0;
                 AcqChart.ChartAreas["Default"].AxisX.Maximum = _numberOfScans;
 
-                double gate1max = Program.typeSize.minDetected;
+                //double gate1max = Program.typeSize.minDetected;
                 //double gate2max = Program.typeSize.minDetected;
                 for (int iPoint = 0; iPoint < _numberOfScans; iPoint++)
                 {
@@ -70,14 +72,20 @@ namespace USPC
                         AcqChart.Series["Gate1TOF"].Points.AddXY(iPoint, val);
                         lblGate1MaxTof.Text = val.ToString();
                     }
-                    /*
                     {
                         uint tof = _data[iPoint].G2Tof & AcqAscan.TOF_MASK;
-                        double val = 2.5e-6 * tof * USPCData.scopeVelocity;
+                        //double val = 2.5e-6 * tof * USPCData.scopeVelocity;
+                        double val = tof;
                         AcqChart.Series["Gate2TOF"].Points.AddXY(iPoint, val);
                         lblGate2MaxTof.Text = val.ToString();
                     }
-                    */ 
+                    {
+                        uint tof = _data[iPoint].GIFTof & AcqAscan.TOF_MASK;
+                        //double val = 2.5e-6 * tof * USPCData.scopeVelocity;
+                        double val = tof;
+                        AcqChart.Series["GateIFTOF"].Points.AddXY(iPoint, val);
+                        lblGateIFMaxTof.Text = val.ToString();
+                    }
                 }
             }
             catch (Exception ex)

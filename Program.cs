@@ -11,14 +11,17 @@ using Data;
 
 namespace USPC
 {
+    public enum BoardState { NotOpened, Opened, loaded, error };
     static class Program
     {
         public static Dictionary<string, string> cmdLineArgs = null;
-        
+
+        public static string serverAddr;        
         public static USPCData data = new USPCData();
         public static TypeSize typeSize = new TypeSize();
         public static FRMain frMain = null;
         public static int medianFilterWidth = 5;
+
 
         /// <summary>
         /// The main entry point for the application.
@@ -54,6 +57,7 @@ namespace USPC
                         log.add(LogRecord.LogReason.info, "{0}: {1}: {2}", "Program", System.Reflection.MethodBase.GetCurrentMethod().Name, msg);
                     }
                     #endregion
+                    serverAddr = Program.cmdLineArgs["Server"];
                 }
             }
             catch (ArgumentException ex)
@@ -61,12 +65,7 @@ namespace USPC
                 log.add(LogRecord.LogReason.error, "{0}: {1}: {2}", "Program", System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message);
                 return -1;
             }
-            if (cmdLineArgs != null)
-            {
-                if (cmdLineArgs.ContainsKey(@"/Emul"))
-                {
-                }
-            }
+
             try
             {
                 FormPosSaver.deser();

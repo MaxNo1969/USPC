@@ -24,17 +24,7 @@ namespace USPC
 
         private void btnTest_Click(object sender, EventArgs e)
         {
-            string serverAddress = null;
-            try
-            {
-                serverAddress = Program.cmdLineArgs["Server"];
-            }
-            catch (Exception ex)
-            {
-                log.add(LogRecord.LogReason.warning, "FRTestTcp: btnTest_Click: Error: {0}",ex.Message);
-                log.add(LogRecord.LogReason.warning, "Parameter \"Server\" not assigned. Use \"127.0.0.1\"");
-                serverAddress = "127.0.0.1";
-            }
+            string serverAddress = Program.serverAddr;
             PCXUSNetworkClient client = new PCXUSNetworkClient(serverAddress);
             Object retval = new Object();
             int res = client.callNetworkFunction(edCommand.Text,out retval);

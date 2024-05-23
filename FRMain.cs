@@ -19,7 +19,6 @@ using CHART;
 
 namespace USPC
 {
-    public enum BoardState { NotOpened, Opened, loaded, error };
     public partial class FRMain : Form
     {
         //public PCXUS pcxus = null;

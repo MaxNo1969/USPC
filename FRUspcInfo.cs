@@ -20,7 +20,7 @@ namespace USPC
             Owner = _frMain;
             MdiParent = _frMain;
             frMain = _frMain;
-            string srv = frMain.strNetServer;
+            string srv = Program.serverAddr;
             List<string> info = new List<string>();
             if(frMain.boardState == BoardState.Opened)
             {
