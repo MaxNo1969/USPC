@@ -26,7 +26,7 @@ namespace USPC
         public UspcNetDataReaderForTest(FRTestAcqNet _frTestAcq)
         {
             frTestAcq = _frTestAcq;
-            serverAddr = _frTestAcq.serverAddr;
+            serverAddr = Program.serverAddr;
             data = frTestAcq.data;
             WorkerReportsProgress = true;
             WorkerSupportsCancellation = true;
