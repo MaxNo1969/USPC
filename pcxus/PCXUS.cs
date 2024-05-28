@@ -295,7 +295,7 @@ namespace USPC
         public double gate2_level_alarm;
     }
 
-        // AscanInfo structre must hold parameters requested to display Ascan and gates
+    // Информация о текущем статусе захвата
     [Serializable()]
     public struct AcqSatus
     {

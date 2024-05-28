@@ -256,7 +256,7 @@ namespace USPC
         {
             long usedMem = GC.GetTotalMemory(false);
             sb.Items["heap"].Text = string.Format("{0,6}M", usedMem / (1024 * 1024));
-            sb.Items["speed"].Text = string.Format("{0} м/с", AppSettings.s.speed);
+            sb.Items["speed"].Text = string.Format("{0} mм/mс", AppSettings.s.speed);
 
         }
 

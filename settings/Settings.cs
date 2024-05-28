@@ -103,7 +103,7 @@ namespace Settings
                 log.add(LogRecord.LogReason.info, "{0}: {1}: {2}", "Settings", System.Reflection.MethodBase.GetCurrentMethod().Name, "Первый запуск - файл настроек ещё не записан");
                 s = new Settings();
                 Settings.save(s);
-                return null;
+                return s;
             }
         }
         /// <summary>
