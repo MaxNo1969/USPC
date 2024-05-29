@@ -23,7 +23,6 @@ namespace USPC
     {
         //public PCXUS pcxus = null;
         public BoardState boardState = BoardState.NotOpened;
-        public string strNetServer = null;
 
         ///Подчиненные формы
         /// <summary>
@@ -56,20 +55,6 @@ namespace USPC
             InitializeComponent();
             IsMdiContainer = true;
             WindowState = FormWindowState.Normal;
-            try
-            {
-                strNetServer = Program.cmdLineArgs["Server"];
-            }
-
-            catch (Exception ex)
-            {
-                log.add(LogRecord.LogReason.error, "{0}: {1}: {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message);
-                string str = string.Format("{0}: {1}: {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, "command line param \"Server\" not specified");
-                log.add(LogRecord.LogReason.info, str);
-                throw new Exception(str);
-            }
-
-
             menu.MdiWindowListItem = miWindows;
 
             bStopForView = false;
@@ -174,7 +159,7 @@ namespace USPC
             //pcxus.open(2);
             try
             {
-                PCXUSNetworkClient client = new PCXUSNetworkClient(strNetServer);
+                PCXUSNetworkClient client = new PCXUSNetworkClient(Program.serverAddr);
                 Object obj = new object();
                 int res = client.callNetworkFunction("open,2", out obj);
                 if (res != 0)
@@ -205,7 +190,7 @@ namespace USPC
             }
             try
             {
-                PCXUSNetworkClient client = new PCXUSNetworkClient(strNetServer);
+                PCXUSNetworkClient client = new PCXUSNetworkClient(Program.serverAddr);
                 Object obj = new object();
                 int res = client.callNetworkFunction("load,default.us", out obj);
                 if (res != 0)
@@ -227,7 +212,7 @@ namespace USPC
             }
             try
             {
-                PCXUSNetworkClient client = new PCXUSNetworkClient(strNetServer);
+                PCXUSNetworkClient client = new PCXUSNetworkClient(Program.serverAddr);
                 Object obj = new object();
                 int res = client.callNetworkFunction("close", out obj);
                 if (res != 0)

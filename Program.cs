@@ -59,10 +59,21 @@ namespace USPC
                     #endregion
                     serverAddr = Program.cmdLineArgs["Server"];
                 }
+                else
+                {
+                    serverAddr = "localhost";
+                }
             }
             catch (ArgumentException ex)
             {
                 log.add(LogRecord.LogReason.error, "{0}: {1}: {2}", "Program", System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message);
+                ShowExceptionDetails(ex);
+                return -1;
+            }
+            catch (KeyNotFoundException ex)
+            {
+                log.add(LogRecord.LogReason.error, "{0}: {1}: {2}", "Program", System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message);
+                ShowExceptionDetails(ex);
                 return -1;
             }
 
@@ -110,12 +121,11 @@ namespace USPC
 
         static Dictionary<string, string> getCmdStr(string[] args)
         {
-            Dictionary<string, string> cmdStr = new Dictionary<string, string>();
             if ((args == null) || args.Length < 1)
             {
-                cmdStr.Add("NONE", "true");
-                return cmdStr;
+                return null;                
             }
+            Dictionary<string, string> cmdStr = new Dictionary<string, string>();
             foreach (string s in args)
             {
                 string[] ss = s.Split(new char[] { ':' });
