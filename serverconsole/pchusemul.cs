@@ -12,13 +12,17 @@ namespace USPC
     public class pcxusemul
     {
       
-        public const int MAX_ROW = 100;
-        public const int MAX_STRING = 256;
+        //public const int MAX_ROW = 100;
+        //public const int MAX_STRING = 256;
 
-        public Dictionary<string, double> boardParams;
-
+        private Dictionary<string, double> boardParams;
+        private ACQ_STATUS boardStatus = ACQ_STATUS.ACQ_NO_CONFIGURED;
         private Int32 hPCXUS = 0;
         private int error = 0;
+
+        AcqAscan[] scans = null;
+        int bufferSize = 0;
+        int numberOfScans = 0;
         
         //Серийные номера для плат
         int[] sn = {5555,6666};
@@ -162,11 +166,19 @@ namespace USPC
         public bool config(Int32 _board, Int32 _bufferSize)
         {
             if(!checkHandle())return false;
+            bufferSize = _bufferSize;
+            scans = new AcqAscan[bufferSize];
+            boardStatus = ACQ_STATUS.ACQ_WAITING_START;
             return true;
         }
 
         public bool status(Int32 _board, ref Int32 _status, ref Int32 _NumberOfScansAcquired, ref Int32 _NumberOfScansRead, ref Int32 _BufferSize, ref Int32 _scanSize)
         {
+            _status = (Int32)boardStatus;
+            _scanSize = 8;
+            _BufferSize = bufferSize;
+            _NumberOfScansAcquired = numberOfScans;
+            _NumberOfScansRead = numberOfScans;
             if (!checkHandle()) return false;
             return true;
         }
@@ -174,19 +186,27 @@ namespace USPC
         public bool start(Int32 _board)
         {
             if (!checkHandle()) return false;
+            boardStatus = ACQ_STATUS.ACQ_RUNNING;
+            scanCounter = 0;
             return true;            
         }
 
         public bool stop(Int32 _board)
         {
             if (!checkHandle()) return false;
+            boardStatus = ACQ_STATUS.ACQ_FINISHED_WITHOUT_SCANSBACKLOG;
+            scanCounter = 0;
             return true;
         }
         public bool clear(Int32 _board)
         {
             if (!checkHandle()) return false;
+            scans = null;
+            scanCounter = 0;
+            bufferSize = 0;
             return true;
         }
+        uint scanCounter = 0;
         public Int32 read(Int32 _board, byte[] _data, int _timeout = 200)
         {
             if (!checkHandle()) return 0;
@@ -195,7 +215,29 @@ namespace USPC
         public Int32 read(Int32 _board, AcqAscan[] _data, int _timeout = 200)
         {
             if (!checkHandle()) return 0;
-            return 0;
+            if (boardStatus == ACQ_STATUS.ACQ_RUNNING && scans != null)
+            {
+                Random r = new Random();
+                numberOfScans = 300 + r.Next(50);
+                for (int i = 0; i < numberOfScans; i++)
+                {
+                    _data[i].Channel = 0;
+                    _data[i].ScanCounter = scanCounter;
+                    _data[i].PulserCounter = scanCounter;
+                    scanCounter++;
+                    _data[i].G1Amp = (byte)(90 + r.Next(10));
+                    _data[i].G2Amp = (byte)(90 + r.Next(10));
+                    double Distance = 3.53;
+                    uint wt = (uint)(Distance * 1000.0 / 5.0);
+                    _data[i].G1WTmsb = (byte)(wt & 0x00ff);
+                    _data[i].G1WTlsb = (byte)(wt >> 16);
+                    Distance = 5.1;
+                    wt = (uint)(Distance * 1000.0 / 5.0);
+                    _data[i].G2WTmsb = (byte)(wt & 0x00ff);
+                    _data[i].G2WTlsb = (byte)(wt >> 16);
+                }
+            }
+            return numberOfScans;
         }
 
         public bool readAscan(ref Ascan ascan,int _timeout = 100, int _board = 0, int _test = 0)
