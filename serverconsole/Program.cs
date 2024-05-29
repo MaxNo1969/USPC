@@ -11,13 +11,12 @@ namespace serverconsole
     {
         static void Main(string[] args)
         {
-            PCXUS pcxus = null;
             PCXUSNetworkServer server = null;
 
             log.onLogChanged+= new log.OnLogChanged(()=>Console.WriteLine(log.get().text));
             log.add(LogRecord.LogReason.info, "Program started...");
             //создаём объект для платы
-            pcxus = new PCXUS();
+            pcxusemul pcxus = new pcxusemul();
             //Запускаем сервер
             server = new PCXUSNetworkServer(pcxus);
             server.start();

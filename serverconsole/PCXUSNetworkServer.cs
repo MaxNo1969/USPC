@@ -18,10 +18,10 @@ namespace USPC
         static AcqAscan[] data = new AcqAscan[bufferSize];
 
         TCPServer server = null;
-        PCXUS pcxus = null;
+        pcxusemul pcxus = null;
         StreamWork onFunctionRequested;
 
-        public PCXUSNetworkServer(PCXUS _pcxus)
+        public PCXUSNetworkServer(pcxusemul _pcxus)
         {
             log.add(LogRecord.LogReason.info, "{0}: {1}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name);
             pcxus = _pcxus;
