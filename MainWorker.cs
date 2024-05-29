@@ -14,13 +14,13 @@ namespace USPC
     class MainWorker:BackgroundWorker
     {
         private FRMain frMain = null;
-        UspcNetDataReader dataReader = null;
+        UspcNetDataReader[] dataReaders = null;
         
         public MainWorker(FRMain _frMain)
         {
             frMain = _frMain;
 
-            dataReader = new UspcNetDataReader();
+            dataReaders = new UspcNetDataReader[2];
 
             WorkerReportsProgress = true;
             WorkerSupportsCancellation = true;
@@ -233,8 +233,11 @@ namespace USPC
                                 curState = WrkStates.work;
                                 //Включить сбор данных с модуля контроля. Ожидать пропадания сигнала КОНТРОЛЬ. 
                                 {
-                                    //Запускаем поток чтения данных
-                                    dataReader.RunWorkerAsync();
+                                    //Запускаем потоки чтения данных
+                                    foreach (UspcNetDataReader dataReader in dataReaders)
+                                    {
+                                        dataReader.RunWorkerAsync();
+                                    }
                                 }
                             }
                             break;
@@ -243,7 +246,10 @@ namespace USPC
                             if (SL.getInst().iCNTR.Val == false)
                             {
                                 //Останавливаем сбор
-                                dataReader.CancelAsync();
+                                foreach (UspcNetDataReader dataReader in dataReaders)
+                                {
+                                    dataReader.CancelAsync();
+                                }
                                 SL.getInst().oWRK.Val = false;
                                 curState = WrkStates.endWork;
                                 break;

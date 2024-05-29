@@ -52,7 +52,7 @@ namespace USPC
             {
                 int countFrames = e.ProgressPercentage;
                 frTestAcq.updateGraph(countFrames, data);
-                frTestAcq.frMain.setSb("dataSize", string.Format("{0}", Program.data.currentOffsetFrames));
+                //frTestAcq.frMain.setSb("dataSize", string.Format("{0}", Program.data.currentOffsetFrames));
                 AcqAscan[] buffer = new AcqAscan[countFrames];
                 Array.Copy(data, buffer, countFrames);
                 StructToCsv.writeCsv<AcqAscan>("acqscans.csv", buffer); 
@@ -84,7 +84,7 @@ namespace USPC
                 return;
             }
             //Смещаем указатель буфера в начало
-            Program.data.Start();
+            Program.data[Board].Start();
 
             while (true)
             {
@@ -108,11 +108,11 @@ namespace USPC
                     Int32 NumberOfScans = client.callNetworkFunction("read", out retval);
                     AcqAscan[] buffer = (AcqAscan[])retval;
                     if (dataAcquired != null) dataAcquired(NumberOfScans, buffer);
-                    if (Program.data.currentOffsetFrames + NumberOfScans <= USPCData.countFrames)
+                    if (Program.data[Board].currentOffsetFrames + NumberOfScans <= USPCData.countFrames)
                     {
                         Array.Copy(buffer, data, NumberOfScans);
-                        Array.Copy(buffer, 0, Program.data.ascanBuffer, Program.data.currentOffsetFrames, NumberOfScans);
-                        Program.data.OffsetCounter(NumberOfScans);
+                        Array.Copy(buffer, 0, Program.data[Board].ascanBuffer, Program.data[Board].currentOffsetFrames, NumberOfScans);
+                        Program.data[Board].OffsetCounter(NumberOfScans);
                         ReportProgress(NumberOfScans);
                     }
                     else

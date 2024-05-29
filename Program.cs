@@ -17,7 +17,7 @@ namespace USPC
         public static Dictionary<string, string> cmdLineArgs = null;
 
         public static string serverAddr;        
-        public static USPCData data = new USPCData();
+        public static USPCData[] data = new USPCData[2];
         public static TubeResult result = new TubeResult();
         public static TypeSize typeSize = new TypeSize();
         public static FRMain frMain = null;
@@ -81,6 +81,10 @@ namespace USPC
             try
             {
                 FormPosSaver.deser();
+                for (int i = 0; i < 2;i++ )
+                {
+                    data[i] = new USPCData();
+                }
                 frMain = new FRMain();
                 Application.Run(frMain);
             }

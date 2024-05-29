@@ -10,7 +10,7 @@ namespace Data
         public int sensors;
         public int zones;
         public List<List<double>> values;
-        public void addZone()
+        public virtual void addZone()
         {
         }
         public List<int> zoneStart;
@@ -26,14 +26,26 @@ namespace Data
     class CrossResult : Result
     {
         public CrossResult(int _sensors):base(_sensors){}
+        public override void addZone()
+        {
+            base.addZone();
+        }
     }
     class LinearResult : Result
     {
         public LinearResult(int _sensors):base(_sensors){}
+        public override void addZone()
+        {
+            base.addZone();
+        }
     }
     class ThickResult : Result
     {
         public ThickResult(int _sensors) : base(_sensors) { }
+        public override void addZone()
+        {
+            base.addZone();
+        }
     }
     class TubeResult
     {

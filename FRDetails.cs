@@ -42,7 +42,8 @@ namespace USPC
             sbMeas.Items[1].Text = string.Format("Датчик: {0}", sensor + 1);
             sbMeas.Items[2].Text = string.Format("Измерение: {0}", measCur.x);
             sbMeas.Items[3].Text = string.Format("Толщина: {0}", measCur.y);
-            sbMeas.Items[5].Text = string.Format("Количество измерений в зоне: {0}", (Program.data.offsets[zone+1]-Program.data.offsets[zone])/USPCData.countSensors);
+            //!!! CORRECT
+            sbMeas.Items[5].Text = string.Format("Количество измерений в зоне: {0}", (Program.data[0].offsets[zone+1]-Program.data[0].offsets[zone])/USPCData.countSensors);
             Text = string.Format("Детализированный просмотр трубы: зона {0}, датчик {1}, измерение {2}", zone, sensor + 1, measCur.x);
         }
         private void onMeasCursorMove(int pos)

@@ -26,8 +26,8 @@ namespace USPC
 
         private void UpdateChart()
         {
-            chartResult.putDataOnChart(Program.data.minZoneThickness);
-            chartResult.putColorDecision(Program.data);
+            //chartResult.putDataOnChart(_result.values.);
+            //chartResult.putColorDecision(Program.data);
         }
 
         /// <summary>
@@ -68,9 +68,9 @@ namespace USPC
             MouseEventArgs mea = e as MouseEventArgs;
             HitTestResult htRes = c.HitTest(mea.X, mea.Y, ChartElementType.DataPoint);
             int zone = htRes.PointIndex;
-            FRSensorView frSensorView = new FRSensorView(this, Program.data);
-            frSensorView.Init();
-            frSensorView.Show();
+            //FRSensorView frSensorView = new FRSensorView(this, Program.data);
+            //frSensorView.Init();
+            //frSensorView.Show();
         }
 
         private void FRResultView_Load(object sender, EventArgs e)

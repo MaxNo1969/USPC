@@ -421,10 +421,10 @@ namespace USPC
             switch (args.action)
             {
                 case "Загрузка":
-                    USPCData.load(args.fileName);
+                    //USPCData.load(args.fileName);
                     break;
                 case "Сохранение":
-                    Program.data.save((Object)args.fileName);
+                    //Program.data.save((Object)args.fileName);
                     break;
                 case "Генерация":
                     DataGenerator.GenerateThicknessData(16, 900000);
