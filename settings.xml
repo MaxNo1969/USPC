@@ -1,0 +1,192 @@
+<?xml version="1.0"?>
+<Settings xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <tubeLength>6000</tubeLength>
+  <zoneSize>200</zoneSize>
+  <pcie1730Settings>
+    <name>PCIE-1730</name>
+    <timeout>100</timeout>
+    <sl>
+      <SignalSettings>
+        <name>ЦУП</name>
+        <board>0</board>
+        <input>true</input>
+        <digital>true</digital>
+        <position>0</position>
+        <hint>ЦЕПИ УПРАВЛЕНИЯ. Питание +24В для внутренних нужд</hint>
+        <timeout />
+        <no_reset>false</no_reset>
+        <verbal>false</verbal>
+      </SignalSettings>
+      <SignalSettings>
+        <name>ЦИКЛ</name>
+        <board>0</board>
+        <input>true</input>
+        <digital>false</digital>
+        <position>1</position>
+        <hint>Сигнал установлен при нахождении оборудования ЛУЗК в автоматическом режиме</hint>
+        <timeout />
+        <no_reset>false</no_reset>
+        <verbal>false</verbal>
+      </SignalSettings>
+      <SignalSettings>
+        <name>ГОТОВНОСТЬ</name>
+        <board>0</board>
+        <input>true</input>
+        <digital>false</digital>
+        <position>2</position>
+        <hint>Сигнал устанавливается при наличии в ванне готовой к контролю трубы</hint>
+        <timeout />
+        <no_reset>false</no_reset>
+        <verbal>false</verbal>
+      </SignalSettings>
+      <SignalSettings>
+        <name>КОНТРОЛЬ</name>
+        <board>0</board>
+        <input>true</input>
+        <digital>false</digital>
+        <position>3</position>
+        <hint>Сигнал устанавливается при поступлении первого датчика каретки на поверхность трубы, снимается по сходу последнего датчика каретки с трубы</hint>
+        <timeout />
+        <no_reset>false</no_reset>
+        <verbal>false</verbal>
+      </SignalSettings>
+      <SignalSettings>
+        <name>БАЗА</name>
+        <board>0</board>
+        <input>true</input>
+        <digital>false</digital>
+        <position>4</position>
+        <hint>Сигнал устанавливается при достижении кареткой определенного положения. Используется для контроля скорости перемещения каретки</hint>
+        <timeout />
+        <no_reset>false</no_reset>
+        <verbal>false</verbal>
+      </SignalSettings>
+      <SignalSettings>
+        <name>РЕЗЕРВВХ</name>
+        <board>0</board>
+        <input>true</input>
+        <digital>false</digital>
+        <position>5</position>
+        <hint>Резервный сигнал</hint>
+        <timeout />
+        <no_reset>false</no_reset>
+        <verbal>false</verbal>
+      </SignalSettings>
+      <SignalSettings>
+        <name>РАБОТА</name>
+        <board>0</board>
+        <input>false</input>
+        <digital>false</digital>
+        <position>6</position>
+        <hint>Сигнал устанавливается при готовности системы к контролю трубы</hint>
+        <timeout />
+        <no_reset>false</no_reset>
+        <verbal>false</verbal>
+      </SignalSettings>
+      <SignalSettings>
+        <name>ПЕРЕКЛ</name>
+        <board>0</board>
+        <input>false</input>
+        <digital>false</digital>
+        <position>7</position>
+        <hint>Сигнал устанавливается по завершению всех действий с результатом контроля трубы – разрешение забирать трубу из ванны</hint>
+        <timeout />
+        <no_reset>false</no_reset>
+        <verbal>false</verbal>
+      </SignalSettings>
+      <SignalSettings>
+        <name>РЕЗУЛТ1</name>
+        <board>0</board>
+        <input>false</input>
+        <digital>false</digital>
+        <position>8</position>
+        <hint>Сигнал для кодирования результата контроля трубы</hint>
+        <timeout />
+        <no_reset>false</no_reset>
+        <verbal>false</verbal>
+      </SignalSettings>
+      <SignalSettings>
+        <name>РЕЗУЛТ2</name>
+        <board>0</board>
+        <input>false</input>
+        <digital>false</digital>
+        <position>9</position>
+        <hint>Сигнал для кодирования результата контроля трубы</hint>
+        <timeout />
+        <no_reset>false</no_reset>
+        <verbal>false</verbal>
+      </SignalSettings>
+      <SignalSettings>
+        <name>ПИТБМ</name>
+        <board>0</board>
+        <input>false</input>
+        <digital>false</digital>
+        <position>10</position>
+        <hint>Сигнал включает подачу питания на блок мультиплексоров</hint>
+        <timeout />
+        <no_reset>false</no_reset>
+        <verbal>false</verbal>
+      </SignalSettings>
+      <SignalSettings>
+        <name>РЕЗЕРВВЫХ</name>
+        <board>0</board>
+        <input>false</input>
+        <digital>false</digital>
+        <position>0</position>
+        <hint>Резервный сигнал</hint>
+        <timeout />
+        <no_reset>false</no_reset>
+        <verbal>false</verbal>
+      </SignalSettings>
+    </sl>
+  </pcie1730Settings>
+  <distanceToBase>300</distanceToBase>
+  <speed>0.5</speed>
+  <currenTypeSizeName>Диаметр 16,0</currenTypeSizeName>
+  <tss>
+    <_TypeSize>
+      <name>Диаметр 16,0</name>
+      <diameter>16</diameter>
+      <minGoodLength>0</minGoodLength>
+      <defectTreshold>15</defectTreshold>
+      <class2Treshold>15.5</class2Treshold>
+      <minDetected>12</minDetected>
+      <maxDetected>20</maxDetected>
+      <deadZoneStart>200</deadZoneStart>
+      <deadZoneEnd>200</deadZoneEnd>
+    </_TypeSize>
+    <_TypeSize>
+      <name>Диаметр 19,2</name>
+      <diameter>19.2</diameter>
+      <minGoodLength>0</minGoodLength>
+      <defectTreshold>16.2</defectTreshold>
+      <class2Treshold>18</class2Treshold>
+      <minDetected>12</minDetected>
+      <maxDetected>25</maxDetected>
+      <deadZoneStart>200</deadZoneStart>
+      <deadZoneEnd>200</deadZoneEnd>
+    </_TypeSize>
+    <_TypeSize>
+      <name>Диаметр 22,4</name>
+      <diameter>22.4</diameter>
+      <minGoodLength>0</minGoodLength>
+      <defectTreshold>20</defectTreshold>
+      <class2Treshold>21</class2Treshold>
+      <minDetected>15</minDetected>
+      <maxDetected>30</maxDetected>
+      <deadZoneStart>200</deadZoneStart>
+      <deadZoneEnd>200</deadZoneEnd>
+    </_TypeSize>
+    <_TypeSize>
+      <name>Диаметр 28,7</name>
+      <diameter>28.7</diameter>
+      <minGoodLength>0</minGoodLength>
+      <defectTreshold>25</defectTreshold>
+      <class2Treshold>26.5</class2Treshold>
+      <minDetected>22</minDetected>
+      <maxDetected>32</maxDetected>
+      <deadZoneStart>200</deadZoneStart>
+      <deadZoneEnd>200</deadZoneEnd>
+    </_TypeSize>
+  </tss>
+</Settings>

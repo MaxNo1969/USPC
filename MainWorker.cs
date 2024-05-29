@@ -254,7 +254,7 @@ namespace USPC
                                 TimeSpan timeToBase = sw.Elapsed - controlIsSet;
                                 controlIsSet = TimeSpan.Zero;
                                 //Получаем значение скорости трубы
-                                AppSettings.s.speed = AppSettings.s.distanceToBase / timeToBase.Milliseconds;
+                                AppSettings.s.speed = (double)AppSettings.s.distanceToBase / (double)timeToBase.Milliseconds;
                                 log.add(LogRecord.LogReason.info, "Рассчитаная скорость: {0}", AppSettings.s.speed);
                             }
                             break;

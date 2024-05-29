@@ -18,6 +18,7 @@ namespace USPC
 
         public static string serverAddr;        
         public static USPCData data = new USPCData();
+        public static TubeResult result = new TubeResult();
         public static TypeSize typeSize = new TypeSize();
         public static FRMain frMain = null;
         public static int medianFilterWidth = 5;
