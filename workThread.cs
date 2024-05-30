@@ -167,8 +167,8 @@ namespace USPC
                                 controlIsSet = TimeSpan.Zero;
                                 log.add(LogRecord.LogReason.debug,"timeToBase = {0}",timeToBase.Milliseconds);
                                 //Получаем значение скорости трубы
-                                AppSettings.s.speed = AppSettings.s.distanceToBase / timeToBase.Milliseconds;
-                                frm.setSb("speed",string.Format("{0} м/с", AppSettings.s.speed));
+                                //AppSettings.s.speed = AppSettings.s.distanceToBase / timeToBase.Milliseconds;
+                                //frm.setSb("speed",string.Format("{0} м/с", AppSettings.s.speed));
                             }
                             break;
                         case WrkStates.endWork:

@@ -52,7 +52,8 @@ namespace USPC
                 }
                 Program.result.AddNewZone();
                 int zoneTime = (int)((double)AppSettings.s.zoneSize/(double)AppSettings.s.speed);
-                Thread.Sleep(zoneTime);
+                log.add(LogRecord.LogReason.info, "{0}: {1}: {2} Now: {3}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, zoneTime,DateTime.Now.ToLongTimeString());
+                Thread.Sleep(zoneTime*1000);
             }
         }
 

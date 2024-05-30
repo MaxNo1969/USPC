@@ -15,13 +15,17 @@ namespace USPC
     {
         private FRMain frMain = null;
         UspcNetDataReader[] dataReaders = null;
-        
+        ZoneBackGroundWorker zoneAdder = null;
+        bool speedCalced = false;
         public MainWorker(FRMain _frMain)
         {
             frMain = _frMain;
 
             dataReaders = new UspcNetDataReader[2];
-
+            for (int i = 0; i < 2; i++)
+                dataReaders[i] = new UspcNetDataReader(i);
+            zoneAdder = new ZoneBackGroundWorker();
+            speedCalced = false;
             WorkerReportsProgress = true;
             WorkerSupportsCancellation = true;
 
@@ -38,7 +42,7 @@ namespace USPC
             frMain.setStartStopMenu(true);
             setSb("Info", "Для начала работы нажмите F5");
         }
-
+        #region вывод информации в главное окно программы
         private void setPb(int _percent)
         {
             if (frMain.InvokeRequired)
@@ -81,6 +85,7 @@ namespace USPC
                 text = _text;
             }
         }
+        #endregion вывод информации в главное окно программы
         enum ReportWhat
         {
             SetSB = 101
@@ -135,6 +140,39 @@ namespace USPC
         private static TimeSpan waitControlStarted;
         private static TimeSpan controlIsSet;
 
+        void stopWorkers()
+        {
+            log.add(LogRecord.LogReason.info, "{0}: {1}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name);
+            for (int i = 0; i < 2; i++)
+            {
+                if (dataReaders[i] != null && dataReaders[i].IsBusy)
+                {
+                    dataReaders[i].CancelAsync();
+                }
+            }
+            if (zoneAdder != null && zoneAdder.IsBusy)
+            {
+                zoneAdder.CancelAsync();
+            }
+        }
+
+        void startWorkers()
+        {
+            log.add(LogRecord.LogReason.info, "{0}: {1}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name);
+            for (int i = 0; i < 2; i++)
+            {
+                if (dataReaders[i] != null && !dataReaders[i].IsBusy)
+                {
+                    dataReaders[i].RunWorkerAsync();
+                }
+            }
+            if (zoneAdder != null && !zoneAdder.IsBusy)
+            {
+                zoneAdder.RunWorkerAsync();
+            }
+        }
+
+        
         void worker_DoWork(object sender, DoWorkEventArgs e)
         {
             log.add(LogRecord.LogReason.info, "{0}: {1}: {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, "Worker started");
@@ -165,6 +203,8 @@ namespace USPC
                     }
                     if (CancellationPending)
                     {
+                        speedCalced = false;
+                        stopWorkers();
                         e.Cancel = true;
                         return;
                     }
@@ -232,13 +272,7 @@ namespace USPC
                                 controlIsSet = sw.Elapsed;   
                                 curState = WrkStates.work;
                                 //Включить сбор данных с модуля контроля. Ожидать пропадания сигнала КОНТРОЛЬ. 
-                                {
-                                    //Запускаем потоки чтения данных
-                                    foreach (UspcNetDataReader dataReader in dataReaders)
-                                    {
-                                        dataReader.RunWorkerAsync();
-                                    }
-                                }
+                                startWorkers();
                             }
                             break;
                         case WrkStates.work:
@@ -246,22 +280,20 @@ namespace USPC
                             if (SL.getInst().iCNTR.Val == false)
                             {
                                 //Останавливаем сбор
-                                foreach (UspcNetDataReader dataReader in dataReaders)
-                                {
-                                    dataReader.CancelAsync();
-                                }
+                                stopWorkers();
                                 SL.getInst().oWRK.Val = false;
                                 curState = WrkStates.endWork;
                                 break;
                             }
                             //Труба доехала до базы
-                            if (SL.getInst().iBASE.Val == true && controlIsSet != TimeSpan.Zero)
+                            if (SL.getInst().iBASE.Val == true && controlIsSet != TimeSpan.Zero && !speedCalced)
                             {
                                 TimeSpan timeToBase = sw.Elapsed - controlIsSet;
                                 controlIsSet = TimeSpan.Zero;
                                 //Получаем значение скорости трубы
-                                AppSettings.s.speed = (double)AppSettings.s.distanceToBase / (double)timeToBase.Milliseconds;
-                                log.add(LogRecord.LogReason.info, "Рассчитаная скорость: {0}", AppSettings.s.speed);
+                                //AppSettings.s.speed = (double)AppSettings.s.distanceToBase / (double)timeToBase.Milliseconds;
+                                log.add(LogRecord.LogReason.info, "Рассчитаная скорость: {0}", (double)AppSettings.s.distanceToBase / ((double)timeToBase.Milliseconds*1000.0));
+                                speedCalced = true;
                             }
                             break;
                         case WrkStates.endWork:
@@ -270,6 +302,7 @@ namespace USPC
                             SL.getInst().oRES2.Val = true;
                             SL.getInst().oPEREKL.Val = true;
                             Thread.Sleep(100);
+                            speedCalced = false;
                             curState = WrkStates.startWorkCycle;
                             break;
                         default:
@@ -281,6 +314,8 @@ namespace USPC
             }
             catch (Exception ex)
             {
+                speedCalced = false;
+                stopWorkers();
                 log.add(LogRecord.LogReason.error, "{0}: {1}: Error: {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message);
                 e.Cancel = true;
                 return;

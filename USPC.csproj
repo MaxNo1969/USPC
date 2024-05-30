@@ -55,6 +55,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Data\Result.cs" />
+    <Compile Include="FRResult.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FRResult.Designer.cs">
+      <DependentUpon>FRResult.cs</DependentUpon>
+    </Compile>
     <Compile Include="StructToCsv.cs" />
     <Compile Include="BytesToStructure.cs" />
     <Compile Include="Chart\CGraphChart.cs">
@@ -177,6 +183,12 @@
       <DependentUpon>TestGetAscanFromNet.cs</DependentUpon>
     </Compile>
     <Compile Include="Data\TypeSize.cs" />
+    <Compile Include="UC4SensorView.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UC4SensorView.Designer.cs">
+      <DependentUpon>UC4SensorView.cs</DependentUpon>
+    </Compile>
     <Compile Include="UspcNetDataReader.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -192,6 +204,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="FRMain.resx">
       <DependentUpon>FRMain.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FRResult.resx">
+      <DependentUpon>FRResult.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="FRResultView.resx">
       <DependentUpon>FRResultView.cs</DependentUpon>
@@ -234,6 +249,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="TestGetAscanFromNet.resx">
       <DependentUpon>TestGetAscanFromNet.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UC4SensorView.resx">
+      <DependentUpon>UC4SensorView.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
