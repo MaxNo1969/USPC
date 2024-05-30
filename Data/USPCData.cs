@@ -11,6 +11,13 @@ using System.Threading;
 namespace Data
 {
     /// <summary>
+    /// Срез по всем датчикам
+    /// </summary>
+    class Slice : List<double>
+    {
+        public Slice() : base() { }
+    }
+    /// <summary>
     /// Данные для сохранения трубы
     /// </summary>
     [Serializable]
@@ -30,8 +37,11 @@ namespace Data
         
         public int currentOffsetFrames;     //Номер последнего кадра 
         public int currentOffsetZones;	    //номер смещения кадра в зоне
-    	public AcqAscan[] ascanBuffer;	    //собранные кадры
+    	public AcqAscan[] ascanBuffer;	    //собранные кадры массив по платам
         public TimeLabels labels;
+        //public List<Slice> allData;
+        //public List<Slice> zoneData; 
+
 	    public int[] offsets;               //смещение кадров по зонам
         public int[] offsSensor;            //смещение кадров по датчикам
 	    public double[] minZoneThickness;	//Минимальная толщина по зоне

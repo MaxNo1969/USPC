@@ -31,7 +31,7 @@ namespace Data
     class CrossResult : Result
     {
         public CrossResult(int _sensors):base(0,_sensors){}
-        public override void addZone(int _board)
+        public override void addZone()
         {
             base.addZone();
         }
@@ -39,7 +39,7 @@ namespace Data
     class LinearResult : Result
     {
         public LinearResult(int _sensors):base(0,_sensors){}
-        public override void addZone(int _board)
+        public override void addZone()
         {
             base.addZone();
         }
@@ -47,7 +47,7 @@ namespace Data
     class ThickResult : Result
     {
         public ThickResult(int _sensors) : base(1,_sensors) { }
-        public override void addZone(int _board)
+        public override void addZone()
         {
             base.addZone();
         }
@@ -57,5 +57,11 @@ namespace Data
         public CrossResult cross;
         public LinearResult linear;
         public ThickResult thick;
+        public void AddNewZone()
+        {
+            cross.addZone();
+            linear.addZone();
+            thick.addZone();
+        }
     }
 }

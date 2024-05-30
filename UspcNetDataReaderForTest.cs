@@ -55,7 +55,7 @@ namespace USPC
                 //frTestAcq.frMain.setSb("dataSize", string.Format("{0}", Program.data.currentOffsetFrames));
                 AcqAscan[] buffer = new AcqAscan[countFrames];
                 Array.Copy(data, buffer, countFrames);
-                StructToCsv.writeCsv<AcqAscan>("acqscans.csv", buffer); 
+                //StructToCsv.writeCsv<AcqAscan>("acqscans.csv", buffer); 
             }
             catch (Exception ex)
             {
