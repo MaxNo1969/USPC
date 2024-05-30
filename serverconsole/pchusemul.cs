@@ -147,6 +147,7 @@ namespace USPC
         public bool close()
         {
             if (!checkHandle()) return false;
+            log.add(LogRecord.LogReason.info, "{0}: {1}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name);
             hPCXUS = 0;
             return true;
         }
@@ -154,12 +155,14 @@ namespace USPC
         public bool load(string _fName, int _board = -1, int _test = -1)
         {
             if (!checkHandle()) return false;
+            log.add(LogRecord.LogReason.info, "{0}: {1}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name);
             return true;
         }
 
         public bool save(string _fName, int _board = -1, int _test = -1)
         {
             if (!checkHandle()) return false;
+            log.add(LogRecord.LogReason.info, "{0}: {1}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name);
             return true;
         }
 
@@ -169,6 +172,7 @@ namespace USPC
             bufferSize = _bufferSize;
             scans = new AcqAscan[bufferSize];
             boardStatus = ACQ_STATUS.ACQ_WAITING_START;
+            log.add(LogRecord.LogReason.info, "{0}: {1}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name);
             return true;
         }
 
@@ -180,6 +184,7 @@ namespace USPC
             _NumberOfScansAcquired = numberOfScans;
             _NumberOfScansRead = numberOfScans;
             if (!checkHandle()) return false;
+            log.add(LogRecord.LogReason.info, "{0}: {1}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name);
             return true;
         }
 
@@ -188,6 +193,7 @@ namespace USPC
             if (!checkHandle()) return false;
             boardStatus = ACQ_STATUS.ACQ_RUNNING;
             scanCounter = 0;
+            log.add(LogRecord.LogReason.info, "{0}: {1}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name);
             return true;            
         }
 
@@ -196,6 +202,7 @@ namespace USPC
             if (!checkHandle()) return false;
             boardStatus = ACQ_STATUS.ACQ_FINISHED_WITHOUT_SCANSBACKLOG;
             scanCounter = 0;
+            log.add(LogRecord.LogReason.info, "{0}: {1}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name);
             return true;
         }
         public bool clear(Int32 _board)
@@ -204,12 +211,14 @@ namespace USPC
             scans = null;
             scanCounter = 0;
             bufferSize = 0;
+            log.add(LogRecord.LogReason.info, "{0}: {1}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name);
             return true;
         }
         uint scanCounter = 0;
         public Int32 read(Int32 _board, byte[] _data, int _timeout = 200)
         {
             if (!checkHandle()) return 0;
+            log.add(LogRecord.LogReason.info, "{0}: {1}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name);
             return 0;
         }
         public Int32 read(Int32 _board, AcqAscan[] _data, int _timeout = 200)
@@ -237,6 +246,7 @@ namespace USPC
                     _data[i].G2WTlsb = (byte)(wt >> 16);
                 }
             }
+            log.add(LogRecord.LogReason.info, "{0}: {1}: {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name,numberOfScans);
             return numberOfScans;
         }
 
@@ -263,6 +273,7 @@ namespace USPC
             {
                 ascan.Points[i] = (byte)(50 + r.Next(50));
             }
+            log.add(LogRecord.LogReason.info, "{0}: {1}: {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ascan.DataSize);
             return true;
         }
 
@@ -304,7 +315,7 @@ namespace USPC
             info.scope_trigger = getParamValueDouble("scope_trigger", _board, _channel);
             info.scope_offset = getParamValueDouble("scope_offset", _board, _channel);
             info.scope_range = getParamValueDouble("scope_range", _board, _channel);
-
+            log.add(LogRecord.LogReason.info, "{0}: {1}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name);
             return info;
         }
     }
