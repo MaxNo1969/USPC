@@ -19,7 +19,6 @@ namespace USPC
         {
             InitializeComponent();
             Owner = _form;
-            MdiParent = _form;
             setupResultChart();
             UpdateChart();
         }

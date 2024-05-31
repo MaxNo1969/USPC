@@ -15,7 +15,6 @@ namespace USPC
     {
         public FRMain frMain;
         //public PCXUS pcxus;
-        public string serverAddr;
         public AcqAscan[] data = new AcqAscan[1024*100];
         UspcNetDataReaderForTest dataReader = null;
         void StartStopToggle(bool _start)
@@ -28,18 +27,6 @@ namespace USPC
             InitializeComponent();
             frMain = _frMain;
             Owner = _frMain;
-            MdiParent = _frMain;
-            //dataReader.dataAcquired += updateGraph;
-            try
-            {
-                serverAddr = Program.cmdLineArgs["Server"];
-            }
-            catch (Exception ex)
-            {
-                log.add(LogRecord.LogReason.warning, "FRTestTcp: btnTest_Click: Error: {0}", ex.Message);
-                log.add(LogRecord.LogReason.warning, "Parameter \"Server\" not assigned. Use \"127.0.0.1\"");
-                serverAddr = "127.0.0.1";
-            }
             dataReader = new UspcNetDataReaderForTest(this);
             StartStopToggle(true);
 

@@ -24,7 +24,6 @@ namespace USPC
         {
             InitializeComponent();
             Owner = _owner;
-            MdiParent = Program.frMain;
             KeyPreview = true;
             KeyDown += new KeyEventHandler(FRSensorView_KeyDown);
             data = _data;

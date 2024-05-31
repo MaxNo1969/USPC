@@ -22,7 +22,7 @@ namespace USPC
     public partial class FRMain : Form
     {
         //public PCXUS pcxus = null;
-        public BoardState boardState = BoardState.NotOpened;
+        //public BoardState boardState = BoardState.NotOpened;
 
         ///Подчиненные формы
         /// <summary>
@@ -53,9 +53,7 @@ namespace USPC
         {
             Thread.CurrentThread.Name = "MainWindow";
             InitializeComponent();
-            IsMdiContainer = true;
             WindowState = FormWindowState.Normal;
-            menu.MdiWindowListItem = miWindows;
 
             bStopForView = false;
 
@@ -73,8 +71,6 @@ namespace USPC
             // всё время работы программы
             pr = new FRProt(this)
             {
-                MdiParent = Program.frMain,
-                Dock = DockStyle.Bottom,
                 saveMethod = FRProt.SaveMethod._tofile,
             };
             //Тут можно вставить обработчик закрытия формы
@@ -86,10 +82,7 @@ namespace USPC
             //Настраиваем окно сигналов
             // Окно создаем сразу оно будет существовать 
             // всё время работы программы
-            fSignals = new FRSignals(SL.getInst())
-            {
-                MdiParent = Program.frMain,
-            };
+            fSignals = new FRSignals(SL.getInst());
             fSignals.onHide += new FRSignals.OnHideForm(() => { miWindowsSignals.Checked = false; });
             fSignals.Visible = FormPosSaver.visible(fSignals);
             miWindowsSignals.Checked = fSignals.Visible;
@@ -164,12 +157,10 @@ namespace USPC
                 int res = client.callNetworkFunction("open,2", out obj);
                 if (res != 0)
                 {
-                    boardState = BoardState.error;
                     throw new Exception(string.Format("callNetworkFunction(open) return {0:X8}", res));
                 }
                 else
                 {
-                    boardState = BoardState.Opened;
                     return;
                 }
             }
@@ -183,11 +174,6 @@ namespace USPC
 
         private void miLoadUSPC_Click(object sender, EventArgs e)
         {
-            if (boardState != BoardState.Opened)
-            {
-                MessageBox.Show("Плата USPC-3100 не открыта!", "Ошибка");
-                return;
-            }
             try
             {
                 PCXUSNetworkClient client = new PCXUSNetworkClient(Program.serverAddr);
@@ -205,11 +191,6 @@ namespace USPC
         }
         private void miCloseUSPC_Click(object sender, EventArgs e)
         {
-            if (boardState != BoardState.Opened)
-            {
-                MessageBox.Show("Плата USPC-3100 не открыта!", "Ошибка");
-                return;
-            }
             try
             {
                 PCXUSNetworkClient client = new PCXUSNetworkClient(Program.serverAddr);
@@ -218,11 +199,6 @@ namespace USPC
                 if (res != 0)
                 {
                     throw new Exception(string.Format("callNetworkFunction(close) return {0:X8}", res));
-                }
-                else
-                {
-                    boardState = BoardState.NotOpened;
-                    return;
                 }
             }
             catch (Exception Ex)

@@ -17,7 +17,6 @@ namespace USPC
         {
             InitializeComponent();
             Owner = _frMain;
-            MdiParent = _frMain;
             AcceptButton = btnSend;
             resp = new List<string>();
         }

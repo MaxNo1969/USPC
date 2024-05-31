@@ -13,8 +13,6 @@ namespace USPC
 {
     public partial class TestGetAscanFromNet : Form
     {
-        FRMain frMain;
-        string serverAddress = null;
         AscanInfo info;
 
         public AscanInfo GetAscanInfoNet(int _board, int _channel)
@@ -26,7 +24,7 @@ namespace USPC
             //          - the scope zero calibration
             //          To display gates according to:
             //          - the wave alternance selection (phase)   
-            PCXUSNetworkClient client = new PCXUSNetworkClient(serverAddress);
+            PCXUSNetworkClient client = new PCXUSNetworkClient(Program.serverAddr);
             Object retval = new Object();
             int res = client.callNetworkFunction("readdouble,scope_video",out retval);
             if (client.callNetworkFunction("readdouble,scope_video", out retval) == 0) info.Video = (AscanInfo.VideoMode)((double)retval);
@@ -60,18 +58,6 @@ namespace USPC
         public TestGetAscanFromNet(FRMain _frMain)
         {
             InitializeComponent();
-            frMain = _frMain;
-            MdiParent = frMain;
-            try
-            {
-                serverAddress = Program.cmdLineArgs["Server"];
-            }
-            catch (Exception ex)
-            {
-                log.add(LogRecord.LogReason.warning, "FRTestTcp: btnTest_Click: Error: {0}", ex.Message);
-                log.add(LogRecord.LogReason.warning, "Parameter \"Server\" not assigned. Use \"127.0.0.1\"");
-                serverAddress = "127.0.0.1";
-            }
             info = GetAscanInfoNet(0, 0);
         }
 
@@ -276,7 +262,7 @@ namespace USPC
         private void timer_Tick(object sender, EventArgs e)
         {
             Object retval = new Object();
-            PCXUSNetworkClient client = new PCXUSNetworkClient(serverAddress);
+            PCXUSNetworkClient client = new PCXUSNetworkClient(Program.serverAddr);
             int res = client.callNetworkFunction("ascan,0,0,100",out retval);
             if (res == 0)
             {

@@ -18,7 +18,6 @@ namespace USPC
         public FRDetails(Form _owner,USPCData _data, int _zone = 0, int _sensor = 0, int _offset = 0)
         {
             Owner = _owner;
-            MdiParent = Program.frMain;
             InitializeComponent();
             KeyPreview = true;
 

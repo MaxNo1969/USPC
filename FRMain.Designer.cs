@@ -103,20 +103,20 @@
             // 
             this.miStart.Name = "miStart";
             this.miStart.ShortcutKeys = System.Windows.Forms.Keys.F5;
-            this.miStart.Size = new System.Drawing.Size(152, 22);
+            this.miStart.Size = new System.Drawing.Size(146, 22);
             this.miStart.Text = "Старт";
             this.miStart.Click += new System.EventHandler(this.miStart_Click);
             // 
             // toolStripMenuItem1
             // 
             this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-            this.toolStripMenuItem1.Size = new System.Drawing.Size(149, 6);
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(143, 6);
             // 
             // miExit
             // 
             this.miExit.Name = "miExit";
             this.miExit.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.X)));
-            this.miExit.Size = new System.Drawing.Size(152, 22);
+            this.miExit.Size = new System.Drawing.Size(146, 22);
             this.miExit.Text = "Выход";
             this.miExit.Click += new System.EventHandler(this.miExit_Click);
             // 
@@ -131,7 +131,7 @@
             // miSettings
             // 
             this.miSettings.Name = "miSettings";
-            this.miSettings.Size = new System.Drawing.Size(152, 22);
+            this.miSettings.Size = new System.Drawing.Size(134, 22);
             this.miSettings.Text = "Настройки";
             this.miSettings.Click += new System.EventHandler(this.miSettings_Click);
             // 
@@ -396,7 +396,6 @@
             this.Controls.Add(this.tb);
             this.Controls.Add(this.sb);
             this.Controls.Add(this.menu);
-            this.IsMdiContainer = true;
             this.MainMenuStrip = this.menu;
             this.Name = "FRMain";
             this.Text = "USPC";

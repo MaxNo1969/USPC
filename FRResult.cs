@@ -17,7 +17,6 @@ namespace USPC
             InitializeComponent();
             DoubleBuffered = false;
             Owner = _parent;
-            MdiParent = _parent;
             FormPosSaver.load(this);
             FormClosing += new FormClosingEventHandler((object sender, FormClosingEventArgs e) => FormPosSaver.save(this));
             CrossView.lblName.Text = "Поперечный контроль";

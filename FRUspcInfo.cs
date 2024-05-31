@@ -13,16 +13,12 @@ namespace USPC
 {
     public partial class FRUspcInfo : Form
     {
-        FRMain frMain;
         public FRUspcInfo(FRMain _frMain)
         {
             InitializeComponent();
             Owner = _frMain;
-            MdiParent = _frMain;
-            frMain = _frMain;
             string srv = Program.serverAddr;
             List<string> info = new List<string>();
-            if(frMain.boardState == BoardState.Opened)
             {
                 int res;
                 PCXUSNetworkClient client = new PCXUSNetworkClient(srv);
@@ -96,10 +92,6 @@ namespace USPC
                 {
                     info.Add(string.Format("Ошибка при чтении параметра \"current_file_name\":{0:X8}", res));
                 }
-            }
-            else
-            {
-                info.Add("Плата USPC не проинициализирована!");
             }
             txtInfo.Lines = info.ToArray();
         }
