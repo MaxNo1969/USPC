@@ -28,14 +28,14 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea5 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Series series5 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea6 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Series series6 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea7 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Series series7 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea8 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Series series8 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea2 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Series series2 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea3 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Series series3 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea4 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Series series4 = new System.Windows.Forms.DataVisualization.Charting.Series();
             this.lay = new System.Windows.Forms.TableLayoutPanel();
             this.ch4 = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.ch3 = new System.Windows.Forms.DataVisualization.Charting.Chart();
@@ -77,84 +77,89 @@
             // ch4
             // 
             this.ch4.BorderlineWidth = 0;
-            chartArea5.AxisX.LabelStyle.Enabled = false;
-            chartArea5.AxisX.MajorGrid.Enabled = false;
-            chartArea5.AxisX.MajorTickMark.Enabled = false;
-            chartArea5.InnerPlotPosition.Auto = false;
-            chartArea5.InnerPlotPosition.Height = 100F;
-            chartArea5.InnerPlotPosition.Width = 100F;
-            chartArea5.Name = "Default";
-            this.ch4.ChartAreas.Add(chartArea5);
+            chartArea1.AxisX.LabelStyle.Enabled = false;
+            chartArea1.AxisX.MajorGrid.Enabled = false;
+            chartArea1.AxisX.MajorTickMark.Enabled = false;
+            chartArea1.InnerPlotPosition.Auto = false;
+            chartArea1.InnerPlotPosition.Height = 100F;
+            chartArea1.InnerPlotPosition.Width = 100F;
+            chartArea1.Name = "Default";
+            this.ch4.ChartAreas.Add(chartArea1);
             this.ch4.Dock = System.Windows.Forms.DockStyle.Fill;
             this.ch4.Location = new System.Drawing.Point(6, 122);
             this.ch4.Name = "ch4";
-            series5.ChartArea = "Default";
-            series5.IsVisibleInLegend = false;
-            series5.Name = "ser";
-            this.ch4.Series.Add(series5);
+            series1.ChartArea = "Default";
+            series1.IsVisibleInLegend = false;
+            series1.Name = "ser";
+            this.ch4.Series.Add(series1);
             this.ch4.Size = new System.Drawing.Size(1012, 22);
             this.ch4.TabIndex = 4;
             // 
             // ch3
             // 
             this.ch3.BorderlineWidth = 0;
-            chartArea6.AxisX.LabelStyle.Enabled = false;
-            chartArea6.AxisX.MajorGrid.Enabled = false;
-            chartArea6.AxisX.MajorTickMark.Enabled = false;
-            chartArea6.InnerPlotPosition.Auto = false;
-            chartArea6.InnerPlotPosition.Height = 100F;
-            chartArea6.InnerPlotPosition.Width = 100F;
-            chartArea6.Name = "Default";
-            this.ch3.ChartAreas.Add(chartArea6);
+            chartArea2.AxisX.LabelStyle.Enabled = false;
+            chartArea2.AxisX.MajorGrid.Enabled = false;
+            chartArea2.AxisX.MajorTickMark.Enabled = false;
+            chartArea2.InnerPlotPosition.Auto = false;
+            chartArea2.InnerPlotPosition.Height = 100F;
+            chartArea2.InnerPlotPosition.Width = 100F;
+            chartArea2.Name = "Default";
+            this.ch3.ChartAreas.Add(chartArea2);
             this.ch3.Dock = System.Windows.Forms.DockStyle.Fill;
             this.ch3.Location = new System.Drawing.Point(6, 93);
             this.ch3.Name = "ch3";
-            series6.ChartArea = "Default";
-            series6.IsVisibleInLegend = false;
-            series6.Name = "ser";
-            this.ch3.Series.Add(series6);
+            series2.ChartArea = "Default";
+            series2.IsVisibleInLegend = false;
+            series2.Name = "ser";
+            this.ch3.Series.Add(series2);
             this.ch3.Size = new System.Drawing.Size(1012, 20);
             this.ch3.TabIndex = 3;
             // 
             // ch2
             // 
             this.ch2.BorderlineWidth = 0;
-            chartArea7.AxisX.LabelStyle.Enabled = false;
-            chartArea7.AxisX.MajorGrid.Enabled = false;
-            chartArea7.AxisX.MajorTickMark.Enabled = false;
-            chartArea7.InnerPlotPosition.Auto = false;
-            chartArea7.InnerPlotPosition.Height = 100F;
-            chartArea7.InnerPlotPosition.Width = 100F;
-            chartArea7.Name = "Default";
-            this.ch2.ChartAreas.Add(chartArea7);
+            chartArea3.AxisX.LabelStyle.Enabled = false;
+            chartArea3.AxisX.MajorGrid.Enabled = false;
+            chartArea3.AxisX.MajorTickMark.Enabled = false;
+            chartArea3.InnerPlotPosition.Auto = false;
+            chartArea3.InnerPlotPosition.Height = 100F;
+            chartArea3.InnerPlotPosition.Width = 100F;
+            chartArea3.Name = "Default";
+            this.ch2.ChartAreas.Add(chartArea3);
             this.ch2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.ch2.Location = new System.Drawing.Point(6, 64);
             this.ch2.Name = "ch2";
-            series7.ChartArea = "Default";
-            series7.IsVisibleInLegend = false;
-            series7.Name = "ser";
-            this.ch2.Series.Add(series7);
+            series3.ChartArea = "Default";
+            series3.IsVisibleInLegend = false;
+            series3.Name = "ser";
+            this.ch2.Series.Add(series3);
             this.ch2.Size = new System.Drawing.Size(1012, 20);
             this.ch2.TabIndex = 2;
             // 
             // ch1
             // 
             this.ch1.BorderlineWidth = 0;
-            chartArea8.AxisX.LabelStyle.Enabled = false;
-            chartArea8.AxisX.MajorGrid.Enabled = false;
-            chartArea8.AxisX.MajorTickMark.Enabled = false;
-            chartArea8.InnerPlotPosition.Auto = false;
-            chartArea8.InnerPlotPosition.Height = 100F;
-            chartArea8.InnerPlotPosition.Width = 100F;
-            chartArea8.Name = "Default";
-            this.ch1.ChartAreas.Add(chartArea8);
+            chartArea4.AxisX.IsLabelAutoFit = false;
+            chartArea4.AxisX.LabelStyle.Enabled = false;
+            chartArea4.AxisX.MajorGrid.Enabled = false;
+            chartArea4.AxisX.MajorTickMark.Enabled = false;
+            chartArea4.AxisY.MajorGrid.Enabled = false;
+            chartArea4.BackColor = System.Drawing.Color.White;
+            chartArea4.InnerPlotPosition.Auto = false;
+            chartArea4.InnerPlotPosition.Height = 100F;
+            chartArea4.InnerPlotPosition.Width = 100F;
+            chartArea4.IsSameFontSizeForAllAxes = true;
+            chartArea4.Name = "Default";
+            this.ch1.ChartAreas.Add(chartArea4);
             this.ch1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.ch1.IsSoftShadows = false;
             this.ch1.Location = new System.Drawing.Point(6, 35);
             this.ch1.Name = "ch1";
-            series8.ChartArea = "Default";
-            series8.IsVisibleInLegend = false;
-            series8.Name = "ser";
-            this.ch1.Series.Add(series8);
+            series4.ChartArea = "Default";
+            series4.IsVisibleInLegend = false;
+            series4.Name = "ser";
+            this.ch1.Series.Add(series4);
             this.ch1.Size = new System.Drawing.Size(1012, 20);
             this.ch1.TabIndex = 0;
             // 

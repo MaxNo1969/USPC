@@ -62,31 +62,53 @@ namespace USPC
             timerUpdUI.Start();
         }
 
-        private void FRMain_Load(object sender, EventArgs e)
+        #region Протокол и сигнвлы
+        /// <summary>
+        /// Настраиваем протокол
+        /// Окно протокола создаем сразу оно будет существовать 
+        /// всё время работы программы
+        /// </summary>
+        /// <param name="_fr">Окно - владелец</param>
+        private void InitProtocolWindow(Form _fr)
         {
-            //восстановление размеров главного окна        
-            FormPosSaver.load(this);
-            //Настраиваем протокол
-            // Окно протокола создаем сразу оно будет существовать 
-            // всё время работы программы
             pr = new FRProt(this)
             {
                 saveMethod = FRProt.SaveMethod._tofile,
+                Owner=_fr,
             };
             //Тут можно вставить обработчик закрытия формы
             pr.onHide += new FRProt.OnHideForm(() => { miWindowsProt.Checked = false; });
             pr.Visible = FormPosSaver.visible(pr);
             miWindowsProt.Checked = pr.Visible;
             FormPosSaver.load(pr);
-
-            //Настраиваем окно сигналов
-            // Окно создаем сразу оно будет существовать 
-            // всё время работы программы
-            fSignals = new FRSignals(SL.getInst());
+        }
+        /// <summary>
+        /// Настраиваем окно сигналов
+        /// Окно создаем сразу оно будет существовать 
+        /// всё время работы программы
+        /// </summary>
+        /// <param name="_fr">Окно - владелец</param>
+        private void InitSignalsWindow(Form _fr)
+        {
+            fSignals = new FRSignals(SL.getInst())
+            {
+                Owner = _fr,
+            };
             fSignals.onHide += new FRSignals.OnHideForm(() => { miWindowsSignals.Checked = false; });
             fSignals.Visible = FormPosSaver.visible(fSignals);
             miWindowsSignals.Checked = fSignals.Visible;
+        }
+        #endregion Протокол и сигнвлы
 
+        private void FRMain_Load(object sender, EventArgs e)
+        {
+            //восстановление размеров главного окна        
+            FormPosSaver.load(this);
+            //Настраиваем протокол
+            InitProtocolWindow(this);
+            //Настраиваем окно сигналов
+            InitSignalsWindow(this);
+            //Типоразмеры
             string[] typeSizeNames = Program.typeSize.allTypesizes();
             foreach (string s in typeSizeNames)
             {
@@ -94,6 +116,10 @@ namespace USPC
                 if (s == Program.typeSize.name) cbTypeSize.SelectedIndex = ind;
             }
 
+            CrossView.lblName.Text = "Поперечный контроль";
+            LinearView.lblName.Text = "Продольный контроль";
+            ThickView.lblName.Text = "Котроль толщины";
+            
             setSb("Info", "Для начала работы нажмите F5");
         }
 

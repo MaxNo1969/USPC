@@ -39,10 +39,12 @@ namespace USPC
             a.AxisX.Maximum = USPCData.countZones;
             a.AxisX.Interval = 10;
             a.AxisX.LabelStyle.Enabled = false;
+            a.AxisX.MajorGrid.Enabled = false;
             a.AxisY.Minimum = 0;
             a.AxisY.Maximum = 100;
             a.AxisY.Interval = 5;
             a.AxisY.LabelStyle.Enabled = false;
+            a.AxisY.MajorGrid.Enabled = false;
             _c.ChartAreas.Clear();
             _c.ChartAreas.Add(a);
             _c.Series.Clear();

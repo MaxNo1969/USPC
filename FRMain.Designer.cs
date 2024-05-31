@@ -29,6 +29,8 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
             this.menu = new System.Windows.Forms.MenuStrip();
             this.miMainWork = new System.Windows.Forms.ToolStripMenuItem();
             this.miStart = new System.Windows.Forms.ToolStripMenuItem();
@@ -68,9 +70,16 @@
             this.toolStripLabel1 = new System.Windows.Forms.ToolStripLabel();
             this.lblTubesCount = new System.Windows.Forms.ToolStripLabel();
             this.cbTypeSize = new System.Windows.Forms.ToolStripComboBox();
+            this.lay = new System.Windows.Forms.TableLayoutPanel();
+            this.ThickView = new USPC.UC4SensorView();
+            this.LinearView = new USPC.UC4SensorView();
+            this.CrossView = new USPC.UC4SensorView();
+            this.ResultChart = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.menu.SuspendLayout();
             this.sb.SuspendLayout();
             this.tb.SuspendLayout();
+            this.lay.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.ResultChart)).BeginInit();
             this.SuspendLayout();
             // 
             // menu
@@ -85,7 +94,7 @@
             this.miEmul});
             this.menu.Location = new System.Drawing.Point(0, 0);
             this.menu.Name = "menu";
-            this.menu.Size = new System.Drawing.Size(1020, 24);
+            this.menu.Size = new System.Drawing.Size(1218, 24);
             this.menu.TabIndex = 1;
             this.menu.Text = "menuStrip1";
             // 
@@ -292,9 +301,9 @@
             this.speed,
             this.duration,
             this.heap});
-            this.sb.Location = new System.Drawing.Point(0, 517);
+            this.sb.Location = new System.Drawing.Point(0, 566);
             this.sb.Name = "sb";
-            this.sb.Size = new System.Drawing.Size(1020, 22);
+            this.sb.Size = new System.Drawing.Size(1218, 22);
             this.sb.TabIndex = 2;
             this.sb.Text = "sb";
             // 
@@ -303,7 +312,7 @@
             this.info.AutoSize = false;
             this.info.BorderSides = System.Windows.Forms.ToolStripStatusLabelBorderSides.Right;
             this.info.Name = "info";
-            this.info.Size = new System.Drawing.Size(495, 17);
+            this.info.Size = new System.Drawing.Size(693, 17);
             this.info.Spring = true;
             this.info.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
@@ -362,7 +371,7 @@
             this.cbTypeSize});
             this.tb.Location = new System.Drawing.Point(0, 24);
             this.tb.Name = "tb";
-            this.tb.Size = new System.Drawing.Size(1020, 33);
+            this.tb.Size = new System.Drawing.Size(1218, 33);
             this.tb.TabIndex = 4;
             // 
             // toolStripLabel1
@@ -388,11 +397,70 @@
             this.cbTypeSize.Size = new System.Drawing.Size(121, 33);
             this.cbTypeSize.SelectedIndexChanged += new System.EventHandler(this.cbTypeSize_SelectedIndexChanged);
             // 
+            // lay
+            // 
+            this.lay.CellBorderStyle = System.Windows.Forms.TableLayoutPanelCellBorderStyle.InsetDouble;
+            this.lay.ColumnCount = 1;
+            this.lay.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.lay.Controls.Add(this.ThickView, 0, 2);
+            this.lay.Controls.Add(this.LinearView, 0, 1);
+            this.lay.Controls.Add(this.CrossView, 0, 0);
+            this.lay.Controls.Add(this.ResultChart, 0, 3);
+            this.lay.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lay.Location = new System.Drawing.Point(0, 57);
+            this.lay.Name = "lay";
+            this.lay.RowCount = 4;
+            this.lay.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 25F));
+            this.lay.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 25F));
+            this.lay.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 25F));
+            this.lay.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 25F));
+            this.lay.Size = new System.Drawing.Size(1218, 509);
+            this.lay.TabIndex = 5;
+            // 
+            // ThickView
+            // 
+            this.ThickView.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.ThickView.Location = new System.Drawing.Point(6, 258);
+            this.ThickView.Name = "ThickView";
+            this.ThickView.Size = new System.Drawing.Size(1206, 117);
+            this.ThickView.TabIndex = 2;
+            // 
+            // LinearView
+            // 
+            this.LinearView.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.LinearView.Location = new System.Drawing.Point(6, 132);
+            this.LinearView.Name = "LinearView";
+            this.LinearView.Size = new System.Drawing.Size(1206, 117);
+            this.LinearView.TabIndex = 1;
+            // 
+            // CrossView
+            // 
+            this.CrossView.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.CrossView.Location = new System.Drawing.Point(6, 6);
+            this.CrossView.Name = "CrossView";
+            this.CrossView.Size = new System.Drawing.Size(1206, 117);
+            this.CrossView.TabIndex = 0;
+            // 
+            // ResultChart
+            // 
+            chartArea1.AxisY.LabelStyle.Enabled = false;
+            chartArea1.Name = "Default";
+            this.ResultChart.ChartAreas.Add(chartArea1);
+            this.ResultChart.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.ResultChart.Location = new System.Drawing.Point(6, 384);
+            this.ResultChart.Name = "ResultChart";
+            series1.ChartArea = "Default";
+            series1.Name = "Series1";
+            this.ResultChart.Series.Add(series1);
+            this.ResultChart.Size = new System.Drawing.Size(1206, 119);
+            this.ResultChart.TabIndex = 3;
+            // 
             // FRMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1020, 539);
+            this.ClientSize = new System.Drawing.Size(1218, 588);
+            this.Controls.Add(this.lay);
             this.Controls.Add(this.tb);
             this.Controls.Add(this.sb);
             this.Controls.Add(this.menu);
@@ -407,6 +475,8 @@
             this.sb.PerformLayout();
             this.tb.ResumeLayout(false);
             this.tb.PerformLayout();
+            this.lay.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.ResultChart)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -453,6 +523,11 @@
         private System.Windows.Forms.ToolStripMenuItem genToolStripMenuItem;
         private System.Windows.Forms.ToolStripLabel toolStripLabel1;
         private System.Windows.Forms.ToolStripComboBox cbTypeSize;
+        private System.Windows.Forms.TableLayoutPanel lay;
+        public UC4SensorView ThickView;
+        public UC4SensorView LinearView;
+        public UC4SensorView CrossView;
+        private System.Windows.Forms.DataVisualization.Charting.Chart ResultChart;
 
     }
 }
