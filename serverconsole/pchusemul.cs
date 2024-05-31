@@ -267,7 +267,7 @@ namespace USPC
             ascan.G2Level = 80;
             ascan.G1Amp = (byte)(90 + r.Next(10));
             ascan.G2Amp = (byte)(90 + r.Next(10));
-            ascan.DataSize = 200;
+            ascan.DataSize = (ushort)(200+r.Next(20));
             ascan.Points = new byte[ascan.DataSize];
             for (int i = 0; i < ascan.DataSize; i++)
             {
