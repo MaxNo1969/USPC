@@ -8,7 +8,8 @@ using Data;
 
 namespace USPC
 {
-    class UspcNetDataReader:BackgroundWorker
+    public delegate void OnDataAcquired(int _NumberOfScans, AcqAscan[] _data);
+    class UspcNetDataReader : BackgroundWorker
     {
         string serverAddr;
         USPCData data = null;
@@ -42,15 +43,7 @@ namespace USPC
 
         void worker_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
-            try
-            {
-                int countFrames = e.ProgressPercentage;
-            }
-            catch (Exception ex)
-            {
-                log.add(LogRecord.LogReason.error, "{0}: {1}: Error: {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message);
-                return;
-            }
+
         }
 
         void worker_DoWork(object sender, DoWorkEventArgs e)
@@ -95,10 +88,10 @@ namespace USPC
                     Int32 NumberOfScans = client.callNetworkFunction("read", out retval);
                     AcqAscan[] buffer = (AcqAscan[])retval;
                     if (dataAcquired != null) dataAcquired(NumberOfScans, buffer);
-                    Array.Copy(buffer, 0, data.ascanBuffer, data.currentOffsetFrames,NumberOfScans);
-                    data.labels.Add(new BufferStamp(DateTime.Now, data.currentOffsetFrames));
-                    data.currentOffsetFrames += NumberOfScans;
-                    ReportProgress(NumberOfScans);
+                    //Array.Copy(buffer, 0, data.ascanBuffer, data.currentOffsetFrames,NumberOfScans);
+                    //data.labels.Add(new BufferStamp(DateTime.Now, data.currentOffsetFrames));
+                    //data.currentOffsetFrames += NumberOfScans;
+                    ReportProgress(NumberOfScans,(object)buffer);
                 }
                 catch (Exception ex)
                 {

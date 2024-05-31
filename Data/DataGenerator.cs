@@ -36,6 +36,7 @@ namespace Data
                         scans[frame + sensor].G1Tof = G1Tof;
                     }
                 }
+                _w.ReportProgress((int)(frame * 100 / _count));
             }
             for (int zone = 0; zone < USPCData.countZones; zone++)
             {

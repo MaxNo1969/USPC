@@ -23,9 +23,21 @@ namespace Data
             sensors = _sensors;
             zones = 0;
             values = new List<List<double>>();
+            for (int i = 0; i < sensors; i++)
+            {
+                values.Add(new List<double>());
+            }
             zoneStart = new List<int>();
             zoneStart.Add(0);
         }
+        public void Clear()
+        {
+            for (int i = 0; i < sensors; i++)
+            {
+                values[i].Clear();
+            }
+        }
+
     }
 
     class CrossResult : Result
@@ -33,7 +45,12 @@ namespace Data
         public CrossResult(int _sensors):base(0,_sensors){}
         public override void addZone()
         {
+            Random r = new Random();
             base.addZone();
+            for(int i = 0;i<sensors;i++)
+            {
+                values[i].Add(90.0 + r.Next(10));
+            }
         }
     }
     class LinearResult : Result
@@ -41,7 +58,12 @@ namespace Data
         public LinearResult(int _sensors):base(0,_sensors){}
         public override void addZone()
         {
+            Random r = new Random();
             base.addZone();
+            for (int i = 0; i < sensors; i++)
+            {
+                values[i].Add(90.0 + r.Next(10));
+            }
         }
     }
     class ThickResult : Result
@@ -49,7 +71,12 @@ namespace Data
         public ThickResult(int _sensors) : base(1,_sensors) { }
         public override void addZone()
         {
+            Random r = new Random();
             base.addZone();
+            for (int i = 0; i < sensors; i++)
+            {
+                values[i].Add(90.0 + r.Next(10));
+            }
         }
     }
     class TubeResult
@@ -57,11 +84,24 @@ namespace Data
         public CrossResult cross;
         public LinearResult linear;
         public ThickResult thick;
+        public TubeResult()
+        {
+            cross = new CrossResult(4);
+            linear = new LinearResult(4);
+            thick = new ThickResult(4);
+        }
         public void AddNewZone()
         {
             cross.addZone();
             linear.addZone();
             thick.addZone();
+        }
+
+        internal void Clear()
+        {
+            cross.Clear();
+            linear.Clear();
+            thick.Clear();
         }
     }
 }

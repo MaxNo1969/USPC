@@ -65,8 +65,9 @@ namespace CHART
             chart.Series[0].Points.Clear();
             for (int i = 0; i < data.Length; i++)
             {
-                var val = data.GetValue(i);
-                chart.Series[0].Points.AddXY(i, val);
+                double val = (double)data.GetValue(i);
+                int ind = chart.Series[0].Points.AddXY(i, val);
+                chart.Series[0].Points[ind].Color = DrawResults.GetColor(val);
             }
         }
 

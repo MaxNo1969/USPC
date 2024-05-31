@@ -58,7 +58,8 @@ namespace USPC
             bStopForView = false;
 
             // Рабочий поток
-            worker = new MainWorker(this);
+            //worker = new MainWorker(this);
+
             timerUpdUI.Start();
         }
 
@@ -75,6 +76,7 @@ namespace USPC
             {
                 saveMethod = FRProt.SaveMethod._tofile,
                 Owner=_fr,
+                ShowInTaskbar=false,
             };
             //Тут можно вставить обработчик закрытия формы
             pr.onHide += new FRProt.OnHideForm(() => { miWindowsProt.Checked = false; });
@@ -93,6 +95,7 @@ namespace USPC
             fSignals = new FRSignals(SL.getInst())
             {
                 Owner = _fr,
+                ShowInTaskbar = false,
             };
             fSignals.onHide += new FRSignals.OnHideForm(() => { miWindowsSignals.Checked = false; });
             fSignals.Visible = FormPosSaver.visible(fSignals);
@@ -129,6 +132,7 @@ namespace USPC
             miStart.Text = (_start) ? "Старт" : "Стоп";
         }
 
+        BackgroundWorker testWorker = null;
         /// <summary>
         /// Запуск/остановка рабочего потока
         /// (В workThread вызывается из другого потока)
@@ -141,17 +145,92 @@ namespace USPC
                 startWorkTime = DateTime.UtcNow;
                 SL.getInst().oPEREKL.Val = true;
                 Thread.Sleep(100);
-                worker.RunWorkerAsync();               
+                testWorker = new BackgroundWorker()
+                {
+                    WorkerReportsProgress = true,
+                    WorkerSupportsCancellation = true,
+                };
+                testWorker.ProgressChanged += new ProgressChangedEventHandler(testWorker_ProgressChanged);
+                testWorker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(testWorker_RunWorkerCompleted);
+                testWorker.DoWork += new DoWorkEventHandler(testWorker_DoWork);
+                Program.result.Clear();
+                testWorker.RunWorkerAsync();
                 setSb("Info", "Работа");
                 setStartStopMenu(false);
             }
             else
             {
-                worker.CancelAsync();
-                //while (worker.IsBusy) Thread.Sleep(100);
+
+                if (testWorker != null && testWorker.IsBusy)
+                {
+                    testWorker.CancelAsync();
+                    testWorker = null;
+                }
                 setSb("Info", "Нажмите F5 для начала работы");
                 setStartStopMenu(true);
             }
+        }
+
+        void testWorker_DoWork(object sender, DoWorkEventArgs e)
+        {
+            BackgroundWorker worker = (BackgroundWorker)sender;
+            log.add(LogRecord.LogReason.info, "{0}: {1}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name);
+            while (true)
+            {
+                if (worker.CancellationPending)
+                {
+                    e.Cancel = true;
+                    break;
+                }
+                else
+                {
+                    Program.result.AddNewZone();
+                    worker.ReportProgress(0);
+                    Thread.Sleep(1000);
+                }
+            }
+        }
+
+        private void PutDataOnCharts()
+        {
+            double[] values = Program.result.cross.values[0].ToArray();
+            UC4SensorView.PutDataOnChart(CrossView.ch1, values);
+            values = Program.result.cross.values[1].ToArray();
+            UC4SensorView.PutDataOnChart(CrossView.ch2, values);
+            values = Program.result.cross.values[2].ToArray();
+            UC4SensorView.PutDataOnChart(CrossView.ch3, values);
+            values = Program.result.cross.values[3].ToArray();
+            UC4SensorView.PutDataOnChart(CrossView.ch4, values);
+
+            values = Program.result.linear.values[0].ToArray();
+            UC4SensorView.PutDataOnChart(LinearView.ch1, values);
+            values = Program.result.linear.values[1].ToArray();
+            UC4SensorView.PutDataOnChart(LinearView.ch2, values);
+            values = Program.result.linear.values[2].ToArray();
+            UC4SensorView.PutDataOnChart(LinearView.ch3, values);
+            values = Program.result.linear.values[3].ToArray();
+            UC4SensorView.PutDataOnChart(LinearView.ch4, values);
+
+
+            values = Program.result.thick.values[0].ToArray();
+            UC4SensorView.PutDataOnChart(ThickView.ch1, values);
+            values = Program.result.thick.values[1].ToArray();
+            UC4SensorView.PutDataOnChart(ThickView.ch2, values);
+            values = Program.result.thick.values[2].ToArray();
+            UC4SensorView.PutDataOnChart(ThickView.ch3, values);
+            values = Program.result.thick.values[3].ToArray();
+            UC4SensorView.PutDataOnChart(ThickView.ch4, values);
+        }
+
+        void testWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            log.add(LogRecord.LogReason.info, "{0}: {1}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name);
+        }
+
+        void testWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)
+        {
+            log.add(LogRecord.LogReason.info, "{0}: {1}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name);
+            PutDataOnCharts();
         }
 
 
@@ -183,7 +262,7 @@ namespace USPC
                 int res = client.callNetworkFunction("open,2", out obj);
                 if (res != 0)
                 {
-                    throw new Exception(string.Format("callNetworkFunction(open) return {0:X8}", res));
+                    throw new Exception(string.Format("callNetworkFunction(open) return {0}", ((ErrorCode)res).ToString()));
                 }
                 else
                 {
@@ -268,10 +347,9 @@ namespace USPC
         private void miSettings_Click(object sender, EventArgs e)
         {
             //btnSettings.Enabled = false;
-            miSettings.Enabled = false;
+            //miSettings.Enabled = false;
             FRSettings frm = new FRSettings();
             frm.FormClosed += new FormClosedEventHandler((object _o, FormClosedEventArgs _e) => { /*btnSettings.Enabled = true;*/ miSettings.Enabled = true; });
-            frm.MdiParent = this;
             frm.Show();
         }
 
@@ -429,7 +507,7 @@ namespace USPC
                     //Program.data.save((Object)args.fileName);
                     break;
                 case "Генерация":
-                    DataGenerator.GenerateThicknessData(16, 900000);
+                    DataGenerator.GenerateThicknessData(16,0,USPCData.countFrames,w);
                     break;
                 case "Пересчет":
                     //stick.recalc(w, e);

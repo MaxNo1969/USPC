@@ -140,6 +140,7 @@
             // ch1
             // 
             this.ch1.BorderlineWidth = 0;
+            chartArea4.AlignmentOrientation = ((System.Windows.Forms.DataVisualization.Charting.AreaAlignmentOrientations)((System.Windows.Forms.DataVisualization.Charting.AreaAlignmentOrientations.Vertical | System.Windows.Forms.DataVisualization.Charting.AreaAlignmentOrientations.Horizontal)));
             chartArea4.AxisX.IsLabelAutoFit = false;
             chartArea4.AxisX.LabelStyle.Enabled = false;
             chartArea4.AxisX.MajorGrid.Enabled = false;
@@ -152,15 +153,18 @@
             chartArea4.IsSameFontSizeForAllAxes = true;
             chartArea4.Name = "Default";
             this.ch1.ChartAreas.Add(chartArea4);
+            this.ch1.Cursor = System.Windows.Forms.Cursors.Default;
             this.ch1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.ch1.IsSoftShadows = false;
-            this.ch1.Location = new System.Drawing.Point(6, 35);
+            this.ch1.Location = new System.Drawing.Point(3, 32);
+            this.ch1.Margin = new System.Windows.Forms.Padding(0);
             this.ch1.Name = "ch1";
             series4.ChartArea = "Default";
             series4.IsVisibleInLegend = false;
             series4.Name = "ser";
+            series4.SmartLabelStyle.Enabled = false;
             this.ch1.Series.Add(series4);
-            this.ch1.Size = new System.Drawing.Size(1012, 20);
+            this.ch1.Size = new System.Drawing.Size(1018, 26);
             this.ch1.TabIndex = 0;
             // 
             // pInfo

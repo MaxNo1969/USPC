@@ -82,6 +82,17 @@ namespace USPC
             else
                 return Class2;
         }
+        //! Возвращает цвет измерения (зоны, датчика, смещения - чего угодно)
+        public static Color GetDefectColor(double measure)
+        {
+            // возвращает цвет зоны в зависимости от толщины в этой зоне
+            if (measure > class2Treshold)
+                return Good;
+            else if (measure <= defectTreshold)
+                return Brack;
+            else
+                return Class2;
+        }
         //! Возвращает цвет измерения
         //! Добавление нового метода для коррктного отображения в ViewTubeDetails
         public static Color GetColor(double measure, th_status thCode)

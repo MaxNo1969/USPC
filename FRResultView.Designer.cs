@@ -36,16 +36,20 @@
             // 
             // chartResult
             // 
+            chartArea1.CursorX.IsUserEnabled = true;
+            chartArea1.CursorX.LineColor = System.Drawing.Color.Black;
+            chartArea1.CursorX.LineWidth = 3;
+            chartArea1.CursorX.Position = 0D;
             chartArea1.InnerPlotPosition.Auto = false;
             chartArea1.InnerPlotPosition.Height = 95F;
             chartArea1.InnerPlotPosition.Width = 90F;
             chartArea1.InnerPlotPosition.X = 3F;
-            chartArea1.Name = "ChartArea1";
+            chartArea1.Name = "Default";
             this.chartResult.ChartAreas.Add(chartArea1);
             this.chartResult.Dock = System.Windows.Forms.DockStyle.Fill;
             this.chartResult.Location = new System.Drawing.Point(0, 0);
             this.chartResult.Name = "chartResult";
-            series1.ChartArea = "ChartArea1";
+            series1.ChartArea = "Default";
             series1.CustomProperties = "DrawingStyle=Emboss, PointWidth=1";
             series1.Legend = "Legend1";
             series1.Name = "Series1";

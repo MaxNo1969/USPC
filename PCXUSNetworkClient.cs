@@ -53,7 +53,7 @@ namespace USPC
                     }
                     if (result != 0)
                     {
-                        log.add(LogRecord.LogReason.error, "{0}: {1}: {2}: {3:X8}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name,_func,result);
+                        log.add(LogRecord.LogReason.error, "{0}: {1}: {2}: {3}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name,_func,((ErrorCode)result).ToString());
                         return result;
                     }
                     string[] funcAndArgs = _func.Split(new char[] {','});
