@@ -37,8 +37,14 @@ namespace USPC
         /// <summary>
         ///рабочий воркер
         /// </summary>
-        MainWorker worker=null;
+        TubeWorker worker=null;
 
+        /// <summary>
+        ///Добавление новых зон
+        /// </summary>
+        ZoneBackGroundWorker zoneAdder = null;
+
+        
         /// <summary>
         ///Время начала работы
         /// </summary>
@@ -132,11 +138,11 @@ namespace USPC
             miStart.Text = (_start) ? "Старт" : "Стоп";
         }
 
-        BackgroundWorker testWorker = null;
+        //BackgroundWorker testWorker = null;
         /// <summary>
         /// Запуск/остановка рабочего потока
         /// (В workThread вызывается из другого потока)
-        /// </summary>
+        /// </summary> 
         public void startStop()
         {
             log.add(LogRecord.LogReason.info, "{0}: {1}: {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, miStart.Text);
@@ -144,31 +150,55 @@ namespace USPC
             {
                 startWorkTime = DateTime.UtcNow;
                 SL.getInst().oPEREKL.Val = true;
-                Thread.Sleep(100);
-                testWorker = new BackgroundWorker()
-                {
-                    WorkerReportsProgress = true,
-                    WorkerSupportsCancellation = true,
-                };
-                testWorker.ProgressChanged += new ProgressChangedEventHandler(testWorker_ProgressChanged);
-                testWorker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(testWorker_RunWorkerCompleted);
-                testWorker.DoWork += new DoWorkEventHandler(testWorker_DoWork);
+                Thread.Sleep(200);
+                SL.getInst().oPEREKL.Val = false;
+                if (zoneAdder == null)
+                    zoneAdder = new ZoneBackGroundWorker();
+                if(worker == null)
+                    worker = new TubeWorker(this);
+                zoneAdder.ProgressChanged += new ProgressChangedEventHandler(zoneAdder_ProgressChanged);
+
+                //testWorker = new BackgroundWorker()
+                //{
+                //    WorkerReportsProgress = true,
+                //    WorkerSupportsCancellation = true,
+                //};
+                //testWorker.ProgressChanged += new ProgressChangedEventHandler(testWorker_ProgressChanged);
+                //testWorker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(testWorker_RunWorkerCompleted);
+                //testWorker.DoWork += new DoWorkEventHandler(testWorker_DoWork);
                 Program.result.Clear();
-                testWorker.RunWorkerAsync();
+                //testWorker.RunWorkerAsync();
+                zoneAdder.RunWorkerAsync();
+                worker.RunWorkerAsync();
                 setSb("Info", "Работа");
                 setStartStopMenu(false);
             }
             else
             {
 
-                if (testWorker != null && testWorker.IsBusy)
+                if (worker != null && worker.IsBusy)
                 {
-                    testWorker.CancelAsync();
-                    testWorker = null;
+                    worker.CancelAsync();
+                    worker = null;
                 }
+                if (zoneAdder != null && zoneAdder.IsBusy)
+                {
+                    zoneAdder.CancelAsync();
+                    zoneAdder = null;
+                }
+                //if (testWorker != null && testWorker.IsBusy)
+                //{
+                //    testWorker.CancelAsync();
+                //    testWorker = null;
+                //}
                 setSb("Info", "Нажмите F5 для начала работы");
                 setStartStopMenu(true);
             }
+        }
+
+        void zoneAdder_ProgressChanged(object sender, ProgressChangedEventArgs e)
+        {
+            log.add(LogRecord.LogReason.info, "{0}: {1}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name);
         }
 
         void testWorker_DoWork(object sender, DoWorkEventArgs e)
@@ -229,7 +259,7 @@ namespace USPC
 
         void testWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
-            log.add(LogRecord.LogReason.info, "{0}: {1}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name);
+            //log.add(LogRecord.LogReason.info, "{0}: {1}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name);
             PutDataOnCharts();
         }
 
@@ -382,7 +412,6 @@ namespace USPC
             miEmul.Enabled = false;
             FREmul frm = new FREmul();
             frm.FormClosed += new FormClosedEventHandler((object ob, FormClosedEventArgs ea) => { miEmul.Enabled = true; });
-            frm.MdiParent = this;
             frm.Show();
         }
 

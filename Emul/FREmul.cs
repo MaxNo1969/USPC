@@ -35,6 +35,8 @@ namespace EMUL
         /// </summary>
         BackgroundWorker worker;
 
+        TimeSpan timeTubeMove = new TimeSpan(0,0,30);
+
         DateTime tubeStartTime;
         /// <summary>
         /// Конструктор
@@ -118,7 +120,7 @@ namespace EMUL
         /// </summary>
         const int signalWaitCycleTime = 100;
         const int updateCountersPeriod = 1000;
-        const int tubeMoveTime = 1000*15;
+        
         void worker_DoWork(object sender, DoWorkEventArgs e)
         {
             log.add(LogRecord.LogReason.info, "{0}: {1}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name);
@@ -175,8 +177,10 @@ namespace EMUL
                 tubeStartTime = DateTime.Now;
                 //Ждем пока труба доедет до входа в модуль (~30 сек.)
                 startWait = sw.ElapsedMilliseconds;
-                while (sw.ElapsedMilliseconds - startWait < 1000)
+                while (true)
                 {
+                    long currentMilliseconds = sw.ElapsedMilliseconds - startWait;
+                    if (currentMilliseconds > 3000) break;                        ;
                     //Проверяем кнопку СТОП
                     if (worker.CancellationPending)
                     {
@@ -185,15 +189,17 @@ namespace EMUL
                     }
                     Thread.Sleep(signalWaitCycleTime);
                 }
-                //Труба на входе в модуль мнк3
+                //Труба на входе в модуль
                 worker.ReportProgress(101, "Труба на входе в модуль...");
                 worker.ReportProgress(101, "Выставляем сигнал \"КОНТРОЛЬ\"(труба на входе)...");
                 SL.getInst().set(SL.getInst().iCNTR, true);
                 //Ждем пока труба проедет до конца
                 startWait = sw.ElapsedMilliseconds;
                 bool iBaseSet = false;
-                while (sw.ElapsedMilliseconds -startWait < 20000)
+                while (true)
                 {
+                    long currentMilliseconds = sw.ElapsedMilliseconds - startWait;
+                    if (currentMilliseconds > timeTubeMove.TotalMilliseconds) break;
                     //Проверяем кнопку СТОП
                     if (worker.CancellationPending)
                     {
@@ -206,6 +212,7 @@ namespace EMUL
                         SL.getInst().set(SL.getInst().iBASE, true);
                         iBaseSet = true;
                     }
+                    worker.ReportProgress((int)(currentMilliseconds * 100 / timeTubeMove.TotalMilliseconds));
                     Thread.Sleep(signalWaitCycleTime);
                 }
                 //worker.ReportProgress(tm.Position * 100 / tm.Width, 0);
@@ -230,7 +237,10 @@ namespace EMUL
                     inputSignals.SetItemChecked(i, s.Val);
                 }
             }
-            lblTimer.Text= string.Format(@"{0:hh\:mm\:ss}", DateTime.Now - tubeStartTime);
+            if (worker.IsBusy)
+                lblTimer.Text = string.Format(@"{0:hh\:mm\:ss}", DateTime.Now - tubeStartTime);
+            else
+                lblTimer.Text = "";
         }
 
         private void signals_ItemCheck(object sender, ItemCheckEventArgs e)
