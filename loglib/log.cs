@@ -39,6 +39,10 @@ namespace PROTOCOL
         {
             return p.Dequeue();
         }
+        public static LogRecord peek()
+        {
+            return p.Peek();
+        }
         public static int size() { return p.Count; }
     }
 }

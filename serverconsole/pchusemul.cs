@@ -275,7 +275,7 @@ namespace USPC
             {
                 ascan.Points[i] = (byte)(50 + r.Next(50));
             }
-            log.add(LogRecord.LogReason.info, "{0}: {1}: {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ascan.DataSize);
+            log.add(LogRecord.LogReason.info, "{0}: {1}: Board={2},Test={3} DataSize={4}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, _board,_test, ascan.DataSize);
             return true;
         }
 

@@ -14,7 +14,9 @@ namespace USPC
     public partial class FRTestAscaNet : Form
     {
         AscanInfo info;
-
+        int board = 0;
+        int test = 0;
+        int timeout = 0;
         public AscanInfo GetAscanInfoNet(int _board, int _channel)
         {
             AscanInfo info = new AscanInfo();
@@ -26,30 +28,30 @@ namespace USPC
             //          - the wave alternance selection (phase)   
             PCXUSNetworkClient client = new PCXUSNetworkClient(Program.serverAddr);
             Object retval = new Object();
-            int res = client.callNetworkFunction("readdouble,scope_video",out retval);
-            if (client.callNetworkFunction("readdouble,scope_video", out retval) == 0) info.Video = (AscanInfo.VideoMode)((double)retval);
-            if (client.callNetworkFunction("readdouble,scope_zero", out retval) == 0) info.ZeroVideo = (double)retval;
+            if (client.callNetworkFunction(string.Format("{0},{1},{2},{3}", "readdouble", "scope_video", board, test), out retval) == 0) info.Video = (AscanInfo.VideoMode)((double)retval);
+            if (client.callNetworkFunction(string.Format("{0},{1},{2},{3}", "readdouble", "scope_zero", board, test), out retval) == 0) info.ZeroVideo = (double)retval;
 
-            if (client.callNetworkFunction("readdouble,gateIF_phase", out retval) == 0) info.GIFPhase = (AscanInfo.PhaseType)((double)retval);
-            if (client.callNetworkFunction("readdouble,gate1_phase", out retval) == 0) info.G1Phase = (AscanInfo.PhaseType)((double)retval);
-            if (client.callNetworkFunction("readdouble,gate2_phase", out retval) == 0) info.G2Phase = (AscanInfo.PhaseType)((double)retval);
+            if (client.callNetworkFunction(string.Format("{0},{1},{2},{3}", "readdouble", "gateIF_phase", board, test), out retval) == 0) info.GIFPhase = (AscanInfo.PhaseType)((double)retval);
+            if (client.callNetworkFunction(string.Format("{0},{1},{2},{3}", "readdouble", "gate1_phase", board, test), out retval) == 0) info.G1Phase = (AscanInfo.PhaseType)((double)retval);
+            if (client.callNetworkFunction(string.Format("{0},{1},{2},{3}", "readdouble", "gate2_phase", board, test), out retval) == 0) info.G2Phase = (AscanInfo.PhaseType)((double)retval);
 
             // Part 2.  This part gets parameters to convert Ascan data coming from acquisition to Ascan structure ready to display 
-            if (client.callNetworkFunction("readdouble,gate1_trigger", out retval) == 0) info.gate1_trigger = (double)retval;
-            if (client.callNetworkFunction("readdouble,gate1_position", out retval) == 0) info.gate1_position = (double)retval;
-            if (client.callNetworkFunction("readdouble,gate1_width", out retval) == 0) info.gate1_width = (double)retval;
-            if (client.callNetworkFunction("readdouble,gate1_level", out retval) == 0) info.gate1_level = (double)retval;
-            if (client.callNetworkFunction("readdouble,gate1_nb_alarm_level", out retval) == 0) info.gate1_level_alarm = (double)retval;
+            if (client.callNetworkFunction(string.Format("{0},{1},{2},{3}", "readdouble", "gate1_trigger", board, test), out retval) == 0) info.gate1_trigger = (double)retval;
+            if (client.callNetworkFunction(string.Format("{0},{1},{2},{3}", "readdouble", "gate1_position", board, test), out retval) == 0) info.gate1_position = (double)retval;
+            if (client.callNetworkFunction(string.Format("{0},{1},{2},{3}", "readdouble", "gate1_width", board, test), out retval) == 0) info.gate1_width = (double)retval;
+            if (client.callNetworkFunction(string.Format("{0},{1},{2},{3}", "readdouble", "gate1_level", board, test), out retval) == 0) info.gate1_level = (double)retval;
+            if (client.callNetworkFunction(string.Format("{0},{1},{2},{3}", "readdouble", "gate1_nb_alarm_level", board, test), out retval) == 0) info.gate1_level_alarm = (double)retval;
 
-            if (client.callNetworkFunction("readdouble,gate2_trigger", out retval) == 0) info.gate2_trigger = (double)retval;
-            if (client.callNetworkFunction("readdouble,gate2_position", out retval) == 0) info.gate2_position = (double)retval;
-            if (client.callNetworkFunction("readdouble,gate2_width", out retval) == 0) info.gate2_width = (double)retval;
-            if (client.callNetworkFunction("readdouble,gate2_level", out retval) == 0) info.gate2_level = (double)retval;
-            if (client.callNetworkFunction("readdouble,gate2_nb_alarm_level", out retval) == 0) info.gate2_level_alarm = (double)retval;
+            // Part 2.  This part gets parameters to convert Ascan data coming from acquisition to Ascan structure ready to display 
+            if (client.callNetworkFunction(string.Format("{0},{1},{2},{3}", "readdouble", "gate2_trigger", board, test), out retval) == 0) info.gate2_trigger = (double)retval;
+            if (client.callNetworkFunction(string.Format("{0},{1},{2},{3}", "readdouble", "gate2_position", board, test), out retval) == 0) info.gate2_position = (double)retval;
+            if (client.callNetworkFunction(string.Format("{0},{1},{2},{3}", "readdouble", "gate2_width", board, test), out retval) == 0) info.gate2_width = (double)retval;
+            if (client.callNetworkFunction(string.Format("{0},{1},{2},{3}", "readdouble", "gate2_level", board, test), out retval) == 0) info.gate2_level = (double)retval;
+            if (client.callNetworkFunction(string.Format("{0},{1},{2},{3}", "readdouble", "gate2_nb_alarm_level", board, test), out retval) == 0) info.gate2_level_alarm = (double)retval;
 
-            if (client.callNetworkFunction("readdouble,scope_trigger", out retval) == 0) info.scope_trigger = (double)retval;
-            if (client.callNetworkFunction("readdouble,scope_offset", out retval) == 0) info.scope_offset = (double)retval;
-            if (client.callNetworkFunction("readdouble,scope_range", out retval) == 0) info.scope_range = (double)retval;
+            if (client.callNetworkFunction(string.Format("{0},{1},{2},{3}","readdouble","scope_trigger",board,test), out retval) == 0) info.scope_trigger = (double)retval;
+            if (client.callNetworkFunction(string.Format("{0},{1},{2},{3}","readdouble","scope_offset",board,test), out retval) == 0) info.scope_offset = (double)retval;
+            if (client.callNetworkFunction(string.Format("{0},{1},{2},{3}","readdouble","scope_range",board,test), out retval) == 0) info.scope_range = (double)retval;
 
             return info;
         }
@@ -58,13 +60,15 @@ namespace USPC
         public FRTestAscaNet(FRMain _frMain)
         {
             InitializeComponent();
-            info = GetAscanInfoNet(0, 0);
+            cbBoards.SelectedIndex = 0;
+            cbTest.SelectedIndex = 0;
         }
 
         private void btnStartStop_Click(object sender, EventArgs e)
         {
             if (btnStartStop.Text == "Start")
             {
+                info = GetAscanInfoNet(board, test);
                 btnStartStop.Text = "Stop";
                 timer.Enabled = true;
             }
@@ -263,7 +267,7 @@ namespace USPC
         {
             Object retval = new Object();
             PCXUSNetworkClient client = new PCXUSNetworkClient(Program.serverAddr);
-            int res = client.callNetworkFunction("ascan,0,0,100",out retval);
+            int res = client.callNetworkFunction(string.Format("{0},{1},{2},{3}","ascan",board,test,timeout),out retval);
             if (res == 0)
             {
                 Ascan ascan = (Ascan)retval;
@@ -288,7 +292,34 @@ namespace USPC
 
         private void TestGetAscanFromNet_Resize(object sender, EventArgs e)
         {
-            AscanChart.SetBounds(0,0, ClientSize.Width-150, ClientSize.Height);
+            AscanChart.SetBounds(0,58, ClientSize.Width-150, ClientSize.Height-58);
+        }
+
+        private void cbBoards_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            ComboBox cb = (ComboBox)sender;
+            if (cb.SelectedIndex > 0) board = cb.SelectedIndex;
+        }
+
+        private void cbTest_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            ComboBox cb = (ComboBox)sender;
+            if (cb.SelectedIndex > 0) test = cb.SelectedIndex;
+        }
+
+        private void textBoxTimeout_TextChanged(object sender, EventArgs e)
+        {
+            TextBox tb = (TextBox)sender;
+            try
+            {
+                timeout = Convert.ToInt32(tb.Text);
+            }
+            catch (FormatException ex)
+            {
+                log.add(LogRecord.LogReason.error, "{0}:,{1}: Error:{2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message);
+                timeout = 100;
+                tb.Text = "100";
+            }
         }
     }
 }

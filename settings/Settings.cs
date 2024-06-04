@@ -102,6 +102,7 @@ namespace Settings
                 //Обработка первого запуска - файл настроек ещё не записан
                 log.add(LogRecord.LogReason.info, "{0}: {1}: {2}", "Settings", System.Reflection.MethodBase.GetCurrentMethod().Name, "Первый запуск - файл настроек ещё не записан");
                 s = new Settings();
+                s.changed = true;
                 Settings.save(s);
                 return s;
             }

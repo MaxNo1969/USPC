@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using PROTOCOL;
+using System.IO;
 
 namespace USPC
 {
@@ -11,7 +12,7 @@ namespace USPC
         public static Dictionary<string, string> cmdLineArgs = null;
         static void Main(string[] args)
         {
-            log.onLogChanged += new log.OnLogChanged(() => Console.WriteLine(log.get().text));
+            log.onLogChanged += new log.OnLogChanged(() => Console.WriteLine(string.Format("{0} {1} {2}",log.peek().dt,log.peek().reason,log.get().text)));
             log.add(LogRecord.LogReason.info, "Program started...");
             Dictionary<string, string> cmdLineArgs = getCmdStr(args);
             IPCXUS pcxus;
@@ -26,6 +27,7 @@ namespace USPC
             server.start();
             log.add(LogRecord.LogReason.info, "{0}: {1}: {2}", "Program", System.Reflection.MethodBase.GetCurrentMethod().Name, "server started");
             while (!Console.KeyAvailable) ;
+
         }
 
         static Dictionary<string, string> getCmdStr(string[] args)

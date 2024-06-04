@@ -157,9 +157,9 @@ namespace USPC
                     case "ascan":
                         {
                             const int defTimeout = 20;
-                            int board = (cmdAndParams.Length > 2) ? ConvertToInt(cmdAndParams[1], 0) : 0;
-                            int test = (cmdAndParams.Length > 3) ? ConvertToInt(cmdAndParams[2], 0) : 0;
-                            int timeout = (cmdAndParams.Length > 4) ? ConvertToInt(cmdAndParams[3],defTimeout) : defTimeout;
+                            int board = (cmdAndParams.Length > 2) ? ConvertToInt(cmdAndParams[2], 0) : 0;
+                            int test = (cmdAndParams.Length > 3) ? ConvertToInt(cmdAndParams[3], 0) : 0;
+                            int timeout = (cmdAndParams.Length > 4) ? ConvertToInt(cmdAndParams[4],defTimeout) : defTimeout;
                             Ascan ascan = new Ascan();
                             int counter = 0;
                             while (!pcxus.readAscan(ref ascan, timeout,board,test) || counter++ < 5) ;
