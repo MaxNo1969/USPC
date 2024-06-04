@@ -61,6 +61,7 @@
     <Compile Include="FRResult.Designer.cs">
       <DependentUpon>FRResult.cs</DependentUpon>
     </Compile>
+    <Compile Include="PCXUSNET.cs" />
     <Compile Include="StructToCsv.cs" />
     <Compile Include="BytesToStructure.cs" />
     <Compile Include="Chart\CGraphChart.cs">

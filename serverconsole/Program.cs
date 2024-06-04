@@ -17,7 +17,7 @@ namespace USPC
             IPCXUS pcxus;
             //создаём объект для платы
             if(cmdLineArgs.ContainsKey("EMUL"))
-                pcxus = new pcxusemul();
+                pcxus = new PCXUSEMUL();
             else
                 pcxus = new PCXUS();
 

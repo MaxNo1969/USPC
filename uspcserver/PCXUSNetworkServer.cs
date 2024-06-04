@@ -62,6 +62,20 @@ namespace USPC
             return ret;
         }
 
+        private double ConvertTodouble(string _str)
+        {
+            double ret = 0;
+            try
+            {
+                ret = Convert.ToDouble(_str.Replace('.',','));
+            }
+            catch (Exception ex)
+            {
+                log.add(LogRecord.LogReason.error, "{0}: {1}: {2}: Error {3}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, _str, ex.Message);
+            }
+            return ret;
+        }
+
         public void completeFunctionRequest(Stream _stream)
         {
             //log.add(LogRecord.LogReason.info, "{0}: {1}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name);
@@ -130,13 +144,26 @@ namespace USPC
                         }
                     case "readdouble":
                         {
-                            int board = (cmdAndParams.Length > 2) ? ConvertToInt(cmdAndParams[1]) : 0;
-                            int test = (cmdAndParams.Length > 3) ? ConvertToInt(cmdAndParams[2]) : 0;
-                            double value = pcxus.getParamValueDouble(cmdAndParams[1],board,test);
+                            string paramName = (cmdAndParams.Length > 1) ?cmdAndParams[1]:"";
+                            int board = (cmdAndParams.Length > 2) ? ConvertToInt(cmdAndParams[2]) : 0;
+                            int test = (cmdAndParams.Length > 3) ? ConvertToInt(cmdAndParams[3]) : 0;
+                            double value = pcxus.getParamValueDouble(paramName,board,test);
                             ret = (UInt32)pcxus.Err;
                             _stream.Write(BitConverter.GetBytes(ret), 0, sizeof(Int32));
                             byte[] byteArray = BitConverter.GetBytes(value);
                             _stream.Write(byteArray, 0, byteArray.Length);
+                            _stream.Close();
+                            return;
+                        }
+                    case "writedouble":
+                        {
+                            string paramName = (cmdAndParams.Length > 1) ? cmdAndParams[1]:"";
+                            double val = (cmdAndParams.Length > 2) ? ConvertTodouble(cmdAndParams[2]):0;
+                            int board = (cmdAndParams.Length > 3) ? ConvertToInt(cmdAndParams[3]) : 0;
+                            int test = (cmdAndParams.Length > 4) ? ConvertToInt(cmdAndParams[4]) : 0;
+                            pcxus.setParamValueDouble(val,paramName, board, test);
+                            ret = (UInt32)pcxus.Err;
+                            _stream.Write(BitConverter.GetBytes(ret), 0, sizeof(Int32));
                             _stream.Close();
                             return;
                         }

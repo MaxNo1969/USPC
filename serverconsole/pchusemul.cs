@@ -9,7 +9,7 @@ using System.IO;
 
 namespace USPC
 {
-    public class pcxusemul:IPCXUS
+    public class PCXUSEMUL:IPCXUS
     {
       
         //public const int MAX_ROW = 100;
@@ -49,7 +49,7 @@ namespace USPC
         {
             return sn[_board];
         }
-        public pcxusemul()
+        public PCXUSEMUL()
         {
             boardParams = new Dictionary<string, double>();
             using (StreamReader reader = new StreamReader("default.us", false))
@@ -79,7 +79,7 @@ namespace USPC
 
         }
 
-        ~pcxusemul()
+        ~PCXUSEMUL()
         {
             boardParams.Clear();
             close();
