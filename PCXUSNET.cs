@@ -76,7 +76,8 @@ namespace USPC
 
         public bool config(Int32 _board, Int32 _bufferSize)
         {
-            return true;
+            int err = netClient.callNetworkFunction(string.Format("{0},{1},{2},{3}", "config", _bufferSize), out obj);
+            return (err == 0);
         }
 
         public bool status(Int32 _board, ref Int32 _status, ref Int32 _NumberOfScansAcquired, ref Int32 _NumberOfScansRead, ref Int32 _BufferSize, ref Int32 _scanSize)

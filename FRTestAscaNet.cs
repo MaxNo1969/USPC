@@ -11,7 +11,7 @@ using FPS;
 
 namespace USPC
 {
-    public partial class TestGetAscanFromNet : Form
+    public partial class FRTestAscaNet : Form
     {
         AscanInfo info;
 
@@ -55,7 +55,7 @@ namespace USPC
         }
 
 
-        public TestGetAscanFromNet(FRMain _frMain)
+        public FRTestAscaNet(FRMain _frMain)
         {
             InitializeComponent();
             info = GetAscanInfoNet(0, 0);

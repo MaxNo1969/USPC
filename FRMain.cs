@@ -364,7 +364,7 @@ namespace USPC
 
         private void miTestAscanFromNet_Click(object sender, EventArgs e)
         {
-            TestGetAscanFromNet frm = new TestGetAscanFromNet(this);
+            FRTestAscaNet frm = new FRTestAscaNet(this);
             frm.Show();
         }
 

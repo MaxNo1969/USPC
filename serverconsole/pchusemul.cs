@@ -116,10 +116,12 @@ namespace USPC
         {
             try
             {
+                log.add(LogRecord.LogReason.info, string.Format("{0}: {1}: {2}={3}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, _paramName, boardParams[_paramName]));
                 return boardParams[_paramName];
             }
-            catch (KeyNotFoundException)
+            catch (KeyNotFoundException ex)
             {
+                log.add(LogRecord.LogReason.error,string.Format("{0}: {1}: Error: {2}",GetType().Name,System.Reflection.MethodBase.GetCurrentMethod().Name,ex.Message));
                 return 0;
             }
         }

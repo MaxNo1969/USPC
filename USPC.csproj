@@ -177,11 +177,11 @@
     <Compile Include="settings\PropGridHelper.cs" />
     <Compile Include="settings\Settings.cs" />
     <Compile Include="settings\SignalSettings.cs" />
-    <Compile Include="TestGetAscanFromNet.cs">
+    <Compile Include="FRTestAscanet.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="TestGetAscanFromNet.Designer.cs">
-      <DependentUpon>TestGetAscanFromNet.cs</DependentUpon>
+    <Compile Include="FRTestAscanet.Designer.cs">
+      <DependentUpon>FRTestAscanet.cs</DependentUpon>
     </Compile>
     <Compile Include="Data\TypeSize.cs" />
     <Compile Include="UC4SensorView.cs">
@@ -245,8 +245,8 @@
     <EmbeddedResource Include="settings\FRSettings.resx">
       <DependentUpon>FRSettings.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="TestGetAscanFromNet.resx">
-      <DependentUpon>TestGetAscanFromNet.cs</DependentUpon>
+    <EmbeddedResource Include="FRTestAscanet.resx">
+      <DependentUpon>FRTestAscanet.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UC4SensorView.resx">
       <DependentUpon>UC4SensorView.cs</DependentUpon>
