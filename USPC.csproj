@@ -131,7 +131,7 @@
     <Compile Include="Forms\MNMDIForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="MainWorker.cs">
+    <Compile Include="TubeWorker.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="MedianFilter.cs" />
