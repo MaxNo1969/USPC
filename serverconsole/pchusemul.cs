@@ -9,7 +9,7 @@ using System.IO;
 
 namespace USPC
 {
-    public class pcxusemul
+    public class pcxusemul:IPCXUS
     {
       
         //public const int MAX_ROW = 100;
@@ -97,7 +97,7 @@ namespace USPC
                 return true;
         }
 
-        public double setParamValueDouble(double _val,string _paramName, int _board = 0, int _test = 0, UnitCode _unit = UnitCode.UNIT_us)
+        public void setParamValueDouble(double _val,string _paramName, int _board = 0, int _test = 0, UnitCode _unit = UnitCode.UNIT_us)
         {
             try
             {
@@ -107,7 +107,7 @@ namespace USPC
             {
                 boardParams.Add(_paramName, _val);
             }
-            return _val;
+            return;
         }
 
 
