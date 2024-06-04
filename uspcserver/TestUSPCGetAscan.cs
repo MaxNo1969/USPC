@@ -18,12 +18,19 @@ namespace USPC
         FRMain frMain;
         AscanInfo info;
 
-        public TestUSPCGetAscan(FRMain _frMain)
+        int board;
+        int channel;
+
+
+        public TestUSPCGetAscan(FRMain _frMain,int _board,int _channel)
         {
             InitializeComponent();
             frMain = _frMain;
             MdiParent = frMain;
-            info = frMain.pcxus.GetAscanInfo(0, 0);
+            board = _board;
+            channel = _channel;
+            info = frMain.pcxus.GetAscanInfo(board, channel);
+            Text = string.Format("Board: {0} Channel: {1}", board, channel);
         }
 
         // This function draws an Ascan and gates...
@@ -214,7 +221,7 @@ namespace USPC
         {
             // A timer event to get an A-scan
             Ascan ascan = new Ascan();
-            if (!frMain.pcxus.readAscan(ref ascan, 20))
+            if (!frMain.pcxus.readAscan(ref ascan, 20,board,channel))
             {
                 //log.add(LogRecord.LogReason.error, "PCXUS.readAscan(ref ascan, 20)");
                 return;
@@ -231,12 +238,22 @@ namespace USPC
 
         private void TestUSPCGetAscan_Load(object sender, EventArgs e)
         {
-            FormPosSaver.load(this);
+            Size = new Size(frMain.ClientSize.Width, frMain.ClientSize.Height / 2);
+            switch (board)
+            {
+                case 0:
+                    Location = new Point(0, 0);
+                    break;
+                case 1:
+                    Location = new Point(0, frMain.ClientSize.Height);
+                    break;
+                default:
+                    break;
+            }
         }
 
         private void TestUSPCGetAscan_FormClosing(object sender, FormClosingEventArgs e)
         {
-            FormPosSaver.save(this);
         }
 
         private void TestUSPCGetAscan_Resize(object sender, EventArgs e)

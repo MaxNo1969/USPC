@@ -96,7 +96,7 @@ namespace USPC
             };
             if (ofd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
-                if (!pcxus.load(ofd.FileName))
+                if (!pcxus.load(ofd.FileName,-1,-1))
                 {
                     MessageBox.Show(string.Format("Ошибка загрузки конфигурации \"{0}\"",ofd.FileName));
                 }
@@ -139,8 +139,10 @@ namespace USPC
 
         private void miTestUSPCAscan_Click(object sender, EventArgs e)
         {
-            TestUSPCGetAscan frm = new TestUSPCGetAscan(this);
-            frm.Show();
+            TestUSPCGetAscan frm1 = new TestUSPCGetAscan(this, 0, 0);
+            frm1.Show();
+            TestUSPCGetAscan frm2 = new TestUSPCGetAscan(this, 1, 0);
+            frm2.Show();
         }
 
         /// <summary>

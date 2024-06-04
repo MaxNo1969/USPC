@@ -6,6 +6,7 @@ using System.ComponentModel;
 using PROTOCOL;
 using System.Threading;
 using Settings;
+using Data;
 
 namespace USPC
 {
@@ -32,6 +33,7 @@ namespace USPC
         {
             try
             {
+                log.add(LogRecord.LogReason.info, "{0}: {1}: e.ProgressPercentage = {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, e.ProgressPercentage);
             }
             catch (Exception ex)
             {
@@ -53,6 +55,7 @@ namespace USPC
                 Program.result.AddNewZone();
                 int zoneTime = (int)((double)AppSettings.s.zoneSize/(double)AppSettings.s.speed);
                 log.add(LogRecord.LogReason.info, "{0}: {1}: {2} Now: {3}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, zoneTime,DateTime.Now.ToLongTimeString());
+                ReportProgress(Program.data[0].currentOffsetFrames * 100 / USPCData.countFrames);
                 Thread.Sleep(zoneTime*1000);
             }
         }

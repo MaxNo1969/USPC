@@ -130,7 +130,9 @@ namespace USPC
                         }
                     case "readdouble":
                         {
-                            double value = pcxus.getParamValueDouble(cmdAndParams[1]);
+                            int board = (cmdAndParams.Length > 2) ? ConvertToInt(cmdAndParams[1]) : 0;
+                            int test = (cmdAndParams.Length > 3) ? ConvertToInt(cmdAndParams[2]) : 0;
+                            double value = pcxus.getParamValueDouble(cmdAndParams[1],board,test);
                             ret = (UInt32)pcxus.Err;
                             _stream.Write(BitConverter.GetBytes(ret), 0, sizeof(Int32));
                             byte[] byteArray = BitConverter.GetBytes(value);
@@ -140,7 +142,9 @@ namespace USPC
                         }
                     case "readstring":
                         {
-                            string value = pcxus.getParamValueString(cmdAndParams[1]);
+                            int board = (cmdAndParams.Length > 2) ? ConvertToInt(cmdAndParams[1]) : 0;
+                            int test = (cmdAndParams.Length > 3) ? ConvertToInt(cmdAndParams[2]) : 0;
+                            string value = pcxus.getParamValueString(cmdAndParams[1],board,test);
                             ret = (UInt32)pcxus.Err;
                             _stream.Write(BitConverter.GetBytes(ret), 0, sizeof(Int32));
                             byte[] byteArray = Encoding.UTF8.GetBytes(value);

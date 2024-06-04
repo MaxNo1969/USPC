@@ -43,7 +43,6 @@ namespace USPC
 
         void worker_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
-
         }
 
         void worker_DoWork(object sender, DoWorkEventArgs e)
