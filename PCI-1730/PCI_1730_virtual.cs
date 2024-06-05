@@ -6,7 +6,7 @@ namespace PCI1730
     /// <summary>
     /// Эмулятор платы ввода/вывода 
     /// </summary>
-    public class PCI_1730_virtual : PCI_1730
+    public class PCI_1730_virtual  : PCI_1730
     {
         /// <summary>
         /// Конструктор

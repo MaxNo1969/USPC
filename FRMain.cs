@@ -149,9 +149,9 @@ namespace USPC
             if (miStart.Text == "Старт")
             {
                 startWorkTime = DateTime.UtcNow;
-                SL.getInst().oPEREKL.Val = true;
+                //SL.getInst().oPEREKL.Val = true;
                 Thread.Sleep(200);
-                SL.getInst().oPEREKL.Val = false;
+                //SL.getInst().oPEREKL.Val = false;
                 if (zoneAdder == null)
                     zoneAdder = new ZoneBackGroundWorker();
                 if(worker == null)

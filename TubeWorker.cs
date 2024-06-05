@@ -111,13 +111,7 @@ namespace USPC
         private static void clearAllOutSignals()
         {
             //Снимаем все выходные сигналв, кроме ПИТАНИЕ БМ
-            //SL.getInst().oPBM.Val = false;
-            SL.getInst().oWRK.Val = false;
-            SL.getInst().oPEREKL.Val = false;
-            SL.getInst().oRES1.Val = false;
-            SL.getInst().oRES2.Val = false;
-            //Резерв не трогаем
-            //SL.getInst().oREZ.Val=false;
+            SL.getInst().oREADY.Val = false;
         }
         //Перечисление для текущуго состояния конечного автомата
         public enum WrkStates
@@ -210,23 +204,23 @@ namespace USPC
                         //Начало рабочего цикла - снимаем сигнал "Перекладка" для сигнализации того, что
                         //установка ждет следующую трубу
                         case WrkStates.startWorkCycle:
-                            SL.getInst().oPEREKL.Val = false;
+                            //SL.getInst().oPEREKL.Val = false;
                             curState = WrkStates.waitNextTube;
                             break;
                         case WrkStates.waitNextTube:
                             //Труба поступила на вход установки
-                            if (SL.getInst().iREADY.Val == true)
+                            if (SL.getInst().iWRK.Val == true)
                             {
                                 clearAllOutSignals();
 
                                 //Здесь подготовка модуля к работе
                                 {
                                     //Установить сигнал "Питание БМ"
-                                    SL.getInst().oPBM.Val = true;
+                                    //SL.getInst().oPBM.Val = true;
                                     prepareBoardsForWork();
                                 }
                                 //Выставляем сигнал "РАБОТА"
-                                SL.getInst().oWRK.Val = true;
+                                //SL.getInst().oWRK.Val = true;
                                 waitReadyStarted = sw.Elapsed;
                                 curState = WrkStates.moduleReady;
                             }
@@ -240,11 +234,13 @@ namespace USPC
                                 break;
                             }
                             //Снялcя сигнал "ГОТОВНОСТЬ" - труба начала движение
+                            /*
                             if (SL.getInst().iREADY.Val == false)
                             {
                                 waitControlStarted = sw.Elapsed;
                                 curState = WrkStates.waitCntrl;
                             }
+                            */ 
                             break;
                         //При появлении сигнала КОНТРОЛЬ запоминаем время для вычисления скорости
                         //Если сигнал КОНТРОЛЬ не появился за определенное время (10 секунд) – 
@@ -257,6 +253,7 @@ namespace USPC
                                 break;
                             }
                             //
+                            /*
                             if(SL.getInst().iCNTR.Val==true)
                             {
                                 controlIsSet = sw.Elapsed;   
@@ -264,9 +261,11 @@ namespace USPC
                                 //Включить сбор данных с модуля контроля. Ожидать пропадания сигнала КОНТРОЛЬ. 
                                 startWorkers();
                             }
+                            */ 
                             break;
                         case WrkStates.work:
                             //Пропал сигнал контроль
+                            /*
                             if (SL.getInst().iCNTR.Val == false)
                             {
                                 //Останавливаем сбор
@@ -275,6 +274,7 @@ namespace USPC
                                 curState = WrkStates.endWork;
                                 break;
                             }
+                            */ 
                             //Труба доехала до базы
                             if (SL.getInst().iBASE.Val == true && controlIsSet != TimeSpan.Zero && !speedCalced)
                             {
@@ -288,9 +288,9 @@ namespace USPC
                             break;
                         case WrkStates.endWork:
                             //По окончании сбора, обработки и передачи результата. 
-                            SL.getInst().oRES1.Val = true;
-                            SL.getInst().oRES2.Val = true;
-                            SL.getInst().oPEREKL.Val = true;
+                            //SL.getInst().oRES1.Val = true;
+                            //SL.getInst().oRES2.Val = true;
+                            //SL.getInst().oPEREKL.Val = true;
                             Thread.Sleep(100);
                             speedCalced = false;
                             curState = WrkStates.startWorkCycle;

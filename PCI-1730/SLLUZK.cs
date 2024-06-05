@@ -55,68 +55,30 @@ namespace PCI1730
         /// ЦИКЛ. Сигнал установлен при нахождении оборудования ЛУЗК в автоматическом режиме.
         /// </summary>
         public SignalIn iCYC;
-        
-        private Signal iREADY_;
-        /// <summary>
-        /// ГОТОВНОСТЬ. Сигнал устанавливается при наличии в ванне готовой к контролю трубы.
-        /// </summary>
-        public SignalIn iREADY;
 
-        private Signal iCNTR_;
+        private Signal iWRK_;
         /// <summary>
-        /// КОНТРОЛЬ. Сигнал устанавливается при поступлении первого датчика каретки на поверхность трубы, снимается по сходу последнего датчика каретки с трубы.
+        /// РАБОТА. Сигнал устанавливается при готовности системы к контролю трубы.
         /// </summary>
-        public SignalIn iCNTR;
+        public SignalIn iWRK;
 
         private Signal iBASE_;
         /// <summary>
         ///  БАЗА. Сигнал устанавливается при достижении кареткой определенного положения. Используется для контроля скорости перемещения каретки.
         /// </summary>
         public SignalIn iBASE;
-        
-        private Signal iREZ_;
-        /// <summary>
-        /// РЕЗЕРВ. Резервный сигнал
-        /// </summary>
-        public SignalIn iREZ;
 
-        
-        private Signal oWRK_;
+        private Signal iSTRB_;
         /// <summary>
-        /// РАБОТА. Сигнал устанавливается при готовности системы к контролю трубы.
+        /// СТРОБ. Метка новой зоны
         /// </summary>
-        public SignalOut oWRK;
-        
-        private Signal oPEREKL_;
+        public SignalIn iSTRB;
+
+        private Signal oREADY_;
         /// <summary>
         /// ПЕРЕКЛАДКА. Сигнал устанавливается по завершению всех действий с результатом контроля трубы – разрешение забирать трубу из ванны.
         /// </summary>
-        public SignalOut oPEREKL;
-        
-        private Signal oRES1_;
-        /// <summary>
-        /// РЕЗУЛЬТАТ1. Сигнал для кодирования результата контроля трубы.
-        /// </summary>
-        public SignalOut oRES1;
-
-        private Signal oRES2_;
-        /// <summary>
-        /// РЕЗУЛЬТАТ2. Сигнал для кодирования результата контроля трубы.
-        /// </summary>
-        public SignalOut oRES2;
-
-        private Signal oPBM_;
-        /// <summary>
-        /// ПИТАНИЕ БМ. Сигнал включает подачу питания на блок мультиплексоров.
-        /// </summary>
-        public SignalOut oPBM;
-
-
-        private Signal oREZ_;
-        /// <summary>
-        /// РЕЗЕРВ. Резервный сигнал.
-        /// </summary>
-        public SignalOut oREZ;
+        public SignalOut oREADY;
 
         /// <summary>
         /// Событие "Авария"
@@ -134,17 +96,10 @@ namespace PCI1730
             {
                 iCC_ = Find("ЦУП", true); iCC = new SignalIn(iCC_); MIn.Add(iCC);
                 iCYC_ = Find("ЦИКЛ", true); iCYC = new SignalIn(iCYC_); MIn.Add(iCYC);
-                iREADY_ = Find("ГОТОВНОСТЬ", true); iREADY = new SignalIn(iREADY_); MIn.Add(iREADY);
-                iCNTR_ = Find("КОНТРОЛЬ", true); iCNTR = new SignalIn(iCNTR_); MIn.Add(iCNTR);
+                iWRK_ = Find("РАБОТА", true); iWRK = new SignalIn(iWRK_); MIn.Add(iWRK);
                 iBASE_ = Find("БАЗА", true); iBASE = new SignalIn(iBASE_); MIn.Add(iBASE);
-                iREZ_ = Find("РЕЗЕРВВХ", true); iREZ = new SignalIn(iREZ_); MIn.Add(iREZ);
 
-                oWRK_ = Find("РАБОТА", false); oWRK = new SignalOut(oWRK_); MOut.Add(oWRK);
-                oPEREKL_ = Find("ПЕРЕКЛ", false); oPEREKL = new SignalOut(oPEREKL_); MOut.Add(oPEREKL);
-                oRES1_ = Find("РЕЗУЛТ1", false); oRES1 = new SignalOut(oRES1_); MOut.Add(oRES1);
-                oRES2_ = Find("РЕЗУЛТ2", false); oRES2 = new SignalOut(oRES2_); MOut.Add(oRES2);
-                oPBM_ = Find("ПИТБМ", false); oPBM = new SignalOut(oPBM_); MOut.Add(oPBM);
-                oREZ_ = Find("РЕЗЕРВВЫХ", false); oREZ = new SignalOut(oREZ_); MOut.Add(oREZ);
+                oREADY_ = Find("ГОТОВНОСТЬ", false); oREADY = new SignalOut(oREADY_); MOut.Add(oREADY);
                 Start();
             }
             catch (KeyNotFoundException)
@@ -186,13 +141,7 @@ namespace PCI1730
         public void ClearAllSignals()
         {
             log.add(LogRecord.LogReason.info, "{0}: {1}: {2}", "SLLUZK",System.Reflection.MethodBase.GetCurrentMethod().Name,"Снимаем выходные сигналы");
-
-            if (oWRK != null) oWRK.Val = false;
-            if (oPEREKL != null) oPEREKL.Val = false;
-            if (oPBM != null) oPBM.Val = false;
-            if (oRES1 != null) oRES1.Val = false;
-            if (oRES2 != null) oRES2.Val = false;
-            if (oREZ != null) oREZ.Val = false;
+            if (oREADY != null) oREADY.Val = false;
         }
         /// <summary>
         /// Снимаем все входные сигналы (для эмулятора)
@@ -202,11 +151,10 @@ namespace PCI1730
         {
             if (_bIccOff)
                 set(iCC, false);
-            set(iREADY, false);
             set(iCYC, false);
-            set(iCNTR, false);
+            set(iWRK, false);
             set(iBASE, false);
-            set(iREZ, false);
+            set(iSTRB, false);
         }
     }
 }

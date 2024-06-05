@@ -194,7 +194,6 @@
     <Compile Include="UspcNetDataReader.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="workThread.cs" />
     <Compile Include="ZoneBackGroundWorker.cs">
       <SubType>Component</SubType>
     </Compile>

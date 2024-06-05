@@ -139,8 +139,8 @@ namespace EMUL
                     return;
                 }
                 //Ждем выставления сигнала "Перекладка"
-                worker.ReportProgress(101, "Ждем выставления сигнала \"ПЕРЕКЛАДКА\"...");
-                while (SL.getInst().oPEREKL.Val == false)
+                worker.ReportProgress(101, "Ждем выставления сигнала \"ЦИКЛ\"...");
+                while (SL.getInst().iCYC.Val == false)
                 {
                     //Проверяем кнопку СТОП
                     if (worker.CancellationPending)
@@ -151,7 +151,7 @@ namespace EMUL
                     Thread.Sleep(signalWaitCycleTime);
                 }
                 worker.ReportProgress(101, "Выставляем сигнал \"ГОТОВНОСТЬ\"...");
-                SL.getInst().set(SL.getInst().iREADY, true);
+                //SL.getInst().set(SL.getInst().iREADY, true);
                 if (worker.CancellationPending)
                 {
                     e.Cancel = true;
@@ -159,6 +159,7 @@ namespace EMUL
                 }
                 //Ожидаем сигнал "Работа"
                 worker.ReportProgress(101, "Ожидаем сигнал \"РАБОТА\"(модуль готов к работе)...");
+                /*
                 while (SL.getInst().oWRK.Val == false)
                 {
                     //Проверяем кнопку СТОП
@@ -169,11 +170,12 @@ namespace EMUL
                     }
                     Thread.Sleep(signalWaitCycleTime);
                 }
+                */ 
                 //Начинаем  движение трубы
                 worker.ReportProgress(101, "Начинаем движение трубы...");
                 //Снимаем сигнал "Готовность" (начинается движение трубы)
                 worker.ReportProgress(101, "Снимаем сигнал \"ГОТОВНОСТЬ\"...");
-                SL.getInst().set(SL.getInst().iREADY, false);
+                //SL.getInst().set(SL.getInst().iREADY, false);
                 tubeStartTime = DateTime.Now;
                 //Ждем пока труба доедет до входа в модуль (~30 сек.)
                 startWait = sw.ElapsedMilliseconds;
@@ -192,7 +194,7 @@ namespace EMUL
                 //Труба на входе в модуль
                 worker.ReportProgress(101, "Труба на входе в модуль...");
                 worker.ReportProgress(101, "Выставляем сигнал \"КОНТРОЛЬ\"(труба на входе)...");
-                SL.getInst().set(SL.getInst().iCNTR, true);
+                //SL.getInst().set(SL.getInst().iCNTR, true);
                 //Ждем пока труба проедет до конца
                 startWait = sw.ElapsedMilliseconds;
                 bool iBaseSet = false;
@@ -218,7 +220,7 @@ namespace EMUL
                 //worker.ReportProgress(tm.Position * 100 / tm.Width, 0);
                 worker.ReportProgress(101, "Труба вышла из ЛУЗК...");
                 worker.ReportProgress(101, "Снимаем сигнал \"КОНТРОЛЬ3\"...");
-                SL.getInst().set(SL.getInst().iCNTR, false);
+                //SL.getInst().set(SL.getInst().iCNTR, false);
             }
         }
 
