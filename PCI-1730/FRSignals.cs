@@ -2,7 +2,7 @@
 using System;
 using System.Windows.Forms;
 
-namespace PCIE1730
+namespace PCI1730
 {
     /// <summary>
     /// Форма отображения сигналов платы цифрового ввода/вывода

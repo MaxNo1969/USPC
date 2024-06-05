@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace PCIE1730
+namespace PCI1730
 {
     /// <summary>
     /// Входящий сигнал

@@ -1,12 +1,12 @@
 ﻿using PROTOCOL;
 using System.Diagnostics;
 
-namespace PCIE1730
+namespace PCI1730
 {
     /// <summary>
     /// Эмулятор платы ввода/вывода 
     /// </summary>
-    public class PCIE_1730_virtual : PCIE_1730
+    public class PCI_1730_virtual : PCI_1730
     {
         /// <summary>
         /// Конструктор
@@ -14,7 +14,7 @@ namespace PCIE1730
         /// <param name="_name"></param>
         /// <param name="_portCount_in"></param>
         /// <param name="_portCount_out"></param>
-        public PCIE_1730_virtual(string _name, int _portCount_in, int _portCount_out):base(_name,_portCount_in,_portCount_out)
+        public PCI_1730_virtual(string _name, int _portCount_in, int _portCount_out):base(_name,_portCount_in,_portCount_out)
         {
             log.add(LogRecord.LogReason.info, "{0}: {1}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name);
         }

@@ -1,5 +1,5 @@
 ﻿using PROTOCOL;
-using PCIE1730;
+using PCI1730;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;

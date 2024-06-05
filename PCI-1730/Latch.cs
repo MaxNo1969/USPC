@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading;
 
 
-namespace PCIE1730
+namespace PCI1730
 {
     class Latch
     {

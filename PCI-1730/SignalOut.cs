@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 
-namespace PCIE1730
+namespace PCI1730
 {
     /// <summary>
     /// Выходной сигнал

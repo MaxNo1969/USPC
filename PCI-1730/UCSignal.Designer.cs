@@ -1,4 +1,4 @@
-﻿namespace PCIE1730
+﻿namespace PCI1730
 {
     partial class UCSignal
     {

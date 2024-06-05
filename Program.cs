@@ -6,7 +6,7 @@ using PROTOCOL;
 using System.Diagnostics;
 using System.Threading;
 using FPS;
-using PCIE1730;
+using PCI1730;
 using Data;
 
 namespace USPC

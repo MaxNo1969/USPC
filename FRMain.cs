@@ -10,7 +10,7 @@ using PROTOCOL;
 using System.Threading;
 using FPS;
 using System.Diagnostics;
-using PCIE1730;
+using PCI1730;
 using EMUL;
 using Settings;
 using Data;

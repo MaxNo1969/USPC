@@ -8,7 +8,7 @@ using System.ComponentModel;
 using USPC;
 using Settings;
 
-namespace PCIE1730
+namespace PCI1730
 {
     /// <summary>
     /// Параметры сигнала с платы цифрового ввода/вывода

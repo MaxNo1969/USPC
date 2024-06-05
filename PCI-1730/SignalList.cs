@@ -9,7 +9,7 @@ using System.Windows.Forms;
 using USPC;
 using Settings;
 
-namespace PCIE1730
+namespace PCI1730
 {
     /// <summary>
     /// Делегат при установке сигнала
@@ -56,7 +56,7 @@ namespace PCIE1730
         /// <summary>
         /// Плата цифрового ввода/вывода (PCIE-1730)
         /// </summary>
-        protected PCIE_1730 a1730;
+        protected PCI_1730 a1730;
 
         private List<Signal> M = new List<Signal>();
         private List<Latch> L = new List<Latch>();
@@ -177,9 +177,9 @@ namespace PCIE1730
             try
             {
                 if (Program.cmdLineArgs.ContainsKey("NOA1730"))
-                    a1730 = new PCIE_1730_virtual(st1730.ToString(), st1730.portInCnt, st1730.portOutCnt);
+                    a1730 = new PCI_1730_virtual(st1730.ToString(), st1730.portInCnt, st1730.portOutCnt);
                 else
-                    a1730 = new PCIE_1730_real(st1730.ToString(), st1730.portInCnt, st1730.portOutCnt);
+                    a1730 = new PCI_1730_real(st1730.ToString(), st1730.portInCnt, st1730.portOutCnt);
             }
             catch(Exception ex)
             {

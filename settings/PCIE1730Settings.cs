@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using Settings;
 
-namespace PCIE1730
+namespace PCI1730
 {
     /// <summary>
     /// Настройки платы PCIE-1730

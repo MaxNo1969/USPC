@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 
-namespace PCIE1730
+namespace PCI1730
 {
     /// <summary>
     /// UserControl для отображения одного обрабатываемого сигнала с PCIE-1720

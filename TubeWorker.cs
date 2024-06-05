@@ -5,7 +5,7 @@ using System.Text;
 using System.ComponentModel;
 using PROTOCOL;
 using System.Diagnostics;
-using PCIE1730;
+using PCI1730;
 using Settings;
 using System.Threading;
 

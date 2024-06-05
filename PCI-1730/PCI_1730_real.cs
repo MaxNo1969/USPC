@@ -4,12 +4,12 @@ using System;
 using System.Diagnostics;
 using System.Windows.Forms;
 
-namespace PCIE1730
+namespace PCI1730
 {
     /// <summary>
     /// Плата цифрового ввода/вывода (PCIE1730Сохранение размера и положения формы)
     /// </summary>
-    public class PCIE_1730_real:PCIE_1730
+    public class PCI_1730_real:PCI_1730
     {
         /// <summary>
         /// Очистить
@@ -30,7 +30,7 @@ namespace PCIE1730
         /// <param name="_name">Имя платы для инициализации</param>
         /// <param name="_portCount_in">Количество входящих сигналов</param>
         /// <param name="_portCount_out">Количество исходящих сигналов</param>
-        public PCIE_1730_real(string _name, int _portCount_in, int _portCount_out):base(_name,_portCount_in,_portCount_out)
+        public PCI_1730_real(string _name, int _portCount_in, int _portCount_out):base(_name,_portCount_in,_portCount_out)
         {
             ctrl_in = new InstantDiCtrl();
             ctrl_out = new InstantDoCtrl();

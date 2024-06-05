@@ -7,7 +7,7 @@ using System.Threading;
 using System.ComponentModel;
 using PROTOCOL;
 
-namespace PCIE1730
+namespace PCI1730
 {
     /// <summary>
     /// Сигнал платы цифрового ввода/вывода

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Windows.Forms;
 
-namespace PCIE1730
+namespace PCI1730
 {
     /// <summary>
     /// Делегат при тревожном сигнале
