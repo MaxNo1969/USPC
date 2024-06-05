@@ -37,11 +37,17 @@ namespace PROTOCOL
         }
         public static LogRecord get() 
         {
-            return p.Dequeue();
+            if (p.Count() > 0)
+                return p.Dequeue();
+            else
+                return null;
         }
         public static LogRecord peek()
         {
-            return p.Peek();
+            if (p.Count() > 0)
+                return p.Peek();
+            else
+                return null;
         }
         public static int size() { return p.Count; }
     }

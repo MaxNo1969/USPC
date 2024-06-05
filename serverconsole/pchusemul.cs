@@ -56,21 +56,22 @@ namespace USPC
             {
                 string s;
                 //Читаем заголовок
-                for (int i = 0; i < 22; i++)
-                {
-                    s = reader.ReadLine();
-                }
+                while ((s = reader.ReadLine()) != "[Test 0]") ;
                 while ((s = reader.ReadLine()) != null)
                 {
-                   string[] splitted = s.Split(new char[] { '=' });
+                    if (s == null) break;
+                    if (s == "[/Test 0]") break;
+                    if (s == "" || s.Contains("\"")) continue;
+                    string[] splitted = s.Split(new char[] { '=' });
                    try
                    {
                        double val = Convert.ToDouble(splitted[1].Replace('.',','));
                        boardParams.Add(splitted[0], val);
+                       //log.add(LogRecord.LogReason.info, "{0}: {1}: {2}={3}", "pcxusemul", ".ctor", splitted[0],splitted[1]);
                    }
                    catch (Exception ex)
                    {
-                       log.add(LogRecord.LogReason.error, "{0}: {1}: Ошибка: {2}", "pcxusemul", ".ctor", ex.Message);
+                       log.add(LogRecord.LogReason.error, "{0}: {1}: Ошибка: {2} ({3},{4})", "pcxusemul", ".ctor", ex.Message, splitted[0], splitted[1]);
                    }
                 }
                 reader.Close();

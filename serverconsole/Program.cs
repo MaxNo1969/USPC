@@ -10,10 +10,33 @@ namespace USPC
     class Program
     {
         public static Dictionary<string, string> cmdLineArgs = null;
+        public static StreamWriter fileStream = null;
+        private static void WriteLog()
+        {
+            LogRecord logRecord = log.get();
+            if (logRecord != null)
+            {
+                Console.WriteLine(string.Format("{0}\t{1}\t{2}", logRecord.dt, logRecord.reason, logRecord.text));
+                if (fileStream != null) fileStream.WriteLine(string.Format("{0}\t{1}\t{2}", logRecord.dt, logRecord.reason, logRecord.text));
+            }
+        }
         static void Main(string[] args)
         {
-            log.onLogChanged += new log.OnLogChanged(() => Console.WriteLine(string.Format("{0} {1} {2}",log.peek().dt,log.peek().reason,log.get().text)));
-            log.add(LogRecord.LogReason.info, "Program started...");
+            log.onLogChanged += new log.OnLogChanged(WriteLog);
+            string logDirectory = "Log";
+            DateTime dt = DateTime.Now; 
+            string fileName = logDirectory+"\\"+string.Format("{0}-{1:D4}-{2:D2}-{3:D2}.log","log",dt.Year,dt.Month,dt.Day);
+            try
+            {
+                if (!Directory.Exists(logDirectory)) Directory.CreateDirectory(logDirectory);
+                fileStream = new StreamWriter(fileName);
+                fileStream.AutoFlush = true;
+            }
+            catch (Exception ex)
+            {
+                log.add(LogRecord.LogReason.error, "{0}:{1}: Error", "Program", System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message);
+                return;    
+            }
             Dictionary<string, string> cmdLineArgs = getCmdStr(args);
             IPCXUS pcxus;
             //создаём объект для платы
@@ -21,13 +44,28 @@ namespace USPC
                 pcxus = new PCXUSEMUL();
             else
                 pcxus = new PCXUS();
-
-            //Запускаем сервер
-            PCXUSNetworkServer server = new PCXUSNetworkServer(pcxus);
-            server.start();
-            log.add(LogRecord.LogReason.info, "{0}: {1}: {2}", "Program", System.Reflection.MethodBase.GetCurrentMethod().Name, "server started");
-            while (!Console.KeyAvailable) ;
-
+            log.add(LogRecord.LogReason.info, "Program started...");
+            try
+            {
+                //Запускаем сервер
+                PCXUSNetworkServer server = new PCXUSNetworkServer(pcxus);
+                server.start();
+                log.add(LogRecord.LogReason.info, "{0}: {1}: {2}", "Program", System.Reflection.MethodBase.GetCurrentMethod().Name, "server started");
+                while (!Console.KeyAvailable) ;
+            }
+            catch (Exception ex)
+            {
+                log.add(LogRecord.LogReason.error, "{0}:{1}: Error", "Program", System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message);
+            }
+            finally
+            {
+                log.onLogChanged = null;
+                if (fileStream != null)
+                {
+                    fileStream.Flush();
+                    fileStream.Close();
+                }
+            }
         }
 
         static Dictionary<string, string> getCmdStr(string[] args)
