@@ -50,8 +50,8 @@ namespace PCI1730
         /// </summary>
         public PCIE1730Settings()
         {
-            name = "PCIE-1730";
-            devNum = 0;
+            name = "PCI-1730";
+            devNum = 15;
             portInCnt = 4;
             portOutCnt = 4;
             timeout = 100;
