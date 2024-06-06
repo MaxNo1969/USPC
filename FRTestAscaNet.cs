@@ -17,6 +17,35 @@ namespace USPC
         int board = 0;
         int test = 0;
         int timeout = 0;
+
+
+        public double GetVal(string _paramName)
+        {
+            return PCXUSNET.GetVal(board, test, _paramName);
+        }
+
+        static readonly string[] boardParams = 
+        { 
+            "scope_video",
+            "scope_zero", 
+            "gateIF_phase",
+            "gate1_phase", 
+            "gate2_phase", 
+            "gate1_trigger", 
+            "gate1_position",
+            "gate1_width",
+            "gate1_level",
+            "gate1_nb_alarm_level",
+            "gate2_trigger", 
+            "gate2_position",
+            "gate2_width",
+            "gate2_level",
+            "gate2_nb_alarm_level",
+            "scope_trigger",
+            "scope_offset",
+            "scope_range",
+        };
+
         public AscanInfo GetAscanInfoNet(int _board, int _channel)
         {
             AscanInfo info = new AscanInfo();
@@ -28,30 +57,43 @@ namespace USPC
             //          - the wave alternance selection (phase)   
             PCXUSNetworkClient client = new PCXUSNetworkClient(Program.serverAddr);
             Object retval = new Object();
-            if (client.callNetworkFunction(string.Format("{0},{1},{2},{3}", "readdouble", "scope_video", board, test), out retval) == 0) info.Video = (AscanInfo.VideoMode)((double)retval);
-            if (client.callNetworkFunction(string.Format("{0},{1},{2},{3}", "readdouble", "scope_zero", board, test), out retval) == 0) info.ZeroVideo = (double)retval;
-
-            if (client.callNetworkFunction(string.Format("{0},{1},{2},{3}", "readdouble", "gateIF_phase", board, test), out retval) == 0) info.GIFPhase = (AscanInfo.PhaseType)((double)retval);
-            if (client.callNetworkFunction(string.Format("{0},{1},{2},{3}", "readdouble", "gate1_phase", board, test), out retval) == 0) info.G1Phase = (AscanInfo.PhaseType)((double)retval);
-            if (client.callNetworkFunction(string.Format("{0},{1},{2},{3}", "readdouble", "gate2_phase", board, test), out retval) == 0) info.G2Phase = (AscanInfo.PhaseType)((double)retval);
-
+            double val;
+            val = GetVal("scope_video");
+            if(!double.IsNaN(val))info.Video = (AscanInfo.VideoMode)((double)val);
+            val = GetVal("scope_zero");
+            if (!double.IsNaN(val)) info.ZeroVideo = val;
+            val = GetVal("gateIF_phase");
+            if (!double.IsNaN(val)) info.GIFPhase = (AscanInfo.PhaseType)val;
+            val = GetVal("gate1_phase");
+            if (!double.IsNaN(val)) info.G1Phase = (AscanInfo.PhaseType)val;
+            val = GetVal("gate2_phase");
+            if (!double.IsNaN(val)) info.G2Phase = (AscanInfo.PhaseType)val;
             // Part 2.  This part gets parameters to convert Ascan data coming from acquisition to Ascan structure ready to display 
-            if (client.callNetworkFunction(string.Format("{0},{1},{2},{3}", "readdouble", "gate1_trigger", board, test), out retval) == 0) info.gate1_trigger = (double)retval;
-            if (client.callNetworkFunction(string.Format("{0},{1},{2},{3}", "readdouble", "gate1_position", board, test), out retval) == 0) info.gate1_position = (double)retval;
-            if (client.callNetworkFunction(string.Format("{0},{1},{2},{3}", "readdouble", "gate1_width", board, test), out retval) == 0) info.gate1_width = (double)retval;
-            if (client.callNetworkFunction(string.Format("{0},{1},{2},{3}", "readdouble", "gate1_level", board, test), out retval) == 0) info.gate1_level = (double)retval;
-            if (client.callNetworkFunction(string.Format("{0},{1},{2},{3}", "readdouble", "gate1_nb_alarm_level", board, test), out retval) == 0) info.gate1_level_alarm = (double)retval;
 
-            // Part 2.  This part gets parameters to convert Ascan data coming from acquisition to Ascan structure ready to display 
-            if (client.callNetworkFunction(string.Format("{0},{1},{2},{3}", "readdouble", "gate2_trigger", board, test), out retval) == 0) info.gate2_trigger = (double)retval;
-            if (client.callNetworkFunction(string.Format("{0},{1},{2},{3}", "readdouble", "gate2_position", board, test), out retval) == 0) info.gate2_position = (double)retval;
-            if (client.callNetworkFunction(string.Format("{0},{1},{2},{3}", "readdouble", "gate2_width", board, test), out retval) == 0) info.gate2_width = (double)retval;
-            if (client.callNetworkFunction(string.Format("{0},{1},{2},{3}", "readdouble", "gate2_level", board, test), out retval) == 0) info.gate2_level = (double)retval;
-            if (client.callNetworkFunction(string.Format("{0},{1},{2},{3}", "readdouble", "gate2_nb_alarm_level", board, test), out retval) == 0) info.gate2_level_alarm = (double)retval;
+            val = GetVal("gate1_trigger");
+            if (!double.IsNaN(val)) info.gate1_trigger = val;
+            val = GetVal("gate1_position");
+            if (!double.IsNaN(val)) info.gate1_position = val;
+            val = GetVal("gate1_level");
+            if (!double.IsNaN(val)) info.gate1_level = val;
+            val = GetVal("gate1_nb_alarm_level");
+            if (!double.IsNaN(val)) info.gate1_level_alarm = val;
 
-            if (client.callNetworkFunction(string.Format("{0},{1},{2},{3}","readdouble","scope_trigger",board,test), out retval) == 0) info.scope_trigger = (double)retval;
-            if (client.callNetworkFunction(string.Format("{0},{1},{2},{3}","readdouble","scope_offset",board,test), out retval) == 0) info.scope_offset = (double)retval;
-            if (client.callNetworkFunction(string.Format("{0},{1},{2},{3}","readdouble","scope_range",board,test), out retval) == 0) info.scope_range = (double)retval;
+            val = GetVal("gate2_trigger");
+            if (!double.IsNaN(val)) info.gate2_trigger = val;
+            val = GetVal("gate2_position");
+            if (!double.IsNaN(val)) info.gate2_position = val;
+            val = GetVal("gate2_level");
+            if (!double.IsNaN(val)) info.gate2_level = val;
+            val = GetVal("gate2_nb_alarm_level");
+            if (!double.IsNaN(val)) info.gate2_level_alarm = val;
+
+            val = GetVal("scope_trigger");
+            if (!double.IsNaN(val)) info.scope_trigger = val;
+            val = GetVal("scope_offset");
+            if (!double.IsNaN(val)) info.scope_offset = val;
+            val = GetVal("scope_range");
+            if (!double.IsNaN(val)) info.scope_range = val;
 
             return info;
         }

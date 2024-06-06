@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using PROTOCOL;
 
 namespace USPC
 {
@@ -47,6 +48,20 @@ namespace USPC
             return "string";
         }
 
+        public static double GetVal(int _board, int _channel, string _paramName)
+        {
+            PCXUSNetworkClient client = new PCXUSNetworkClient(Program.serverAddr);
+            Object retval = new Object();
+            string s = string.Format("{0},{1},{2},{3}", "readdouble", _paramName, _board, _channel);
+            int ret = client.callNetworkFunction(s, out retval);
+            if (ret == 0)
+                return (double)retval;
+            else
+            {
+                log.add(LogRecord.LogReason.error, "{0}: {1}: Error: callNetworkFunction(\"{2}\") returns {3}", "FRTestAscaNet", System.Reflection.MethodBase.GetCurrentMethod().Name, s, ret);
+                return double.NaN;
+            }
+        }
 
 
         public bool open(Int32 _mode)
@@ -82,34 +97,53 @@ namespace USPC
 
         public bool status(Int32 _board, ref Int32 _status, ref Int32 _NumberOfScansAcquired, ref Int32 _NumberOfScansRead, ref Int32 _BufferSize, ref Int32 _scanSize)
         {
-            return true;
+            int err = netClient.callNetworkFunction(string.Format("{0},{1}", "status", _board), out obj);
+            if (err == 0)
+            {
+                AcqSatus status = (AcqSatus)obj;
+                _status = status.status;
+                _NumberOfScansAcquired = status.NumberOfScansAcquired;
+                _NumberOfScansRead = status.NumberOfScansRead;
+                _BufferSize = status.bufferSize;
+                _scanSize = status.scanSize;
+            }
+            return (err==0);
         }
 
         public bool start(Int32 _board)
         {
+            int err = netClient.callNetworkFunction(string.Format("{0},{1}", "start", _board), out obj);
             return true;
         }
 
         public bool stop(Int32 _board)
         {
+            int err = netClient.callNetworkFunction(string.Format("{0},{1}", "stop", _board), out obj);
             return true;
         }
         public bool clear(Int32 _board)
         {
+            int err = netClient.callNetworkFunction(string.Format("{0},{1}", "clear", _board), out obj);
             return true;
         }
         public Int32 read(Int32 _board, byte[] _data, int _timeout = 200)
         {
-            return 0;
+            int numberScans = netClient.callNetworkFunction(string.Format("{0},{1}", "read", _board), out obj);
+            _data = (byte[])obj;
+            return numberScans*System.Runtime.InteropServices.Marshal.SizeOf(_data[0]);
         }
         public Int32 read(Int32 _board, AcqAscan[] _data, int _timeout = 200)
         {
-            return 0;
+            int numberScans = netClient.callNetworkFunction(string.Format("{0},{1}", "read", _board), out obj);
+            _data = (AcqAscan[])obj;
+            return numberScans;
         }
 
         public bool readAscan(ref Ascan ascan, int _timeout = 100, int _board = 0, int _test = 0)
         {
-            return true;
+            int err = netClient.callNetworkFunction(string.Format("{0},{1}", "read", _board), out obj);
+            ascan = (Ascan)obj;
+            return (err==0);
         }
 
     }

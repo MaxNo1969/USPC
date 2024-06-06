@@ -11,10 +11,14 @@ namespace Data
         public int sensors;
         public int zones;
         public int board;
+
         public List<List<double>> values;
         public virtual void addZone()
         {
-            zoneStart.Add(Program.data[board].currentOffsetFrames);
+            int zBegin = zoneStart.Last();
+            int zEnd = Program.data[board].currentOffsetFrames;
+            Program.data[board].OffsetCounter(zEnd);
+            zoneStart.Add(zEnd);
         }
         public List<int> zoneStart;
         public Result(int _board,int _sensors)
@@ -47,7 +51,10 @@ namespace Data
         {
             Random r = new Random();
             base.addZone();
-            for(int i = 0;i<sensors;i++)
+            int zBegin = zoneStart[zoneStart.Count() - 2];
+            int zEnd = zoneStart[zoneStart.Count() - 1];
+            
+            for (int i = 0; i < sensors; i++)
             {
                 values[i].Add(90.0 + r.Next(10));
             }

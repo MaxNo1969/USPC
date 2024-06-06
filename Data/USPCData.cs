@@ -36,7 +36,7 @@ namespace Data
         public static int lengthCaretka = 20;
         
         public int currentOffsetFrames;     //Номер последнего кадра 
-        public int currentOffsetZones;	    //номер смещения кадра в зоне
+        public int currentOffsetZones;	    
     	public AcqAscan[] ascanBuffer;	    //собранные кадры массив по платам
         public TimeLabels labels;
         //public List<Slice> allData;
@@ -52,11 +52,13 @@ namespace Data
         public void Start()                     // Выполнить перед началом цикла сбора кадров с платы
         {
             currentOffsetFrames = 0;
+            currentOffsetZones = 0;
             labels.Clear();
         }
         public void OffsetCounter(int offs)
         {
             currentOffsetFrames += offs;
+            currentOffsetZones++;
             labels.Add(new BufferStamp(DateTime.Now,currentOffsetFrames));
         }
 
