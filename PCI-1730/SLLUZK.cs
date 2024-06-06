@@ -98,6 +98,7 @@ namespace PCI1730
                 iCYC_ = Find("ЦИКЛ", true); iCYC = new SignalIn(iCYC_); MIn.Add(iCYC);
                 iWRK_ = Find("РАБОТА", true); iWRK = new SignalIn(iWRK_); MIn.Add(iWRK);
                 iBASE_ = Find("БАЗА", true); iBASE = new SignalIn(iBASE_); MIn.Add(iBASE);
+                iSTRB_ = Find("СТРОБ", true); iSTRB = new SignalIn(iSTRB_); MIn.Add(iSTRB);
 
                 oREADY_ = Find("ГОТОВНОСТЬ", false); oREADY = new SignalOut(oREADY_); MOut.Add(oREADY);
                 Start();

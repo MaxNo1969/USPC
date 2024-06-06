@@ -7,6 +7,7 @@ using PROTOCOL;
 using System.Threading;
 using Settings;
 using Data;
+using PCI1730;
 
 namespace USPC
 {
@@ -59,6 +60,5 @@ namespace USPC
                 Thread.Sleep(zoneTime*1000);
             }
         }
-
     }
 }

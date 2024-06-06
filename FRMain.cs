@@ -15,6 +15,7 @@ using EMUL;
 using Settings;
 using Data;
 using CHART;
+using System.Threading.Tasks;
 
 
 namespace USPC
@@ -39,6 +40,12 @@ namespace USPC
         /// </summary>
         TubeWorker worker=null;
 
+        /// <summary>
+        ///тестовый воркер
+        /// </summary>
+        BackgroundWorker testWorker = null;
+
+        
         /// <summary>
         ///Добавление новых зон
         /// </summary>
@@ -152,45 +159,44 @@ namespace USPC
                 //SL.getInst().oPEREKL.Val = true;
                 Thread.Sleep(200);
                 //SL.getInst().oPEREKL.Val = false;
-                if (zoneAdder == null)
-                    zoneAdder = new ZoneBackGroundWorker();
-                if(worker == null)
-                    worker = new TubeWorker(this);
-                zoneAdder.ProgressChanged += new ProgressChangedEventHandler(zoneAdder_ProgressChanged);
+                //if (zoneAdder == null)
+                //    zoneAdder = new ZoneBackGroundWorker();
+                //if(worker == null)
+                //    worker = new TubeWorker(this);
+                //zoneAdder.ProgressChanged += new ProgressChangedEventHandler(zoneAdder_ProgressChanged);
 
-                //testWorker = new BackgroundWorker()
-                //{
-                //    WorkerReportsProgress = true,
-                //    WorkerSupportsCancellation = true,
-                //};
-                //testWorker.ProgressChanged += new ProgressChangedEventHandler(testWorker_ProgressChanged);
-                //testWorker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(testWorker_RunWorkerCompleted);
-                //testWorker.DoWork += new DoWorkEventHandler(testWorker_DoWork);
+                testWorker = new BackgroundWorker()
+                {
+                    WorkerReportsProgress = true,
+                    WorkerSupportsCancellation = true,
+                };
+                testWorker.ProgressChanged += new ProgressChangedEventHandler(testWorker_ProgressChanged);
+                testWorker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(testWorker_RunWorkerCompleted);
+                testWorker.DoWork += new DoWorkEventHandler(testWorker_DoWork);
                 Program.result.Clear();
-                //testWorker.RunWorkerAsync();
-                zoneAdder.RunWorkerAsync();
-                worker.RunWorkerAsync();
+                testWorker.RunWorkerAsync();
+                //zoneAdder.RunWorkerAsync();
+                //worker.RunWorkerAsync();
                 setSb("Info", "Работа");
                 setStartStopMenu(false);
             }
             else
             {
-
-                if (worker != null && worker.IsBusy)
-                {
-                    worker.CancelAsync();
-                    worker = null;
-                }
-                if (zoneAdder != null && zoneAdder.IsBusy)
-                {
-                    zoneAdder.CancelAsync();
-                    zoneAdder = null;
-                }
-                //if (testWorker != null && testWorker.IsBusy)
+                //if (worker != null && worker.IsBusy)
                 //{
-                //    testWorker.CancelAsync();
-                //    testWorker = null;
+                //    worker.CancelAsync();
+                //    worker = null;
                 //}
+                //if (zoneAdder != null && zoneAdder.IsBusy)
+                //{
+                //    zoneAdder.CancelAsync();
+                //    zoneAdder = null;
+                //}
+                if (testWorker != null && testWorker.IsBusy)
+                {
+                    testWorker.CancelAsync();
+                    testWorker = null;
+                }
                 setSb("Info", "Нажмите F5 для начала работы");
                 setStartStopMenu(true);
             }
