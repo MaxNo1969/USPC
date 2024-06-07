@@ -84,7 +84,12 @@ namespace PCI1730
         /// Событие "Авария"
         /// </summary>
         public event OnAlarm onAlarm = null;
+        //public event OnAlarm onAlarm = new OnAlarm(AlarmEventRaise);
 
+        //static void AlarmEventRaise()
+        //{
+        //    log.add(LogRecord.LogReason.debug, string.Format("{0}: {1}", "SLLUZK", System.Reflection.MethodBase.GetCurrentMethod().Name));
+        //}
 
         /// <summary>
         /// Конструктор
@@ -109,7 +114,7 @@ namespace PCI1730
             }
             catch
             {
-                throw new Exception("Ошибка в конструкторк SignalListDef");
+                throw new Exception("Ошибка в конструкторе SLLUZK");
             }
         }
         /// <summary>

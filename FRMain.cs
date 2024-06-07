@@ -17,12 +17,10 @@ using Data;
 using CHART;
 using System.Threading.Tasks;
 
-
 namespace USPC
 {
     public partial class FRMain : Form
     {
-        //public PCXUS pcxus = null;
         //public BoardState boardState = BoardState.NotOpened;
 
         ///Подчиненные формы
@@ -290,66 +288,63 @@ namespace USPC
 
         private void miOpenUSPC_Click(object sender, EventArgs e)
         {
-            //pcxus.open(2);
-            try
+            if (Program.boardState == BoardState.Opened)
             {
-                PCXUSNetworkClient client = new PCXUSNetworkClient(Program.serverAddr);
-                Object obj = new object();
-                int res = client.callNetworkFunction("open,2", out obj);
-                if (res != 0)
+                if (MessageBox.Show("Плата уже открыта!Переоткрыть?\nВсе настройки будут сброшены.", "Внимание!", MessageBoxButtons.YesNo, MessageBoxIcon.Error, MessageBoxDefaultButton.Button2) == DialogResult.Yes)
                 {
-                    throw new Exception(string.Format("callNetworkFunction(open) return {0}", ((ErrorCode)res).ToString()));
+                    Program.pcxus.close();
+                    Program.boardState = BoardState.NotOpened;
+                    Program.pcxus.open(2);
+                    Program.boardState = BoardState.Opened;
                 }
-                else
-                {
-                    return;
-                }
-            }
-            catch (Exception Ex)
-            {
-                log.add(LogRecord.LogReason.error, "{0}: {1}: Error: {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, Ex.Message);
                 return;
             }
-
+            else
+            {
+                if (!Program.pcxus.open(2))
+                {
+                    log.add(LogRecord.LogReason.error, "{0}: {1}: Error: {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, (ErrorCode)Program.pcxus.Err);
+                }
+            }
         }
 
         private void miLoadUSPC_Click(object sender, EventArgs e)
         {
-            try
+            if (Program.boardState != BoardState.Opened)
             {
-                PCXUSNetworkClient client = new PCXUSNetworkClient(Program.serverAddr);
-                Object obj = new object();
-                int res = client.callNetworkFunction("load,default.us", out obj);
-                if (res != 0)
-                {
-                    throw new Exception(string.Format("callNetworkFunction(load) return {0:X8}", res));
-                }
+                MessageBox.Show("Плата не открыта", "Внимание!", MessageBoxButtons.OK);
+                return;
             }
-            catch (Exception Ex)
+            if (!Program.pcxus.load("default.us"))
             {
-                log.add(LogRecord.LogReason.error, "{0}: {1}: Error: {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, Ex.Message);
+                log.add(LogRecord.LogReason.error, "{0}: {1}: Error: {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, (ErrorCode)Program.pcxus.Err);
             }
         }
         private void miCloseUSPC_Click(object sender, EventArgs e)
         {
-            try
+
+            if (Program.boardState != BoardState.Opened)
             {
-                PCXUSNetworkClient client = new PCXUSNetworkClient(Program.serverAddr);
-                Object obj = new object();
-                int res = client.callNetworkFunction("close", out obj);
-                if (res != 0)
-                {
-                    throw new Exception(string.Format("callNetworkFunction(close) return {0:X8}", res));
-                }
+                MessageBox.Show("Плата не открыта", "Внимание!", MessageBoxButtons.OK);
+                return;
             }
-            catch (Exception Ex)
+            if (!Program.pcxus.close())
             {
-                log.add(LogRecord.LogReason.error, "{0}: {1}: Error: {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, Ex.Message);
+                log.add(LogRecord.LogReason.error, "{0}: {1}: Error: {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, (ErrorCode)Program.pcxus.Err);
+            }
+            else
+            {
+                Program.boardState = BoardState.NotOpened;
             }
         }
 
         private void miBoardInfo_Click(object sender, EventArgs e)
         {
+            if (Program.boardState != BoardState.Opened)
+            {
+                MessageBox.Show("Плата не открыта", "Внимание!", MessageBoxButtons.OK);
+                return;
+            }
             FRUspcInfo frm = new FRUspcInfo(this);
             frm.Show();
         }
@@ -358,7 +353,34 @@ namespace USPC
         {
             long usedMem = GC.GetTotalMemory(false);
             sb.Items["heap"].Text = string.Format("{0,6}M", usedMem / (1024 * 1024));
-            sb.Items["speed"].Text = string.Format("{0} mм/mс", AppSettings.s.speed);
+            sb.Items["speed"].Text = string.Format("{0}", AppSettings.s.speed);
+            //NotOpened, Opened, loaded, error
+            Color color;
+            switch(Program.boardState)
+            {
+                case BoardState.NotOpened:
+                    color = SystemColors.Control;
+                    break;
+                case BoardState.Opened:
+                    color = Color.Green;
+                    break;
+                case BoardState.Error:
+                    color = Color.Red;
+                    break;
+                default:
+                    color = SystemColors.Control;
+                    break;
+
+            }
+            if (Program.boardState == BoardState.NotOpened)
+                color = SystemColors.Control;
+            else
+            {
+                if (Program.pcxus.Err != (int)ErrorCode.PCXUS_NO_ERROR) color = Color.Red;
+                else
+                    color = Color.Green;
+            }
+            sb.Items["boardStateLabel"].BackColor = color;
 
         }
 

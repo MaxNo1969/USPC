@@ -62,6 +62,12 @@
     <Compile Include="FRResult.Designer.cs">
       <DependentUpon>FRResult.cs</DependentUpon>
     </Compile>
+    <Compile Include="FRWaitLongProcess.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FRWaitLongProcess.Designer.cs">
+      <DependentUpon>FRWaitLongProcess.cs</DependentUpon>
+    </Compile>
     <Compile Include="PCXUSNET.cs" />
     <Compile Include="StructToCsv.cs" />
     <Compile Include="BytesToStructure.cs" />
@@ -129,9 +135,6 @@
     </Compile>
     <Compile Include="Gate.Designer.cs">
       <DependentUpon>Gate.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\MNMDIForm.cs">
-      <SubType>Form</SubType>
     </Compile>
     <Compile Include="TubeWorker.cs">
       <SubType>Component</SubType>
@@ -223,6 +226,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="FRUspcInfo.resx">
       <DependentUpon>FRUspcInfo.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FRWaitLongProcess.resx">
+      <DependentUpon>FRWaitLongProcess.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Gate.resx">
       <DependentUpon>Gate.cs</DependentUpon>

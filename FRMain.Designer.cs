@@ -31,6 +31,7 @@
             this.components = new System.ComponentModel.Container();
             System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
             System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.ToolStripStatusLabel boardStateLabel;
             this.menu = new System.Windows.Forms.MenuStrip();
             this.miMainWork = new System.Windows.Forms.ToolStripMenuItem();
             this.miStart = new System.Windows.Forms.ToolStripMenuItem();
@@ -71,10 +72,11 @@
             this.lblTubesCount = new System.Windows.Forms.ToolStripLabel();
             this.cbTypeSize = new System.Windows.Forms.ToolStripComboBox();
             this.lay = new System.Windows.Forms.TableLayoutPanel();
+            this.ResultChart = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.ThickView = new USPC.UC4SensorView();
             this.LinearView = new USPC.UC4SensorView();
             this.CrossView = new USPC.UC4SensorView();
-            this.ResultChart = new System.Windows.Forms.DataVisualization.Charting.Chart();
+            boardStateLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.menu.SuspendLayout();
             this.sb.SuspendLayout();
             this.tb.SuspendLayout();
@@ -300,10 +302,11 @@
             this.tubePos,
             this.speed,
             this.duration,
-            this.heap});
-            this.sb.Location = new System.Drawing.Point(0, 566);
+            this.heap,
+            boardStateLabel});
+            this.sb.Location = new System.Drawing.Point(0, 564);
             this.sb.Name = "sb";
-            this.sb.Size = new System.Drawing.Size(1218, 22);
+            this.sb.Size = new System.Drawing.Size(1218, 24);
             this.sb.TabIndex = 2;
             this.sb.Text = "sb";
             // 
@@ -312,7 +315,7 @@
             this.info.AutoSize = false;
             this.info.BorderSides = System.Windows.Forms.ToolStripStatusLabelBorderSides.Right;
             this.info.Name = "info";
-            this.info.Size = new System.Drawing.Size(693, 17);
+            this.info.Size = new System.Drawing.Size(813, 19);
             this.info.Spring = true;
             this.info.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
@@ -320,7 +323,7 @@
             // 
             this.pb.AutoSize = false;
             this.pb.Name = "pb";
-            this.pb.Size = new System.Drawing.Size(200, 16);
+            this.pb.Size = new System.Drawing.Size(100, 18);
             this.pb.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
             // 
             // dataSize
@@ -328,35 +331,35 @@
             this.dataSize.AutoSize = false;
             this.dataSize.BorderSides = System.Windows.Forms.ToolStripStatusLabelBorderSides.Right;
             this.dataSize.Name = "dataSize";
-            this.dataSize.Size = new System.Drawing.Size(80, 17);
+            this.dataSize.Size = new System.Drawing.Size(80, 19);
             // 
             // tubePos
             // 
             this.tubePos.AutoSize = false;
             this.tubePos.BorderSides = System.Windows.Forms.ToolStripStatusLabelBorderSides.Right;
             this.tubePos.Name = "tubePos";
-            this.tubePos.Size = new System.Drawing.Size(48, 17);
+            this.tubePos.Size = new System.Drawing.Size(48, 19);
             // 
             // speed
             // 
             this.speed.AutoSize = false;
             this.speed.BorderSides = System.Windows.Forms.ToolStripStatusLabelBorderSides.Right;
             this.speed.Name = "speed";
-            this.speed.Size = new System.Drawing.Size(50, 17);
+            this.speed.Size = new System.Drawing.Size(50, 19);
             // 
             // duration
             // 
             this.duration.AutoSize = false;
             this.duration.BorderSides = System.Windows.Forms.ToolStripStatusLabelBorderSides.Right;
             this.duration.Name = "duration";
-            this.duration.Size = new System.Drawing.Size(50, 17);
+            this.duration.Size = new System.Drawing.Size(50, 19);
             // 
             // heap
             // 
             this.heap.AutoSize = false;
             this.heap.BorderSides = System.Windows.Forms.ToolStripStatusLabelBorderSides.Right;
             this.heap.Name = "heap";
-            this.heap.Size = new System.Drawing.Size(80, 17);
+            this.heap.Size = new System.Drawing.Size(40, 19);
             this.heap.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // timerUpdUI
@@ -414,8 +417,34 @@
             this.lay.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 25F));
             this.lay.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 25F));
             this.lay.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 25F));
-            this.lay.Size = new System.Drawing.Size(1218, 509);
+            this.lay.Size = new System.Drawing.Size(1218, 507);
             this.lay.TabIndex = 5;
+            // 
+            // ResultChart
+            // 
+            chartArea1.AxisY.LabelStyle.Enabled = false;
+            chartArea1.Name = "Default";
+            this.ResultChart.ChartAreas.Add(chartArea1);
+            this.ResultChart.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.ResultChart.Location = new System.Drawing.Point(6, 384);
+            this.ResultChart.Name = "ResultChart";
+            series1.ChartArea = "Default";
+            series1.Name = "Series1";
+            this.ResultChart.Series.Add(series1);
+            this.ResultChart.Size = new System.Drawing.Size(1206, 117);
+            this.ResultChart.TabIndex = 3;
+            // 
+            // boardStateLabel
+            // 
+            boardStateLabel.AutoSize = false;
+            boardStateLabel.BackColor = System.Drawing.Color.Red;
+            boardStateLabel.BorderSides = ((System.Windows.Forms.ToolStripStatusLabelBorderSides)((((System.Windows.Forms.ToolStripStatusLabelBorderSides.Left | System.Windows.Forms.ToolStripStatusLabelBorderSides.Top)
+                        | System.Windows.Forms.ToolStripStatusLabelBorderSides.Right)
+                        | System.Windows.Forms.ToolStripStatusLabelBorderSides.Bottom)));
+            boardStateLabel.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            boardStateLabel.Name = "boardStateLabel";
+            boardStateLabel.Size = new System.Drawing.Size(20, 19);
+            boardStateLabel.Text = "   ";
             // 
             // ThickView
             // 
@@ -440,20 +469,6 @@
             this.CrossView.Name = "CrossView";
             this.CrossView.Size = new System.Drawing.Size(1206, 117);
             this.CrossView.TabIndex = 0;
-            // 
-            // ResultChart
-            // 
-            chartArea1.AxisY.LabelStyle.Enabled = false;
-            chartArea1.Name = "Default";
-            this.ResultChart.ChartAreas.Add(chartArea1);
-            this.ResultChart.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.ResultChart.Location = new System.Drawing.Point(6, 384);
-            this.ResultChart.Name = "ResultChart";
-            series1.ChartArea = "Default";
-            series1.Name = "Series1";
-            this.ResultChart.Series.Add(series1);
-            this.ResultChart.Size = new System.Drawing.Size(1206, 119);
-            this.ResultChart.TabIndex = 3;
             // 
             // FRMain
             // 

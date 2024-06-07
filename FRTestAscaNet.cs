@@ -47,7 +47,12 @@ namespace USPC
             "scope_range",
         };
 
-       
+        double GetVal(string _paramName, FRWaitLongProcess _win)
+        {
+            double val = GetVal(_paramName);
+            _win.setMes(string.Format("{0}={1}",_paramName,val));
+            return val;
+        }
         public AscanInfo GetAscanInfoNet(int _board, int _channel)
         {
             AscanInfo info = new AscanInfo();
@@ -56,50 +61,31 @@ namespace USPC
             //          - the scope zero calibration
             //          To display gates according to:
             //          - the wave alternance selection (phase)   
-            PCXUSNetworkClient client = new PCXUSNetworkClient(Program.serverAddr);
-            Object retval = new Object();
-            double val;
-            Task task = new Task(() =>
-                {
-                    val = GetVal("scope_video");
-                    if (!double.IsNaN(val)) info.Video = (AscanInfo.VideoMode)((double)val);
-                    val = GetVal("scope_zero");
-                    if (!double.IsNaN(val)) info.ZeroVideo = val;
-                    val = GetVal("gateIF_phase");
-                    if (!double.IsNaN(val)) info.GIFPhase = (AscanInfo.PhaseType)val;
-                    val = GetVal("gate1_phase");
-                    if (!double.IsNaN(val)) info.G1Phase = (AscanInfo.PhaseType)val;
-                    val = GetVal("gate2_phase");
-                    if (!double.IsNaN(val)) info.G2Phase = (AscanInfo.PhaseType)val;
-                    // Part 2.  This part gets parameters to convert Ascan data coming from acquisition to Ascan structure ready to display 
+            //PCXUSNetworkClient client = new PCXUSNetworkClient(Program.serverAddr);
+            //Object retval = new Object();
+            ///double val;
+            FRWaitLongProcess waitWindow = new FRWaitLongProcess(this);
+            waitWindow.Show();
+            info.Video = (AscanInfo.VideoMode)GetVal("scope_video",waitWindow);
+            info.ZeroVideo = GetVal("scope_zero",waitWindow);
+            info.GIFPhase = (AscanInfo.PhaseType)GetVal("gateIF_phase",waitWindow);
+            info.G1Phase = (AscanInfo.PhaseType)GetVal("gate1_phase");
+            info.G2Phase = (AscanInfo.PhaseType)GetVal("gate2_phase");
+            // Part 2.  This part gets parameters to convert Ascan data coming from acquisition to Ascan structure ready to display 
+            info.gate1_trigger = GetVal("gate1_trigger",waitWindow);
+            info.gate1_position = GetVal("gate1_position",waitWindow);
+            info.gate1_level = GetVal("gate1_level",waitWindow);
+            info.gate1_level_alarm = GetVal("gate1_nb_alarm_level");
 
-                    val = GetVal("gate1_trigger");
-                    if (!double.IsNaN(val)) info.gate1_trigger = val;
-                    val = GetVal("gate1_position");
-                    if (!double.IsNaN(val)) info.gate1_position = val;
-                    val = GetVal("gate1_level");
-                    if (!double.IsNaN(val)) info.gate1_level = val;
-                    val = GetVal("gate1_nb_alarm_level");
-                    if (!double.IsNaN(val)) info.gate1_level_alarm = val;
+            info.gate2_trigger = GetVal("gate2_trigger");
+            info.gate2_position = GetVal("gate2_position");
+            info.gate2_level = GetVal("gate2_level");
+            info.gate2_level_alarm = GetVal("gate2_nb_alarm_level");
 
-                    val = GetVal("gate2_trigger");
-                    if (!double.IsNaN(val)) info.gate2_trigger = val;
-                    val = GetVal("gate2_position");
-                    if (!double.IsNaN(val)) info.gate2_position = val;
-                    val = GetVal("gate2_level");
-                    if (!double.IsNaN(val)) info.gate2_level = val;
-                    val = GetVal("gate2_nb_alarm_level");
-                    if (!double.IsNaN(val)) info.gate2_level_alarm = val;
-
-                    val = GetVal("scope_trigger");
-                    if (!double.IsNaN(val)) info.scope_trigger = val;
-                    val = GetVal("scope_offset");
-                    if (!double.IsNaN(val)) info.scope_offset = val;
-                    val = GetVal("scope_range");
-                    if (!double.IsNaN(val)) info.scope_range = val;
-                });
-            task.Start();
-            task.Wait();
+            info.scope_trigger = GetVal("scope_trigger");
+            info.scope_offset = GetVal("scope_offset");
+            info.scope_range = GetVal("scope_range");
+            waitWindow.Close();
             return info;
         }
 

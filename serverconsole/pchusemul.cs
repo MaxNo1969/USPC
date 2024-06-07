@@ -52,6 +52,8 @@ namespace USPC
         public PCXUSEMUL()
         {
             boardParams = new Dictionary<string, double>();
+            boardParams.Add("board_serial_number", 9595);
+            boardParams.Add("mux_rcpp_serial_number", 5959);
             using (StreamReader reader = new StreamReader("default.us", false))
             {
                 string s;
@@ -123,6 +125,7 @@ namespace USPC
             catch (KeyNotFoundException ex)
             {
                 log.add(LogRecord.LogReason.error,string.Format("{0}: {1}: Error: {2}",GetType().Name,System.Reflection.MethodBase.GetCurrentMethod().Name,ex.Message));
+                error = (int)ErrorCode.PCXUS_INVALID_PARAMETER;
                 return 0;
             }
         }

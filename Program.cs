@@ -11,12 +11,15 @@ using Data;
 
 namespace USPC
 {
-    public enum BoardState { NotOpened, Opened, loaded, error };
+    public enum BoardState { NotOpened=0, Opened, Error };
     static class Program
     {
         public static Dictionary<string, string> cmdLineArgs = null;
 
-        public static string serverAddr;        
+        public static BoardState boardState = BoardState.NotOpened;
+
+        public static string serverAddr;
+        public static PCXUSNET pcxus = null; 
         public static USPCData[] data = new USPCData[2];
         public static TubeResult result = new TubeResult();
         public static TypeSize typeSize = new TypeSize();
@@ -64,6 +67,7 @@ namespace USPC
                 {
                     serverAddr = "localhost";
                 }
+                pcxus = new PCXUSNET(serverAddr);
             }
             catch (ArgumentException ex)
             {
@@ -96,6 +100,8 @@ namespace USPC
             finally
             {
                 Debug.WriteLine("Вошли в program/finally");
+                if (boardState == BoardState.Opened || boardState == BoardState.Error)
+                    pcxus.close();
                 //Снимаем все выходные сигналы и останавливаем PCIE1730
                 SL.Destroy();
                 FormPosSaver.ser();

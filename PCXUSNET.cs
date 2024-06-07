@@ -32,7 +32,7 @@ namespace USPC
         {
             double ret = 0;
             string cmd =string.Format("{0},{1},{2},{3}","readdouble",_paramName,_board,_test);
-            int error = netClient.callNetworkFunction(cmd,out obj);
+            error = netClient.callNetworkFunction(cmd,out obj);
             if (error == 0)
             {
                 ret = (double)obj;
@@ -59,46 +59,63 @@ namespace USPC
             else
             {
                 log.add(LogRecord.LogReason.error, "{0}: {1}: Error: callNetworkFunction(\"{2}\") returns {3}", "FRTestAscaNet", System.Reflection.MethodBase.GetCurrentMethod().Name, s, ret);
-                return double.NaN;
+                return 0;
             }
         }
 
 
         public bool open(Int32 _mode)
         {
-            int err = netClient.callNetworkFunction(string.Format("{0},{1}", "open", _mode), out obj);
-            return (err == 0);
+            error = netClient.callNetworkFunction(string.Format("{0},{1}", "open", _mode), out obj);
+            if (error == 0)
+            {
+                Program.boardState = BoardState.Opened;
+                return true;
+            }
+            else
+            {
+                Program.boardState = BoardState.NotOpened;
+                return false;
+            }
         }
 
 
         public bool close()
         {
-            int err = netClient.callNetworkFunction(string.Format("{0}", "close"), out obj);
-            return (err == 0);
+            error = netClient.callNetworkFunction(string.Format("{0}", "close"), out obj);
+            if (error == 0)
+            {
+                Program.boardState = BoardState.NotOpened;
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
 
         public bool load(string _fName, int _board = -1, int _test = -1)
         {
-            int err = netClient.callNetworkFunction(string.Format("{0},{1},{2},{3}", "load",_fName,_board,_test), out obj);
-            return (err == 0);
+            error = netClient.callNetworkFunction(string.Format("{0},{1},{2},{3}", "load",_fName,_board,_test), out obj);
+            return (error == 0);
         }
 
         public bool save(string _fName, int _board = -1, int _test = -1)
         {
-            int err = netClient.callNetworkFunction(string.Format("{0},{1},{2},{3}", "save", _fName, _board, _test), out obj);
-            return (err == 0);
+            error = netClient.callNetworkFunction(string.Format("{0},{1},{2},{3}", "save", _fName, _board, _test), out obj);
+            return (error == 0);
         }
 
         public bool config(Int32 _board, Int32 _bufferSize)
         {
-            int err = netClient.callNetworkFunction(string.Format("{0},{1},{2},{3}", "config", _bufferSize), out obj);
-            return (err == 0);
+            error = netClient.callNetworkFunction(string.Format("{0},{1},{2},{3}", "config", _bufferSize), out obj);
+            return (error == 0);
         }
 
         public bool status(Int32 _board, ref Int32 _status, ref Int32 _NumberOfScansAcquired, ref Int32 _NumberOfScansRead, ref Int32 _BufferSize, ref Int32 _scanSize)
         {
-            int err = netClient.callNetworkFunction(string.Format("{0},{1}", "status", _board), out obj);
-            if (err == 0)
+            error = netClient.callNetworkFunction(string.Format("{0},{1}", "status", _board), out obj);
+            if (error == 0)
             {
                 AcqSatus status = (AcqSatus)obj;
                 _status = status.status;
@@ -107,43 +124,45 @@ namespace USPC
                 _BufferSize = status.bufferSize;
                 _scanSize = status.scanSize;
             }
-            return (err==0);
+            return (error==0);
         }
 
         public bool start(Int32 _board)
         {
-            int err = netClient.callNetworkFunction(string.Format("{0},{1}", "start", _board), out obj);
+            error = netClient.callNetworkFunction(string.Format("{0},{1}", "start", _board), out obj);
             return true;
         }
 
         public bool stop(Int32 _board)
         {
-            int err = netClient.callNetworkFunction(string.Format("{0},{1}", "stop", _board), out obj);
+            error = netClient.callNetworkFunction(string.Format("{0},{1}", "stop", _board), out obj);
             return true;
         }
         public bool clear(Int32 _board)
         {
-            int err = netClient.callNetworkFunction(string.Format("{0},{1}", "clear", _board), out obj);
+            error = netClient.callNetworkFunction(string.Format("{0},{1}", "clear", _board), out obj);
             return true;
         }
         public Int32 read(Int32 _board, byte[] _data, int _timeout = 200)
         {
             int numberScans = netClient.callNetworkFunction(string.Format("{0},{1}", "read", _board), out obj);
             _data = (byte[])obj;
+            error = 0;
             return numberScans*System.Runtime.InteropServices.Marshal.SizeOf(_data[0]);
         }
         public Int32 read(Int32 _board, AcqAscan[] _data, int _timeout = 200)
         {
             int numberScans = netClient.callNetworkFunction(string.Format("{0},{1}", "read", _board), out obj);
             _data = (AcqAscan[])obj;
+            error = 0;
             return numberScans;
         }
 
         public bool readAscan(ref Ascan ascan, int _timeout = 100, int _board = 0, int _test = 0)
         {
-            int err = netClient.callNetworkFunction(string.Format("{0},{1}", "read", _board), out obj);
+            error = netClient.callNetworkFunction(string.Format("{0},{1}", "read", _board), out obj);
             ascan = (Ascan)obj;
-            return (err==0);
+            return (error == 0);
         }
 
     }
