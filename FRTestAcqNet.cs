@@ -15,7 +15,7 @@ namespace USPC
     {
         //public FRMain frMain;
         //public AcqAscan[] data = new AcqAscan[1024*100];
-        UspcNetDataReader dataReader = null;
+        UspcNetDataReader[] dataReader = new UspcNetDataReader[Program.numBoards];
         void StartStopToggle(bool _start)
         {
             btnStart.Enabled = _start;
@@ -25,8 +25,11 @@ namespace USPC
         {
             InitializeComponent();
             Owner = _fr;
-            dataReader = new UspcNetDataReader(1);
-            dataReader.ProgressChanged += new ProgressChangedEventHandler(dataReader_ProgressChanged); 
+            for (int i = 0; i < Program.numBoards; i++)
+            {
+                dataReader[i] = new UspcNetDataReader(i);
+                dataReader[i].ProgressChanged += new ProgressChangedEventHandler(dataReader_ProgressChanged);
+            }
             StartStopToggle(true);
 
         }
@@ -92,19 +95,22 @@ namespace USPC
         private void btnStart_Click(object sender, EventArgs e)
         {
             StartStopToggle(false);
-            if (dataReader != null && !dataReader.IsBusy) dataReader.RunWorkerAsync();
+            for (int i = 0; i < Program.numBoards; i++)
+                if (dataReader[i] != null && !dataReader[i].IsBusy) dataReader[i].RunWorkerAsync();
         }
 
         private void btnStop_Click(object sender, EventArgs e)
         {
             StartStopToggle(true);
-            if (dataReader != null && dataReader.IsBusy)dataReader.CancelAsync();
+            for (int i = 0; i < Program.numBoards; i++)
+                if (dataReader[i] != null && dataReader[i].IsBusy) dataReader[i].CancelAsync();
             //Program.data.saveAsync("data.bin");
         }
 
         private void FRTestAcq_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if (dataReader != null && dataReader.IsBusy) dataReader.CancelAsync();
+            for (int i = 0; i < Program.numBoards;i++ )
+                if (dataReader[i] != null && dataReader[i].IsBusy) dataReader[i].CancelAsync();
         }
 
         private void FRTestAcq_Resize(object sender, EventArgs e)
