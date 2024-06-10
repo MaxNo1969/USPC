@@ -49,8 +49,10 @@ namespace USPC
 
         double GetVal(string _paramName, FRWaitLongProcess _win)
         {
-            double val = GetVal(_paramName);
+            double val;
+            val = GetVal(_paramName);
             _win.setMes(string.Format("{0}={1}",_paramName,val));
+            Application.DoEvents();
             return val;
         }
         public AscanInfo GetAscanInfoNet(int _board, int _channel)

@@ -17,10 +17,10 @@ namespace USPC
         public static Dictionary<string, string> cmdLineArgs = null;
 
         public static BoardState boardState = BoardState.NotOpened;
-
+        public static int numBoards = 2;
         public static string serverAddr;
         public static PCXUSNET pcxus = null; 
-        public static USPCData[] data = new USPCData[2];
+        public static USPCData[] data = new USPCData[numBoards];
         public static TubeResult result = new TubeResult();
         public static TypeSize typeSize = new TypeSize();
         public static FRMain frMain = null;
@@ -85,7 +85,7 @@ namespace USPC
             try
             {
                 FormPosSaver.deser();
-                for (int i = 0; i < 2;i++ )
+                for (int i = 0; i < numBoards;i++ )
                 {
                     data[i] = new USPCData();
                 }

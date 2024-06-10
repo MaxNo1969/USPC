@@ -84,7 +84,7 @@ namespace USPC
                 }
                 try
                 {
-                    Int32 NumberOfScans = client.callNetworkFunction("read", out retval);
+                    Int32 NumberOfScans = client.callNetworkFunction(string.Format("read,{0}",Board), out retval);
                     AcqAscan[] buffer = (AcqAscan[])retval;
                     if (dataAcquired != null) dataAcquired(NumberOfScans, buffer);
                     //Array.Copy(buffer, 0, data.ascanBuffer, data.currentOffsetFrames,NumberOfScans);
