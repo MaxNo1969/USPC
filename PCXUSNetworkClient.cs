@@ -43,55 +43,64 @@ namespace USPC
                     // Получение ответа
                     Byte[] bytesResult = new Byte[sizeof(Int32)];
                     int numberOfBytesRead = stream.Read(bytesResult, 0, bytesResult.Length);
-                    Int32 result = BitConverter.ToInt32(bytesResult,0);
-                    if (result > 0 && _func == "read")
+                    Int32 result = BitConverter.ToInt32(bytesResult, 0);
+                    //Ошибка
+
+                    string[] funcAndArgs = _func.Split(new char[] { ',' });
+                    switch (funcAndArgs[0])
                     {
-                        IFormatter formatter = new BinaryFormatter();
-                        AcqAscan[] scans = (AcqAscan[])formatter.Deserialize(stream);
-                        ret = (Object)scans;
-                        return result;
+                        case "read":
+                            {
+                                IFormatter formatter = new BinaryFormatter();
+                                AcqAscan[] scans = (AcqAscan[])formatter.Deserialize(stream);
+                                log.add(LogRecord.LogReason.debug, "{0}: {1}: command = \"{2}\", {3} scans readed", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, _func, scans.Length);
+                                ret = (Object)scans;
+                                return result;
+                            }
+                        case "readdouble":
+                            {
+                                Byte[] doubleBytes = new byte[sizeof(double)];
+                                numberOfBytesRead = stream.Read(doubleBytes, 0, doubleBytes.Length);
+                                double retval = BitConverter.ToDouble(doubleBytes, 0);
+                                log.add(LogRecord.LogReason.debug, "{0}: {1}: command = \"{2}\", {3} = {4}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, _func, funcAndArgs[0], retval);
+                                ret = (Object)retval;
+                                return result;
+                            }
+                        case "readstring":
+                            {
+                                Byte[] stringBytes = new byte[CMD_SIZE];
+                                numberOfBytesRead = stream.Read(stringBytes, 0, stringBytes.Length);
+                                string retval = Encoding.UTF8.GetString(stringBytes).Trim(new char[] { '\0' });
+                                log.add(LogRecord.LogReason.debug, "{0}: {1}: command = \"{2}\", {3} = {4}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, _func, funcAndArgs[0], retval);
+                                ret = (Object)retval;
+                                return result;
+                            }
+                        case "ascan":
+                            {
+                                IFormatter formatter = new BinaryFormatter();
+                                //XmlSerializer formatter = new XmlSerializer(typeof(Ascan));
+                                Ascan ascan = (Ascan)formatter.Deserialize(stream);
+                                log.add(LogRecord.LogReason.debug, "{0}: {1}: command = \"{2}\", DataSize = {3}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, _func, ascan.DataSize);
+                                ret = (Object)ascan;
+                                return result;
+                            }
+                        case "status":
+                            {
+                                IFormatter formatter = new BinaryFormatter();
+                                AcqSatus status = (AcqSatus)formatter.Deserialize(stream);
+                                log.add(LogRecord.LogReason.debug, "{0}: {1}: command = \"{2}\", {3}, ", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, _func, ((ACQ_STATUS)status.status).ToString());
+                                ret = (Object)status;
+                                return result;
+                            }
+                        default:
+                            {
+                                log.add(LogRecord.LogReason.debug, "{0}: {1}: command = \"{2}\"", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, _func);
+                                return result;
+                            }
                     }
-                    if (result != 0)
-                    {
-                        log.add(LogRecord.LogReason.error, "{0}: {1}: {2}: {3}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name,_func,((ErrorCode)result).ToString());
-                        return result;
-                    }
-                    string[] funcAndArgs = _func.Split(new char[] {','});
-                    //Особая обработка если функция должна возвратить что-то ещё кроме ошибки
-                    if (funcAndArgs[0] == "readdouble")
-                    {
-                        Byte[] doubleBytes = new byte[sizeof(double)];
-                        numberOfBytesRead = stream.Read(doubleBytes, 0, doubleBytes.Length);
-                        double retval = BitConverter.ToDouble(doubleBytes, 0);
-                        ret = (Object)retval;
-                    }
-                    //Особая обработка если функция должна возвратить что-то ещё кроме ошибки
-                    if (funcAndArgs[0] == "readstring")
-                    {
-                        Byte[] stringBytes = new byte[CMD_SIZE];
-                        numberOfBytesRead = stream.Read(stringBytes, 0, stringBytes.Length);
-                        string retval = Encoding.UTF8.GetString(stringBytes).Trim(new char[] {'\0'});
-                        ret = (Object)retval;
-                    }
-                    //Особая обработка если функция должна возвратить что-то ещё кроме ошибки
-                    if (funcAndArgs[0] == "ascan")
-                    {
-                        IFormatter formatter = new BinaryFormatter();
-                        //XmlSerializer formatter = new XmlSerializer(typeof(Ascan));
-                        Ascan ascan = (Ascan)formatter.Deserialize(stream);
-                        ret = (Object)ascan;
-                    }
-                    //Особая обработка если функция должна возвратить что-то ещё кроме ошибки
-                    if (funcAndArgs[0] == "status")
-                    {
-                        IFormatter formatter = new BinaryFormatter();
-                        AcqSatus status = (AcqSatus)formatter.Deserialize(stream);
-                        ret = (Object)status;
-                    }
-                    return result;
                 }
                 else
-                    return -1;
+                    throw new ArgumentException("Вызов пустой функции");
             }
             catch (Exception ex)
             {
