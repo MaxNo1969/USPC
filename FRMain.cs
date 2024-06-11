@@ -155,24 +155,24 @@ namespace USPC
             {
                 startWorkTime = DateTime.UtcNow;
                 Thread.Sleep(200);
-                //if (zoneAdder == null)
-                //    zoneAdder = new ZoneBackGroundWorker();
-                //if(worker == null)
-                //    worker = new TubeWorker(this);
-                //zoneAdder.ProgressChanged += new ProgressChangedEventHandler(zoneAdder_ProgressChanged);
+                if (zoneAdder == null)
+                    zoneAdder = new ZoneBackGroundWorker();
+                if (worker == null)
+                    worker = new TubeWorker();
+                zoneAdder.ProgressChanged += new ProgressChangedEventHandler(zoneAdder_ProgressChanged);
 
-                testWorker = new BackgroundWorker()
-                {
-                    WorkerReportsProgress = true,
-                    WorkerSupportsCancellation = true,
-                };
-                testWorker.ProgressChanged += new ProgressChangedEventHandler(testWorker_ProgressChanged);
-                testWorker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(testWorker_RunWorkerCompleted);
-                testWorker.DoWork += new DoWorkEventHandler(testWorker_DoWork);
-                Program.result.Clear();
-                testWorker.RunWorkerAsync();
-                //zoneAdder.RunWorkerAsync();
-                //worker.RunWorkerAsync();
+                //testWorker = new BackgroundWorker()
+                //{
+                //    WorkerReportsProgress = true,
+                //    WorkerSupportsCancellation = true,
+                //};
+                //testWorker.ProgressChanged += new ProgressChangedEventHandler(testWorker_ProgressChanged);
+                //testWorker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(testWorker_RunWorkerCompleted);
+                //testWorker.DoWork += new DoWorkEventHandler(testWorker_DoWork);
+                //Program.result.Clear();
+                //testWorker.RunWorkerAsync();
+                zoneAdder.RunWorkerAsync();
+                worker.RunWorkerAsync();
                 setSb("Info", "Работа");
                 setStartStopMenu(false);
             }
@@ -183,16 +183,16 @@ namespace USPC
                 //    worker.CancelAsync();
                 //    worker = null;
                 //}
-                //if (zoneAdder != null && zoneAdder.IsBusy)
-                //{
-                //    zoneAdder.CancelAsync();
-                //    zoneAdder = null;
-                //}
-                if (testWorker != null && testWorker.IsBusy)
+                if (zoneAdder != null && zoneAdder.IsBusy)
                 {
-                    testWorker.CancelAsync();
-                    testWorker = null;
+                    zoneAdder.CancelAsync();
+                    zoneAdder = null;
                 }
+                //if (testWorker != null && testWorker.IsBusy)
+                //{
+                //    testWorker.CancelAsync();
+                //    testWorker = null;
+                //}
                 setSb("Info", "Нажмите F5 для начала работы");
                 setStartStopMenu(true);
             }

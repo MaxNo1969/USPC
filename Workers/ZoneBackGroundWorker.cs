@@ -32,15 +32,7 @@ namespace USPC
 
         void worker_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
-            try
-            {
-                log.add(LogRecord.LogReason.info, "{0}: {1}: e.ProgressPercentage = {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, e.ProgressPercentage);
-            }
-            catch (Exception ex)
-            {
-                log.add(LogRecord.LogReason.error, "{0}: {1}: Error: {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message);
-                return;
-            }
+            log.add(LogRecord.LogReason.info, "{0}: {1}: e.ProgressPercentage = {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, e.ProgressPercentage);
         }
 
         void worker_DoWork(object sender, DoWorkEventArgs e)
@@ -57,7 +49,8 @@ namespace USPC
                 int zoneTime = (int)((double)AppSettings.s.zoneSize/(double)AppSettings.s.speed);
                 log.add(LogRecord.LogReason.info, "{0}: {1}: {2} Now: {3}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, zoneTime,DateTime.Now.ToLongTimeString());
                 ReportProgress(Program.data[0].currentOffsetFrames * 100 / USPCData.countFrames);
-                Thread.Sleep(zoneTime*1000);
+                //Thread.Sleep(zoneTime*1000);
+                Thread.Sleep(500);
             }
         }
     }
