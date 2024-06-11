@@ -435,27 +435,6 @@ namespace USPC
     }
     #endregion constants
 
-    public interface IPCXUS
-    {
-        void setParamValueDouble(double _val,string _paramName, int _board = 0, int _test = 0, UnitCode _unit = UnitCode.UNIT_us);
-        double getParamValueDouble(string _paramName, int _board = 0, int _test = 0, UnitCode _unit = UnitCode.UNIT_us);
-        string getParamValueString(string _paramName, int _board = 0, int _test = 0, UnitCode _unit = UnitCode.UNIT_us);
-        bool open(Int32 _mode);
-        bool load(string _fName, int _board = -1, int _test = -1);
-        bool close();
-        bool save(string _fName, int _board = -1, int _test = -1);
-        bool config(Int32 _board, Int32 _bufferSize);
-        bool status(Int32 _board, ref Int32 _status, ref Int32 _NumberOfScansAcquired, ref Int32 _NumberOfScansRead, ref Int32 _BufferSize, ref Int32 _scanSize);
-        bool start(Int32 _board);
-        bool stop(Int32 _board);
-        bool clear(Int32 _board);
-        Int32 read(Int32 _board, byte[] _data, int _timeout = 200);
-        Int32 read(Int32 _board, AcqAscan[] _data, int _timeout = 200);
-        bool readAscan(ref Ascan ascan, int _timeout = 100, int _board = 0, int _test = 0);
-        int Err { get; }
-    }
-
-
 
     public class PCXUS : IPCXUS
     {
@@ -799,24 +778,8 @@ namespace USPC
                 return true;
             }
         }
-        public Int32 read(Int32 _board, byte[] _data, int _timeout = 200)
-        {
-            if (!checkHandle()) return 0;
-            Int32 NumberOfRead = 0;
-            Int32 ScansBacklog = 0;
-            error = PCXUS_ACQ_READ(hPCXUS, _board, 0, _timeout, ref NumberOfRead, ref ScansBacklog, _data);
-            if (error != 0)
-            {
-                log.add(LogRecord.LogReason.error, "{0}: {1}: 0x{2:X8}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, error);
-                return 0;
-            }
-            else
-            {
-                log.add(LogRecord.LogReason.info, "{0}: {1}: {2} = {3}, {4} = {5}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, "NumberOfRead", NumberOfRead, "ScansBacklog", ScansBacklog);
-                return NumberOfRead;
-            }
-        }
-        public Int32 read(Int32 _board, AcqAscan[] _data, int _timeout = 200)
+
+        public Int32 read(Int32 _board, ref AcqAscan[] _data, int _timeout = 200)
         {
             if (!checkHandle()) return 0;
             Int32 NumberOfRead = 0;

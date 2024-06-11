@@ -24,7 +24,6 @@ namespace USPC
         {
             //log.add(LogRecord.LogReason.info, "{0}: {1}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name);
         }
-
         public int callNetworkFunction(string _func, out Object ret)
         {
             TcpClient client = null;
@@ -53,7 +52,7 @@ namespace USPC
                             {
                                 IFormatter formatter = new BinaryFormatter();
                                 AcqAscan[] scans = (AcqAscan[])formatter.Deserialize(stream);
-                                log.add(LogRecord.LogReason.debug, "{0}: {1}: command = \"{2}\", {3} scans readed", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, _func, scans.Length);
+                                //log.add(LogRecord.LogReason.debug, "{0}: {1}: command = \"{2}\", {3} scans readed", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, _func, scans.Length);
                                 ret = (Object)scans;
                                 return result;
                             }
@@ -78,9 +77,8 @@ namespace USPC
                         case "ascan":
                             {
                                 IFormatter formatter = new BinaryFormatter();
-                                //XmlSerializer formatter = new XmlSerializer(typeof(Ascan));
                                 Ascan ascan = (Ascan)formatter.Deserialize(stream);
-                                log.add(LogRecord.LogReason.debug, "{0}: {1}: command = \"{2}\", DataSize = {3}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, _func, ascan.DataSize);
+                                //log.add(LogRecord.LogReason.debug, "{0}: {1}: command = \"{2}\", DataSize = {3}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, _func, ascan.DataSize);
                                 ret = (Object)ascan;
                                 return result;
                             }
@@ -88,7 +86,7 @@ namespace USPC
                             {
                                 IFormatter formatter = new BinaryFormatter();
                                 AcqSatus status = (AcqSatus)formatter.Deserialize(stream);
-                                log.add(LogRecord.LogReason.debug, "{0}: {1}: command = \"{2}\", {3}, ", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, _func, ((ACQ_STATUS)status.status).ToString());
+                                //log.add(LogRecord.LogReason.debug, "{0}: {1}: command = \"{2}\", {3}, ", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, _func, ((ACQ_STATUS)status.status).ToString());
                                 ret = (Object)status;
                                 return result;
                             }

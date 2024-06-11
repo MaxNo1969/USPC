@@ -154,9 +154,7 @@ namespace USPC
             if (miStart.Text == "Старт")
             {
                 startWorkTime = DateTime.UtcNow;
-                //SL.getInst().oPEREKL.Val = true;
                 Thread.Sleep(200);
-                //SL.getInst().oPEREKL.Val = false;
                 //if (zoneAdder == null)
                 //    zoneAdder = new ZoneBackGroundWorker();
                 //if(worker == null)
@@ -353,7 +351,8 @@ namespace USPC
         {
             long usedMem = GC.GetTotalMemory(false);
             sb.Items["heap"].Text = string.Format("{0,6}M", usedMem / (1024 * 1024));
-            sb.Items["speed"].Text = string.Format("{0}", AppSettings.s.speed);
+            sb.Items["speed"].Text = string.Format("{0,7:F2}", AppSettings.s.speed);
+            sb.Items["dataSize"].Text = Program.data[0].currentOffsetFrames.ToString();
             //NotOpened, Opened, loaded, error
             Color color;
             switch(Program.boardState)

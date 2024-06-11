@@ -94,7 +94,7 @@ namespace USPC
                     return;
                 }
                 log.add(LogRecord.LogReason.info, "ACQ_STATUS: {0}, NumberOfScansAcquired: {1}, NumberOfScansRead: {2}", ((ACQ_STATUS)status).ToString(), NumberOfScansAcquired, NumberOfScansRead);
-                Int32 NumberOfScans = pcxus.read(Board, data,200);
+                Int32 NumberOfScans = pcxus.read(Board, ref data,200);
                 log.add(LogRecord.LogReason.info, "NumberOfScans: {0}", NumberOfScans);
                 //AcqAscan[] buffer = new AcqAscan[NumberOfScans];
                 //Array.Copy(data, buffer, NumberOfScans);

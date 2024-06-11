@@ -242,7 +242,7 @@ namespace USPC
                     case "read":
                         {
                             int board = (cmdAndParams.Length > 2) ? ConvertToInt(cmdAndParams[1]) : 0;
-                            ret = (uint)pcxus.read(board, data);
+                            ret = (uint)pcxus.read(board,ref data);
                             ret = (ret > 0) ? ret : (UInt32)pcxus.Err;
                             _stream.Write(BitConverter.GetBytes(ret), 0, sizeof(UInt32));
                             AcqAscan[] retarray = new AcqAscan[ret];

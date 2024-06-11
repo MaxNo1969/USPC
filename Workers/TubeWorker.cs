@@ -13,66 +13,46 @@ namespace USPC
 {
     class TubeWorker:BackgroundWorker
     {
-        private FRMain frMain = null;
         UspcNetDataReader[] dataReaders = null;
         bool speedCalced = false;
-        public TubeWorker(FRMain _frMain)
+        public TubeWorker()
         {
-            frMain = _frMain;
-
-            dataReaders = new UspcNetDataReader[2];
-            for (int i = 0; i < 2; i++)
-                dataReaders[i] = new UspcNetDataReader(i);
-            speedCalced = false;
+            //Натраиваем параметры воркера
             WorkerReportsProgress = true;
             WorkerSupportsCancellation = true;
 
             DoWork += new DoWorkEventHandler(worker_DoWork);
             ProgressChanged += new ProgressChangedEventHandler(worker_ProgressChanged);
             RunWorkerCompleted += new RunWorkerCompletedEventHandler(worker_RunWorkerCompleted);
+
+            //Воркеры сбора данных для каждой платы
+            dataReaders = new UspcNetDataReader[2];
+            for (int i = 0; i < 2; i++)
+                dataReaders[i] = new UspcNetDataReader(i);
+            speedCalced = false;
         }
 
         void worker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            log.add(LogRecord.LogReason.info, "{0}: {1}: e.Cancelled = {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, e.Cancelled);
+            log.add(LogRecord.LogReason.debug, "{0}: {1}: e.Cancelled = {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, e.Cancelled);
             //Снимем все сигналы, кроме слаботочки
             clearAllOutSignals();
-            frMain.setStartStopMenu(true);
+            //Здесь можно обработать окончание работы с трубой - записать куда-нибудь результат и т.п.
             setSb("Info", "Для начала работы нажмите F5");
         }
         #region вывод информации в главное окно программы
         private void setPb(int _percent)
         {
-            if (frMain.InvokeRequired)
-            {
-                Action action = () => frMain.setPb(_percent);
-                frMain.Invoke(action);
-            }
-            else
-                frMain.setPb(_percent);
+            Action action = () => Program.frMain.setPb(_percent);
+            Program.frMain.Invoke(action);
         }
 
         private void setSb(string _item, string _text)
         {
-            if (frMain.InvokeRequired)
-            {
-                Action action = () => frMain.setSb(_item, _text);
-                frMain.Invoke(action);
-            }
-            else
-                frMain.setSb(_item, _text);
+            Action action = () => Program.frMain.setSb(_item, _text);
+            Program.frMain.Invoke(action);
         }
 
-        private void setSb(SetSbParams _params)
-        {
-            if (frMain.InvokeRequired)
-            {
-                Action action = () => frMain.setSb(_params.item, _params.text);
-                frMain.Invoke(action);
-            }
-            else
-                frMain.setSb(_params.item, _params.text);
-        }
         class SetSbParams
         {
             public string item;
@@ -83,14 +63,22 @@ namespace USPC
                 text = _text;
             }
         }
+        private void setSb(SetSbParams _params)
+        {
+            Action action = () => Program.frMain.setSb(_params.item, _params.text);
+            Program.frMain.Invoke(action);
+        }
         #endregion вывод информации в главное окно программы
+        
         enum ReportWhat
         {
             SetSB = 101
         }
+        
+        //ToDo: Этоткусок можно перенести в FRMain
         void worker_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
-            log.add(LogRecord.LogReason.info, "{0}: {1}: e.Cancelled = {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, e.UserState.ToString());
+            log.add(LogRecord.LogReason.debug, "{0}: {1}: e.Cancelled = {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, e.UserState.ToString());
             if(e.ProgressPercentage <= 100)
             {
                 setPb(e.ProgressPercentage);
@@ -118,7 +106,7 @@ namespace USPC
         {
             none, //Не установлено
             startWorkCycle, //Начало рабочего цикла по трубе
-            waitNextTube, //Ожидаем трубу на входе в установку
+            waitTube, //Ожидаем трубу на входе в установку
             moduleReady, //Установка готова к работе
             waitCntrl, //Ждем появления сигнала "Контроль"
             work, //Работа - крутим цикл приема данных до снятия сигнала "Контроль"
@@ -127,14 +115,24 @@ namespace USPC
         }
         public WrkStates curState;
         private static WrkStates prevState = WrkStates.none;
-        
-        private static TimeSpan waitReadyStarted;
-        private static TimeSpan waitControlStarted;
-        private static TimeSpan controlIsSet;
 
+        //Время ожидания сигнала "РАБОТА"
+        private static int iWrkTimeout = 30;
+        //ToDo: Непонятно пока чего ждем
+        //Время ожидания готовности чего-то
+        private static int iReadyTimeout = 30;
+        //Время ожидания сигнала "КОНТРОЛЬ"
+        private static int iControlTimeout = 30;
+
+        private static DateTime tubeStarted;
+        private static DateTime waitReadyStarted;
+        private static DateTime waitControlStarted;
+        private static DateTime controlIsSet = DateTime.MinValue;
+
+        #region запуск/остановка сбора данных по всем платам
         void stopWorkers()
         {
-            log.add(LogRecord.LogReason.info, "{0}: {1}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name);
+            log.add(LogRecord.LogReason.debug, "{0}: {1}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name);
             for (int i = 0; i < 2; i++)
             {
                 if (dataReaders[i] != null && dataReaders[i].IsBusy)
@@ -146,7 +144,7 @@ namespace USPC
 
         void startWorkers()
         {
-            log.add(LogRecord.LogReason.info, "{0}: {1}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name);
+            log.add(LogRecord.LogReason.debug, "{0}: {1}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name);
             for (int i = 0; i < 2; i++)
             {
                 if (dataReaders[i] != null && !dataReaders[i].IsBusy)
@@ -155,28 +153,29 @@ namespace USPC
                 }
             }
         }
+        #endregion запуск/остановка сбора данных по всем платам
 
-        
+
         void worker_DoWork(object sender, DoWorkEventArgs e)
         {
-            log.add(LogRecord.LogReason.info, "{0}: {1}: {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, "Worker started");
+            log.add(LogRecord.LogReason.debug, "{0}: {1}: {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, "Worker started");
             try
             {
-                //начинаем отсчет времени
-                Stopwatch sw = new Stopwatch();
-                sw.Start();
                 //В эту строку запишем сообщение об ошибке
                 string errStr = string.Empty;
                 curState = WrkStates.startWorkCycle;
-                controlIsSet = TimeSpan.Zero;
+
                 while (true)
                 {
                     //Проверяем сигналы ICC и  CYCLE - они должны быть выставлены воё время работы
+                    //Вроде не надо - будет исключение
+                    /*
                     if (!SL.getInst().checkSignals())
                     {
                         errStr = "Отсутствуют сигналы";
                         curState = WrkStates.error;
                     }
+                    */ 
                     //Состояние изменилось
                     if (prevState != curState)
                     {
@@ -194,20 +193,16 @@ namespace USPC
                     }
                     switch (curState)
                     {
-                        //Проверяем наличие ошибки - если выставлено, то закрываем всё и выходим из цикла
+                        //Проверяем наличие ошибки - если выставлено, то бросаем исключение
                         case WrkStates.error:
                             //log.add(LogRecord.LogReason.error, "{0}: {1}: Error: {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, errStr);
                             throw new Exception(errStr);
-                        //isRunning = false;
-                        //frm.setSb("Info", errStr);
-                        //break;
-                        //Начало рабочего цикла - снимаем сигнал "Перекладка" для сигнализации того, что
-                        //установка ждет следующую трубу
+                        //Начало рабочего цикла
                         case WrkStates.startWorkCycle:
-                            //SL.getInst().oPEREKL.Val = false;
-                            curState = WrkStates.waitNextTube;
+                            curState = WrkStates.waitTube;
+                            tubeStarted = DateTime.Now;
                             break;
-                        case WrkStates.waitNextTube:
+                        case WrkStates.waitTube:
                             //Труба поступила на вход установки
                             if (SL.getInst().iWRK.Val == true)
                             {
@@ -219,50 +214,58 @@ namespace USPC
                                     //SL.getInst().oPBM.Val = true;
                                     prepareBoardsForWork();
                                 }
-                                //Выставляем сигнал "РАБОТА"
-                                //SL.getInst().oWRK.Val = true;
-                                waitReadyStarted = sw.Elapsed;
+                                //Выставляем сигнал "ГОТОВНОСТЬ"
+                                SL.getInst().oREADY.Val = true;
+                                waitReadyStarted = DateTime.Now;
                                 curState = WrkStates.moduleReady;
+                                break;
                             }
-                            break;
+                            else
+                            {
+                                //Не дождались сигнала "РАБОТА"
+                                if((DateTime.Now - tubeStarted ).Seconds > iWrkTimeout)
+                                {
+                                    errStr = "Не дождались сигнала \"РАБОТА\"";
+                                    curState = WrkStates.error;
+                                    break;
+                                }
+                                break;
+                            }
                         case WrkStates.moduleReady:
                             //Тут надо проверить таймоут ожидания начала движения трубы
-                            if ((sw.Elapsed - waitReadyStarted).Seconds > 30)
+                            if ((waitReadyStarted - DateTime.Now).Seconds > iReadyTimeout)
                             {
                                 errStr = "Не дождались начала движения трубы";
                                 curState = WrkStates.error;
                                 break;
                             }
-                            //Снялcя сигнал "ГОТОВНОСТЬ" - труба начала движение
-                            /*
-                            if (SL.getInst().iREADY.Val == false)
+                            else
                             {
-                                waitControlStarted = sw.Elapsed;
                                 curState = WrkStates.waitCntrl;
+                                waitControlStarted = DateTime.Now;
+                                break;
                             }
-                            */ 
-                            break;
                         //При появлении сигнала КОНТРОЛЬ запоминаем время для вычисления скорости
                         //Если сигнал КОНТРОЛЬ не появился за определенное время (10 секунд) – 
                         //аварийное завершение режима с выводом со-ответствующего сообщения.
                         case WrkStates.waitCntrl:
-                            if ((sw.Elapsed - waitControlStarted).Seconds > 10)
+                            if ((DateTime.Now - waitControlStarted).Seconds > iControlTimeout)
                             {
                                 errStr = "Не дождались трубы на входе в модуль";
                                 curState = WrkStates.error;
                                 break;
                             }
-                            //
-                            /*
-                            if(SL.getInst().iCNTR.Val==true)
+                            else
                             {
-                                controlIsSet = sw.Elapsed;   
-                                curState = WrkStates.work;
-                                //Включить сбор данных с модуля контроля. Ожидать пропадания сигнала КОНТРОЛЬ. 
-                                startWorkers();
+                                //if (SL.getInst().iCNTR.Val == true)
+                                //{
+                                    controlIsSet = DateTime.Now;
+                                    curState = WrkStates.work;
+                                    //Включить сбор данных с модуля контроля. Ожидать пропадания сигнала КОНТРОЛЬ. 
+                                    startWorkers();
+                                //}
+                                break;
                             }
-                            */ 
-                            break;
                         case WrkStates.work:
                             //Пропал сигнал контроль
                             /*
@@ -276,25 +279,24 @@ namespace USPC
                             }
                             */ 
                             //Труба доехала до базы
-                            if (SL.getInst().iBASE.Val == true && controlIsSet != TimeSpan.Zero && !speedCalced)
+                            if (SL.getInst().iBASE.Val == true && controlIsSet != DateTime.MinValue && !speedCalced)
                             {
-                                TimeSpan timeToBase = sw.Elapsed - controlIsSet;
-                                controlIsSet = TimeSpan.Zero;
+                                int millisecondsToBase = (DateTime.Now - controlIsSet).Milliseconds;
+                                controlIsSet = DateTime.MinValue;
                                 //Получаем значение скорости трубы
-                                //AppSettings.s.speed = (double)AppSettings.s.distanceToBase / (double)timeToBase.Milliseconds;
-                                log.add(LogRecord.LogReason.info, "Рассчитаная скорость: {0}", (double)AppSettings.s.distanceToBase / ((double)timeToBase.Milliseconds*1000.0));
+                                AppSettings.s.speed = (double)AppSettings.s.distanceToBase / ((double)millisecondsToBase*1000.0);
+                                log.add(LogRecord.LogReason.info, "Рассчитаная скорость: {0}", AppSettings.s.speed);
+                                setSb("speed", AppSettings.s.speed.ToString());
                                 speedCalced = true;
                             }
                             break;
                         case WrkStates.endWork:
                             //По окончании сбора, обработки и передачи результата. 
-                            //SL.getInst().oRES1.Val = true;
-                            //SL.getInst().oRES2.Val = true;
-                            //SL.getInst().oPEREKL.Val = true;
+                            SL.getInst().oREADY.Val = false;
+                            stopWorkers();
                             Thread.Sleep(100);
                             speedCalced = false;
-                            curState = WrkStates.startWorkCycle;
-                            break;
+                            return;
                         default:
                             break;
 

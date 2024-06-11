@@ -19,7 +19,8 @@ namespace USPC
         public static BoardState boardState = BoardState.NotOpened;
         public static int numBoards = 2;
         public static string serverAddr;
-        public static PCXUSNET pcxus = null; 
+        public static PCXUSNET pcxus = null;
+        public static int bufferSize = 1024 * 100;
         public static USPCData[] data = new USPCData[numBoards];
         public static TubeResult result = new TubeResult();
         public static TypeSize typeSize = new TypeSize();
@@ -99,9 +100,9 @@ namespace USPC
             }
             finally
             {
-                Debug.WriteLine("Вошли в program/finally");
-                if (boardState == BoardState.Opened || boardState == BoardState.Error)
-                    pcxus.close();
+                log.add(LogRecord.LogReason.debug, "{0}: {1}: {2}", "Program", System.Reflection.MethodBase.GetCurrentMethod().Name, "Зашли в finally");
+                //if (boardState == BoardState.Opened || boardState == BoardState.Error)
+                pcxus.close();
                 //Снимаем все выходные сигналы и останавливаем PCIE1730
                 SL.Destroy();
                 FormPosSaver.ser();

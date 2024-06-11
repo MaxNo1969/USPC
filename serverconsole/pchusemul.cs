@@ -227,7 +227,7 @@ namespace USPC
             log.add(LogRecord.LogReason.info, "{0}: {1}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name);
             return 0;
         }
-        public Int32 read(Int32 _board, AcqAscan[] _data, int _timeout = 200)
+        public Int32 read(Int32 _board, ref AcqAscan[] _data, int _timeout = 200)
         {
             if (!checkHandle()) return 0;
             if (boardStatus == ACQ_STATUS.ACQ_RUNNING && scans != null)

@@ -108,7 +108,7 @@ namespace USPC
 
         public bool config(Int32 _board, Int32 _bufferSize)
         {
-            error = netClient.callNetworkFunction(string.Format("{0},{1},{2},{3}", "config", _bufferSize), out obj);
+            error = netClient.callNetworkFunction(string.Format("{0},{1},{2}", "config", _board,_bufferSize), out obj);
             return (error == 0);
         }
 
@@ -143,17 +143,12 @@ namespace USPC
             error = netClient.callNetworkFunction(string.Format("{0},{1}", "clear", _board), out obj);
             return true;
         }
-        public Int32 read(Int32 _board, byte[] _data, int _timeout = 200)
+
+        public Int32 read(Int32 _board, ref AcqAscan[] _data, int _timeout = 200)
         {
             int numberScans = netClient.callNetworkFunction(string.Format("{0},{1}", "read", _board), out obj);
-            _data = (byte[])obj;
-            error = 0;
-            return numberScans*System.Runtime.InteropServices.Marshal.SizeOf(_data[0]);
-        }
-        public Int32 read(Int32 _board, AcqAscan[] _data, int _timeout = 200)
-        {
-            int numberScans = netClient.callNetworkFunction(string.Format("{0},{1}", "read", _board), out obj);
-            _data = (AcqAscan[])obj;
+            AcqAscan[] tempAscans = (AcqAscan[])obj;
+            _data = tempAscans;
             error = 0;
             return numberScans;
         }
