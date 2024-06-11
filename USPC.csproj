@@ -68,9 +68,9 @@
     <Compile Include="FRWaitLongProcess.Designer.cs">
       <DependentUpon>FRWaitLongProcess.cs</DependentUpon>
     </Compile>
-    <Compile Include="PCXUSNET.cs" />
-    <Compile Include="StructToCsv.cs" />
-    <Compile Include="BytesToStructure.cs" />
+    <Compile Include="PCXUSNET\PCXUSNET.cs" />
+    <Compile Include="Csv\StructToCsv.cs" />
+    <Compile Include="Csv\BytesToStructure.cs" />
     <Compile Include="Chart\CGraphChart.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -83,7 +83,7 @@
     <Compile Include="Chart\MeasChart.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="CSVHelper.cs" />
+    <Compile Include="Csv\CSVHelper.cs" />
     <Compile Include="Data\bufferstamp.cs" />
     <Compile Include="Data\DataGenerator.cs" />
     <Compile Include="Data\USPCData.cs" />
@@ -118,10 +118,10 @@
     <Compile Include="FRTestAcqNet.designer.cs">
       <DependentUpon>FRTestAcqNet.cs</DependentUpon>
     </Compile>
-    <Compile Include="FRTestTcp.cs">
+    <Compile Include="PCXUSNET\FRTestTcp.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="FRTestTcp.Designer.cs">
+    <Compile Include="PCXUSNET\FRTestTcp.Designer.cs">
       <DependentUpon>FRTestTcp.cs</DependentUpon>
     </Compile>
     <Compile Include="FRUspcInfo.cs">
@@ -136,7 +136,7 @@
     <Compile Include="Gate.Designer.cs">
       <DependentUpon>Gate.cs</DependentUpon>
     </Compile>
-    <Compile Include="TubeWorker.cs">
+    <Compile Include="Workers\TubeWorker.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="MedianFilter.cs" />
@@ -161,7 +161,7 @@
     <Compile Include="PCI-1730\UCSignal.designer.cs">
       <DependentUpon>UCSignal.cs</DependentUpon>
     </Compile>
-    <Compile Include="PCXUSNetworkClient.cs" />
+    <Compile Include="PCXUSNET\PCXUSNetworkClient.cs" />
     <Compile Include="FRMain.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -170,7 +170,7 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="StructHelper.cs" />
+    <Compile Include="Csv\StructHelper.cs" />
     <Compile Include="settings\FRSettings.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -194,10 +194,10 @@
     <Compile Include="UC4SensorView.Designer.cs">
       <DependentUpon>UC4SensorView.cs</DependentUpon>
     </Compile>
-    <Compile Include="UspcNetDataReader.cs">
+    <Compile Include="Workers\UspcNetDataReader.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="ZoneBackGroundWorker.cs">
+    <Compile Include="Workers\ZoneBackGroundWorker.cs">
       <SubType>Component</SubType>
     </Compile>
     <EmbeddedResource Include="Emul\FREmul.resx">
@@ -221,7 +221,7 @@
     <EmbeddedResource Include="FRTestAcqNet.resx">
       <DependentUpon>FRTestAcqNet.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="FRTestTcp.resx">
+    <EmbeddedResource Include="PCXUSNET\FRTestTcp.resx">
       <DependentUpon>FRTestTcp.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="FRUspcInfo.resx">
