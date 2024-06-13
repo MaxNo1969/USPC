@@ -9,7 +9,7 @@ namespace PCI1730
     /// </summary>
     public partial class FRSignals : Form 
     {
-        SLLUZK SL;
+        SignalList sl;
         /// <summary>
         /// Делегат при скрытии формы
         /// </summary>
@@ -22,10 +22,10 @@ namespace PCI1730
         /// Конструктор
         /// </summary>
         /// <param name="_SL">Список обрабатываемых сигналов</param>
-        public FRSignals(SLLUZK _SL)
+        public FRSignals(SignalList _sl)
         {
             InitializeComponent();
-            SL = _SL;
+            sl = _sl;
         }
 
         private void FSignals_Load(object sender, EventArgs e)
@@ -35,23 +35,29 @@ namespace PCI1730
             int space = 4;
             int ltop = 0;
             int rleft = 0;
-            for (int i = 0; i < SL.CountIn; i++)
+            for (int i = 0; i < sl.Count; i++)
             {
-                UCSignal p = new UCSignal(SL.GetSignalIn(i));
-                Controls.Add(p);
-                p.Left = space;
-                p.Top = ltop + space;
-                ltop += p.Height + space;
-                rleft = p.Left + p.Width + space;
+                if (sl[i].input)
+                {
+                    UCSignal p = new UCSignal(sl[i], true);
+                    Controls.Add(p);
+                    p.Left = space;
+                    p.Top = ltop + space;
+                    ltop += p.Height + space;
+                    rleft = p.Left + p.Width + space;
+                }
             }
             ltop = 0;
-            for (int i = 0; i < SL.CountOut; i++)
+            for (int i = 0; i < sl.Count; i++)
             {
-                UCSignal p = new UCSignal(SL.GetSignalOut(i));
-                Controls.Add(p);
-                p.Left = rleft;
-                p.Top = ltop + space;
-                ltop += p.Height + space;
+                if (!sl[i].input)
+                {
+                    UCSignal p = new UCSignal(sl[i], false);
+                    Controls.Add(p);
+                    p.Left = rleft;
+                    p.Top = ltop + space;
+                    ltop += p.Height + space;
+                }
             }
             timer1.Enabled = true;
         }

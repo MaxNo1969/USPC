@@ -151,10 +151,7 @@
     <Compile Include="PCI-1730\PCI_1730_real.cs" />
     <Compile Include="PCI-1730\PCI_1730_virtual.cs" />
     <Compile Include="PCI-1730\Signal.cs" />
-    <Compile Include="PCI-1730\SignalIn.cs" />
     <Compile Include="PCI-1730\SignalList.cs" />
-    <Compile Include="PCI-1730\SLLUZK.cs" />
-    <Compile Include="PCI-1730\SignalOut.cs" />
     <Compile Include="PCI-1730\UCSignal.cs">
       <SubType>UserControl</SubType>
     </Compile>

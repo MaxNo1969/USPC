@@ -58,17 +58,48 @@ namespace PCI1730
         /// </summary>
         protected PCI_1730 a1730;
 
+
+        /// <summary>
+        /// Список сигналов
+        /// </summary>
         private List<Signal> M = new List<Signal>();
+
+
+        /// <summary>
+        /// Получаем сигнал по имени
+        /// </summary>
+        public Signal this[string _name]
+        {
+            get
+            {
+                return M.Find(x => x.name == _name);
+                //for (int i = 0; i < M.Count; i++)
+                //{
+                //    if (M[i].name == _name) return M[i];
+                //}
+                //throw new KeyNotFoundException(string.Format("Сигнал \"{0}\" не найден", _name));
+            }
+        }
+
+        public Signal this[int _index]
+        {
+            get
+            {
+                return M[_index];
+            }
+        }
+
+        
         private List<Latch> L = new List<Latch>();
         private readonly object SignalsLock;
         /// <summary>
         /// Список входных сигналов
         /// </summary>
-        protected List<SignalIn> MIn;
+        //protected List<Signal> MIn;
         /// <summary>
         /// Список выходных сигналов
         /// </summary>
-        protected List<SignalOut> MOut;
+        //protected List<Signal> MOut;
 
 
         /// <summary>
@@ -76,9 +107,9 @@ namespace PCI1730
         /// </summary>
         /// <param name="_sg">Сигнал</param>
         /// <param name="_val">Значение</param>
-        public void set(SignalIn _sg, bool _val)
+        public void set(Signal _sg, bool _val)
         {
-            a1730.SetBit(_sg.Position, _val,true);
+            a1730.SetBit(_sg.position, _val,true);
         }
 
         /// <summary>
@@ -86,9 +117,9 @@ namespace PCI1730
         /// </summary>
         /// <param name="_sg">Сигнал</param>
         /// <returns>Значение</returns>
-        public bool get(SignalIn _sg)
+        public bool get(Signal _sg)
         {
-            return a1730.GetBit(_sg.Position,true);
+            return a1730.GetBit(_sg.position,true);
         }
 
         /// <summary>
@@ -96,20 +127,20 @@ namespace PCI1730
         /// </summary>
         /// <param name="_sg">Сигнал</param>
         /// <param name="_val">Значение</param>
-        public void set(SignalOut _sg, bool _val)
-        {
-            a1730.SetBit(_sg.Position, _val, false);
-        }
+        //public void set(SignalOut _sg, bool _val)
+        //{
+        //    a1730.SetBit(_sg.Position, _val, false);
+        //}
 
         /// <summary>
         /// Прочитать сигнал
         /// </summary>
         /// <param name="_sg">Сигнал</param>
         /// <returns>Значение</returns>
-        public bool get(SignalOut _sg)
-        {
-            return a1730.GetBit(_sg.Position, false);
-        }
+        //public bool get(SignalOut _sg)
+        //{
+        //    return a1730.GetBit(_sg.Position, false);
+        //}
         /// <summary>
         /// Записать текущие значения сигналов в плату PCIE1730
         /// </summary>
@@ -161,14 +192,17 @@ namespace PCI1730
             }
             return (ret);
         }
+
+        
+        public int Count{get{return M.Count;} }
         /// <summary>
         /// Конструктор (Напрямую нигде не вызывается)
         /// </summary>
-        protected SignalList()
+        public SignalList()
         {
             SignalsLock = new object();
-            MIn = new List<SignalIn>();
-            MOut = new List<SignalOut>();
+            //MIn = new List<SignalIn>();
+            //MOut = new List<SignalOut>();
             PCIE1730Settings st1730 = AppSettings.settings.pcie1730Settings;
             if (st1730 == null)
             {
@@ -195,6 +229,10 @@ namespace PCI1730
                     sgSet = st1730.sl[i]
                 };
                 M.Add(sg);
+                //if (sg.input)
+                //    MIn.Add(sg);
+                //else
+                //    MOut.Add(sg);
                 log.add(LogRecord.LogReason.info, "{0} {1}-{2}(Digital={3},EOn={4},EOff={5},Timeout={6},No_reset={7},Verbal={8})", sg.position, sg.name, sg.hint, sg.digital, sg.eOn, sg.eOn, sg.timeout, sg.no_reset, sg.verbal);
             }
 
@@ -370,15 +408,26 @@ namespace PCI1730
             throw new KeyNotFoundException(string.Format("SignalList: Find: Сигнал {0} не найден", _name));
             //return (null);
         }
-        public int CountIn { get { return (MIn.Count); } }
-        public int CountOut { get { return (MOut.Count); } }
-        public SignalIn GetSignalIn(int _index)
+        //public int CountIn { get { return (MIn.Count); } }
+        //public int CountOut { get { return (MOut.Count); } }
+        //public Signal GetSignalIn(int _index)
+        //{
+        //    return (MIn[_index]);
+        //}
+        //public Signal GetSignalOut(int _index)
+        //{
+        //    return (MOut[_index]);
+        //}
+
+        public void ClearAllOutputSignals()
         {
-            return (MIn[_index]);
+            for (int i = 0; i < M.Count; i++)
+                if(M[i].input == false)M[i].Val = false;
         }
-        public SignalOut GetSignalOut(int _index)
+        public void ClearAllInputSignals()
         {
-            return (MOut[_index]);
+            for (int i = 0; i < M.Count; i++)
+                if(M[i].input == true)M[i].Val = false;
         }
     }
 }

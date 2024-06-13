@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Threading;
 using System.Windows.Forms;
 using FPS;
+using USPC;
 
 namespace EMUL
 {
@@ -29,7 +30,7 @@ namespace EMUL
         /// <summary>
         /// Сигналы для эмуляции PCIE1730
         /// </summary>
-        SLLUZK sl;
+        SignalList sl;
         /// <summary>
         /// Worker - эмуляция движения трубы через установку
         /// </summary>
@@ -49,18 +50,18 @@ namespace EMUL
             // Настройка ProgressBar-а
             pbTube.Minimum = 0;
             pbTube.Maximum = 100;
-            sl = SL.getInst();
+            sl = Program.sl;
             btnStart.Enabled = true;
             btnStop.Enabled = false;
-            for (int i = 0; i < sl.CountIn; i++)
+            for (int i = 0; i < sl.Count; i++)
             {
-                SignalIn s = sl.GetSignalIn(i);
-                inputSignals.Items.Add(string.Format("{0} {1}", s.Position, s.Name), s.Val);
-            }
-            for (int i = 0; i < sl.CountOut; i++)
-            {
-                SignalOut s = sl.GetSignalOut(i);
-                outputSignals.Items.Add(string.Format("{0} {1}", s.Position, s.Name), s.Val);
+                Signal s = sl[i];
+                if(s.input)
+                    //inputSignals.Items.Add(string.Format("{0} {1}", s.position, s.name), s.Val);
+                    inputSignals.Items.Add(s, s.Val);
+                else
+                    //outputSignals.Items.Add(string.Format("{0} {1}", s.position, s.name), s.Val);
+                    outputSignals.Items.Add(s, s.Val);
             }
             timer.Start();
             //Подготавливаем BackgroundWorker
@@ -78,7 +79,8 @@ namespace EMUL
         {
             log.add(LogRecord.LogReason.info, "{0}: {1}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name);
             //Снимаем все сигналы 
-            SL.getInst().ClearAllInputSignals();
+            sl.ClearAllOutputSignals();
+            sl.ClearAllInputSignals();
             pbTube.Value = 0;
             btnStart.Enabled = true;
             btnStop.Enabled = false;
@@ -127,9 +129,9 @@ namespace EMUL
             Stopwatch sw = new Stopwatch();
             sw.Start();
             worker.ReportProgress(101, "Включаем сигнал \"Цепи управления\"");
-            SL.getInst().set(SL.getInst().iCC, true);
+            //SL.getInst().set(SL.getInst().iCC, true);
             worker.ReportProgress(101, "Включаем сигнал \"Цикл\"");
-            SL.getInst().set(SL.getInst().iCYC, true);
+            //SL.getInst().set(SL.getInst().iCYC, true);
             //Тут сделаем цикл по трубам
             while (true)
             {
@@ -140,7 +142,7 @@ namespace EMUL
                 }
                 //Ждем выставления сигнала "Перекладка"
                 worker.ReportProgress(101, "Ждем выставления сигнала \"ЦИКЛ\"...");
-                while (SL.getInst().iCYC.Val == false)
+                //while (SL.getInst().iCYC.Val == false)
                 {
                     //Проверяем кнопку СТОП
                     if (worker.CancellationPending)
@@ -211,7 +213,7 @@ namespace EMUL
                     if (sw.ElapsedMilliseconds - startWait >= 3000 && !iBaseSet)
                     {
                         worker.ReportProgress(101, "Доехали до базы...");
-                        SL.getInst().set(SL.getInst().iBASE, true);
+                        //SL.getInst().set(SL.getInst().iBASE, true);
                         iBaseSet = true;
                     }
                     worker.ReportProgress((int)(currentMilliseconds * 100 / timeTubeMove.TotalMilliseconds));
@@ -228,15 +230,15 @@ namespace EMUL
         {
             if (Visible)
             {
+                for(int i = 0;i<inputSignals.Items.Count;i++)
+                {
+                    Signal s = (Signal)inputSignals.Items[i];
+                    inputSignals.SetItemChecked(i, s.Val);
+                }
                 for (int i = 0; i < outputSignals.Items.Count; i++)
                 {
-                    SignalOut s = sl.GetSignalOut(i);
+                    Signal s = (Signal)outputSignals.Items[i];
                     outputSignals.SetItemChecked(i, s.Val);
-                }
-                for (int i = 0; i < inputSignals.Items.Count; i++)
-                {
-                    SignalIn s = sl.GetSignalIn(i);
-                    inputSignals.SetItemChecked(i, s.Val);
                 }
             }
             if (worker.IsBusy)
@@ -250,7 +252,7 @@ namespace EMUL
             CheckedListBox clb = (CheckedListBox)sender;
             if (clb.Name == "inputSignals")
             {
-                SL.getInst().set(sl.GetSignalIn(e.Index), e.NewValue == CheckState.Checked);
+                Program.sl[e.Index].Val = (e.NewValue == CheckState.Checked);
             }
         }
 

@@ -27,6 +27,7 @@ namespace USPC
         public static FRMain frMain = null;
         public static int medianFilterWidth = 5;
 
+        public static SignalList sl = null;
 
         /// <summary>
         /// The main entry point for the application.
@@ -86,6 +87,8 @@ namespace USPC
             try
             {
                 FormPosSaver.deser();
+                sl = new SignalList();
+                sl["РЕЗЕРВ1"].Val = true;
                 for (int i = 0; i < numBoards;i++ )
                 {
                     data[i] = new USPCData();
@@ -104,7 +107,7 @@ namespace USPC
                 //if (boardState == BoardState.Opened || boardState == BoardState.Error)
                 pcxus.close();
                 //Снимаем все выходные сигналы и останавливаем PCIE1730
-                SL.Destroy();
+                sl.Dispose();
                 FormPosSaver.ser();
             }
             return ret;

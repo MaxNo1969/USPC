@@ -14,43 +14,33 @@ namespace PCI1730
     /// </summary>
     public partial class UCSignal : UserControl
     {
-        private SignalIn sIn=null;
-        private SignalOut sOut=null;
+        private Signal s=null;
         bool input=false;
         Color color_false;
         /// <summary>
-        /// Конструктор. Входящий сигнал
+        /// Конструктор
         /// </summary>
         /// <param name="_sIn">Входящий сигнал</param>
-        public UCSignal(SignalIn _sIn)
+        public UCSignal(Signal _s,bool _isInput)
         {
             InitializeComponent();
-            sIn=_sIn;
-            input = true;
+            s=_s;
+            input = _isInput;
         }
-        /// <summary>
-        /// Конструктор. Исходящий сигнал
-        /// </summary>
-        /// <param name="_sOut">Исходящий сигнал</param>
-        public UCSignal(SignalOut _sOut)
-        {
-            InitializeComponent();
-            sOut = _sOut;
-            input = false;
-        }
+
         private void UCSignal_Load(object sender, EventArgs e)
         {
             if(input)
             {
-                label1.Text = sIn.Position+" "+sIn.Name;
-                TT.SetToolTip(this,sIn.Hint);
-                TT.SetToolTip(label1,sIn.Hint);
+                label1.Text = string.Format("{0} {1}", s.position, s.name);
+                TT.SetToolTip(this,s.hint);
+                TT.SetToolTip(label1,s.hint);
             }
             else
             {
-                label1.Text = sOut.Position + " " + sOut.Name;
-                TT.SetToolTip(this,sOut.Hint);
-                TT.SetToolTip(label1,sOut.Hint);
+                label1.Text = string.Format("{0} {1}", s.position, s.name);
+                TT.SetToolTip(this,s.hint);
+                TT.SetToolTip(label1,s.hint);
             }
             label1.Top = (ClientSize.Height - label1.Height) / 2;
             if (label1.Top < 0)
@@ -64,14 +54,14 @@ namespace PCI1730
         {
             if (input)
             {
-                if (sIn.Val)
+                if (s.Val)
                     BackColor = Color.Green;
                 else
                     BackColor = color_false;
             }
             else
             {
-                if (sOut.Val)
+                if (s.Val)
                     BackColor = Color.Red;
                 else
                     BackColor = color_false;
@@ -85,7 +75,7 @@ namespace PCI1730
                 //bool b = sOut.Val;
                 //if (b == true) sOut.Val = false;
                 //if (b == false) sOut.Val = true;
-                sOut.Val = !sOut.Val;
+                s.Val = !s.Val;
                 Exec();                
             }
             TT.Active = false;

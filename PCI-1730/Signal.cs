@@ -25,7 +25,7 @@ namespace PCI1730
         /// <summary>
         /// Название сигнала
         /// </summary>
-        public string name { get { return sgSet.name; }}
+        public string name { get { return sgSet.name; } }
         /// <summary>
         /// Номер платы вводв/вывода
         /// </summary>
@@ -239,6 +239,25 @@ namespace PCI1730
                     AlarmVal = false;
                 }
             }
+        }
+
+        public override string ToString()
+        {
+            return string.Format("{0} {1}",position,name);
+        }
+        public override bool Equals(object obj)
+        {
+            if (obj == null) return false;
+            Signal s = obj as Signal;
+            if (s == null) 
+                return false;
+            else
+                return name == s.name;
+        }
+        public bool Equals(Signal _s)
+        {
+            if (_s == null) return false;
+            return this.name == _s.name;
         }
     }
 }

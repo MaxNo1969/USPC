@@ -103,7 +103,7 @@ namespace USPC
         /// <param name="_fr">Окно - владелец</param>
         private void InitSignalsWindow(Form _fr)
         {
-            fSignals = new FRSignals(SL.getInst())
+            fSignals = new FRSignals(Program.sl)
             {
                 Owner = _fr,
                 ShowInTaskbar = false,

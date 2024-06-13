@@ -96,10 +96,10 @@ namespace USPC
                 }
         }
 
+        //Снимаем все выходные сигналв, кроме ПИТАНИЕ БМ
         private static void clearAllOutSignals()
         {
-            //Снимаем все выходные сигналв, кроме ПИТАНИЕ БМ
-            SL.getInst().oREADY.Val = false;
+            Program.sl.ClearAllOutputSignals();
         }
         //Перечисление для текущуго состояния конечного автомата
         public enum WrkStates
@@ -204,7 +204,7 @@ namespace USPC
                             break;
                         case WrkStates.waitTube:
                             //Труба поступила на вход установки
-                            if (SL.getInst().iWRK.Val == true)
+                            if (Program.sl["КОНТРОЛЬ"].Val == true)
                             {
                                 clearAllOutSignals();
 
@@ -215,7 +215,8 @@ namespace USPC
                                     prepareBoardsForWork();
                                 }
                                 //Выставляем сигнал "ГОТОВНОСТЬ"
-                                SL.getInst().oREADY.Val = true;
+                                //SL.getInst().oWORK.Val = true;
+                                
                                 waitReadyStarted = DateTime.Now;
                                 curState = WrkStates.moduleReady;
                                 break;
@@ -279,7 +280,7 @@ namespace USPC
                             }
                             */ 
                             //Труба доехала до базы
-                            if (SL.getInst().iBASE.Val == true && controlIsSet != DateTime.MinValue && !speedCalced)
+                            if (Program.sl["БАЗА"].Val == true && controlIsSet != DateTime.MinValue && !speedCalced)
                             {
                                 int millisecondsToBase = (DateTime.Now - controlIsSet).Milliseconds;
                                 controlIsSet = DateTime.MinValue;
@@ -292,7 +293,8 @@ namespace USPC
                             break;
                         case WrkStates.endWork:
                             //По окончании сбора, обработки и передачи результата. 
-                            SL.getInst().oREADY.Val = false;
+                            Program.sl["РАБОТА"].Val = false;
+                            Program.sl["РРЕЗУЛЬТАТ"].Val = false;
                             stopWorkers();
                             Thread.Sleep(100);
                             speedCalced = false;
