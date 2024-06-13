@@ -245,6 +245,11 @@ namespace PCI1730
         {
             return string.Format("{0} {1}",position,name);
         }
+        public bool ToBool()
+        {
+            return this.Val;
+        }
+
         public override bool Equals(object obj)
         {
             if (obj == null) return false;
@@ -254,6 +259,11 @@ namespace PCI1730
             else
                 return name == s.name;
         }
+        public override int GetHashCode()
+        {
+            return name.GetHashCode();
+        }
+             
         public bool Equals(Signal _s)
         {
             if (_s == null) return false;
