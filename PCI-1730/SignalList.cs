@@ -213,6 +213,7 @@ namespace PCI1730
             {
                 Name = "SignalThread"
             };
+            Start();
         }
         /// <summary>
         /// Запуск потока обработки сигналов

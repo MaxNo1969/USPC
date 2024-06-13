@@ -1,51 +1,31 @@
 <?xml version="1.0"?>
 <Settings xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <tubeLength>6000</tubeLength>
-  <zoneSize>200</zoneSize>
+  <zoneSize>100</zoneSize>
   <pcie1730Settings>
-    <name>PCIE-1730</name>
+    <name>PCI-1730</name>
+    <devNum>15</devNum>
     <timeout>100</timeout>
     <sl>
-      <SignalSettings>
-        <name>ЦУП</name>
-        <board>0</board>
-        <input>true</input>
-        <digital>true</digital>
-        <position>0</position>
-        <hint>ЦЕПИ УПРАВЛЕНИЯ. Питание +24В для внутренних нужд</hint>
-        <timeout />
-        <no_reset>false</no_reset>
-        <verbal>false</verbal>
-      </SignalSettings>
       <SignalSettings>
         <name>ЦИКЛ</name>
         <board>0</board>
         <input>true</input>
-        <digital>false</digital>
-        <position>1</position>
+        <digital>true</digital>
+        <position>10</position>
         <hint>Сигнал установлен при нахождении оборудования ЛУЗК в автоматическом режиме</hint>
+        <eOff>Пропал сигнал ЦИКЛ</eOff>
         <timeout />
-        <no_reset>false</no_reset>
-        <verbal>false</verbal>
+        <no_reset>true</no_reset>
+        <verbal>true</verbal>
       </SignalSettings>
       <SignalSettings>
-        <name>ГОТОВНОСТЬ</name>
+        <name>РЕЗЕРВ1</name>
         <board>0</board>
         <input>true</input>
-        <digital>false</digital>
-        <position>2</position>
-        <hint>Сигнал устанавливается при наличии в ванне готовой к контролю трубы</hint>
-        <timeout />
-        <no_reset>false</no_reset>
-        <verbal>false</verbal>
-      </SignalSettings>
-      <SignalSettings>
-        <name>КОНТРОЛЬ</name>
-        <board>0</board>
-        <input>true</input>
-        <digital>false</digital>
-        <position>3</position>
-        <hint>Сигнал устанавливается при поступлении первого датчика каретки на поверхность трубы, снимается по сходу последнего датчика каретки с трубы</hint>
+        <digital>true</digital>
+        <position>11</position>
+        <hint>Резервный сигнал.</hint>
         <timeout />
         <no_reset>false</no_reset>
         <verbal>false</verbal>
@@ -54,85 +34,85 @@
         <name>БАЗА</name>
         <board>0</board>
         <input>true</input>
-        <digital>false</digital>
-        <position>4</position>
+        <digital>true</digital>
+        <position>12</position>
         <hint>Сигнал устанавливается при достижении кареткой определенного положения. Используется для контроля скорости перемещения каретки</hint>
         <timeout />
         <no_reset>false</no_reset>
-        <verbal>false</verbal>
+        <verbal>true</verbal>
       </SignalSettings>
       <SignalSettings>
-        <name>РЕЗЕРВВХ</name>
+        <name>КОНТРОЛЬ</name>
         <board>0</board>
         <input>true</input>
-        <digital>false</digital>
-        <position>5</position>
-        <hint>Резервный сигнал</hint>
+        <digital>true</digital>
+        <position>13</position>
+        <hint>Сигнал устанавливается при поступлении первого датчика каретки на поверхность трубы, снимается по сходу последнего датчика каретки с трубы.</hint>
         <timeout />
         <no_reset>false</no_reset>
-        <verbal>false</verbal>
+        <verbal>true</verbal>
+      </SignalSettings>
+      <SignalSettings>
+        <name>СТРОБ</name>
+        <board>0</board>
+        <input>true</input>
+        <digital>true</digital>
+        <position>14</position>
+        <hint>Сигнал устанавливается при начале новой зоны</hint>
+        <timeout />
+        <no_reset>false</no_reset>
+        <verbal>true</verbal>
       </SignalSettings>
       <SignalSettings>
         <name>РАБОТА</name>
         <board>0</board>
         <input>false</input>
-        <digital>false</digital>
-        <position>6</position>
+        <digital>true</digital>
+        <position>10</position>
         <hint>Сигнал устанавливается при готовности системы к контролю трубы</hint>
         <timeout />
         <no_reset>false</no_reset>
-        <verbal>false</verbal>
+        <verbal>true</verbal>
       </SignalSettings>
       <SignalSettings>
-        <name>ПЕРЕКЛ</name>
+        <name>РЕЗЕРВ2</name>
         <board>0</board>
         <input>false</input>
-        <digital>false</digital>
-        <position>7</position>
-        <hint>Сигнал устанавливается по завершению всех действий с результатом контроля трубы – разрешение забирать трубу из ванны</hint>
+        <digital>true</digital>
+        <position>11</position>
+        <hint>Резервный сигнал.</hint>
         <timeout />
         <no_reset>false</no_reset>
         <verbal>false</verbal>
       </SignalSettings>
       <SignalSettings>
-        <name>РЕЗУЛТ1</name>
+        <name>РЕЗУЛЬТАТ</name>
         <board>0</board>
         <input>false</input>
-        <digital>false</digital>
-        <position>8</position>
-        <hint>Сигнал для кодирования результата контроля трубы</hint>
+        <digital>true</digital>
+        <position>12</position>
+        <hint>Результат годно</hint>
+        <timeout />
+        <no_reset>false</no_reset>
+        <verbal>true</verbal>
+      </SignalSettings>
+      <SignalSettings>
+        <name>СТРБРЕЗ</name>
+        <board>0</board>
+        <input>false</input>
+        <digital>true</digital>
+        <position>13</position>
+        <hint>Результат контроля трубы</hint>
         <timeout />
         <no_reset>false</no_reset>
         <verbal>false</verbal>
       </SignalSettings>
       <SignalSettings>
-        <name>РЕЗУЛТ2</name>
+        <name>РЕЗЕРВ1</name>
         <board>0</board>
         <input>false</input>
-        <digital>false</digital>
-        <position>9</position>
-        <hint>Сигнал для кодирования результата контроля трубы</hint>
-        <timeout />
-        <no_reset>false</no_reset>
-        <verbal>false</verbal>
-      </SignalSettings>
-      <SignalSettings>
-        <name>ПИТБМ</name>
-        <board>0</board>
-        <input>false</input>
-        <digital>false</digital>
-        <position>10</position>
-        <hint>Сигнал включает подачу питания на блок мультиплексоров</hint>
-        <timeout />
-        <no_reset>false</no_reset>
-        <verbal>false</verbal>
-      </SignalSettings>
-      <SignalSettings>
-        <name>РЕЗЕРВВЫХ</name>
-        <board>0</board>
-        <input>false</input>
-        <digital>false</digital>
-        <position>0</position>
+        <digital>true</digital>
+        <position>14</position>
         <hint>Резервный сигнал</hint>
         <timeout />
         <no_reset>false</no_reset>
@@ -140,16 +120,16 @@
       </SignalSettings>
     </sl>
   </pcie1730Settings>
-  <distanceToBase>300</distanceToBase>
-  <speed>0.5</speed>
+  <distanceToBase>500</distanceToBase>
+  <speed>1</speed>
   <currenTypeSizeName>Диаметр 16,0</currenTypeSizeName>
   <tss>
     <_TypeSize>
       <name>Диаметр 16,0</name>
       <diameter>16</diameter>
       <minGoodLength>0</minGoodLength>
-      <defectTreshold>15</defectTreshold>
-      <class2Treshold>15.5</class2Treshold>
+      <defectTreshold>90</defectTreshold>
+      <class2Treshold>95</class2Treshold>
       <minDetected>12</minDetected>
       <maxDetected>20</maxDetected>
       <deadZoneStart>200</deadZoneStart>
@@ -159,10 +139,10 @@
       <name>Диаметр 19,2</name>
       <diameter>19.2</diameter>
       <minGoodLength>0</minGoodLength>
-      <defectTreshold>16.2</defectTreshold>
-      <class2Treshold>18</class2Treshold>
-      <minDetected>12</minDetected>
-      <maxDetected>25</maxDetected>
+      <defectTreshold>90</defectTreshold>
+      <class2Treshold>95</class2Treshold>
+      <minDetected>18</minDetected>
+      <maxDetected>22</maxDetected>
       <deadZoneStart>200</deadZoneStart>
       <deadZoneEnd>200</deadZoneEnd>
     </_TypeSize>
