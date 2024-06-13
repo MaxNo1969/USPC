@@ -68,6 +68,7 @@
     <Compile Include="FRWaitLongProcess.Designer.cs">
       <DependentUpon>FRWaitLongProcess.cs</DependentUpon>
     </Compile>
+    <Compile Include="PCI-1730\DefSignals.cs" />
     <Compile Include="PCXUSNET\PCXUSNET.cs" />
     <Compile Include="Csv\StructToCsv.cs" />
     <Compile Include="Csv\BytesToStructure.cs" />

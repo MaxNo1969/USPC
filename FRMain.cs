@@ -316,6 +316,7 @@ namespace USPC
             if (!Program.pcxus.load("default.us"))
             {
                 log.add(LogRecord.LogReason.error, "{0}: {1}: Error: {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, (ErrorCode)Program.pcxus.Err);
+                Program.boardState = BoardState.Error;
             }
         }
         private void miCloseUSPC_Click(object sender, EventArgs e)
@@ -329,6 +330,7 @@ namespace USPC
             if (!Program.pcxus.close())
             {
                 log.add(LogRecord.LogReason.error, "{0}: {1}: Error: {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, (ErrorCode)Program.pcxus.Err);
+                Program.boardState = BoardState.Error;
             }
             else
             {

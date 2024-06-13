@@ -62,7 +62,7 @@ namespace PCI1730
         /// <summary>
         /// Список сигналов
         /// </summary>
-        private List<Signal> M = new List<Signal>();
+        protected List<Signal> M = new List<Signal>();
 
 
         /// <summary>
@@ -91,7 +91,7 @@ namespace PCI1730
 
         
         private List<Latch> L = new List<Latch>();
-        private readonly object SignalsLock;
+        protected readonly object SignalsLock;
         /// <summary>
         /// Список входных сигналов
         /// </summary>
@@ -171,7 +171,7 @@ namespace PCI1730
         /// <param name="_signal">Сигнал</param>
         /// <param name="_timeout">Таймаут ожидания(мс)</param>
         /// <returns></returns>
-        private string OnWait(bool _val, Signal _signal, TimeSpan _timeout)
+        protected string OnWait(bool _val, Signal _signal, TimeSpan _timeout)
         {
             Latch lp;
             lock (SignalsLock)
@@ -198,7 +198,7 @@ namespace PCI1730
         /// <summary>
         /// Конструктор (Напрямую нигде не вызывается)
         /// </summary>
-        public SignalList()
+        protected SignalList()
         {
             SignalsLock = new object();
             //MIn = new List<SignalIn>();
@@ -219,23 +219,6 @@ namespace PCI1730
             {
                 throw ex;
             }
-            //Читаем сигналы из AppSettings
-            int cnt = st1730.sl.Count;
-            log.add(LogRecord.LogReason.info,"{0}: {1}: Будем читать {2} сигналов.", GetType().Name,System.Reflection.MethodBase.GetCurrentMethod().Name, cnt);
-            for (int i = 0; i < cnt; i++)
-            {
-                Signal sg = new Signal(st1730.sl[i].name, WriteSignals, OnWait, SignalsLock)
-                {
-                    sgSet = st1730.sl[i]
-                };
-                M.Add(sg);
-                //if (sg.input)
-                //    MIn.Add(sg);
-                //else
-                //    MOut.Add(sg);
-                log.add(LogRecord.LogReason.info, "{0} {1}-{2}(Digital={3},EOn={4},EOff={5},Timeout={6},No_reset={7},Verbal={8})", sg.position, sg.name, sg.hint, sg.digital, sg.eOn, sg.eOn, sg.timeout, sg.no_reset, sg.verbal);
-            }
-
             ts = new ThreadStart(Run);
             th = new Thread(ts)
             {
@@ -404,21 +387,8 @@ namespace PCI1730
                     return (p);
                 }
             }
-            //MessageBox.Show("SignalList: Find: Сигнал " + _name + " не найден");
             throw new KeyNotFoundException(string.Format("SignalList: Find: Сигнал {0} не найден", _name));
-            //return (null);
         }
-        //public int CountIn { get { return (MIn.Count); } }
-        //public int CountOut { get { return (MOut.Count); } }
-        //public Signal GetSignalIn(int _index)
-        //{
-        //    return (MIn[_index]);
-        //}
-        //public Signal GetSignalOut(int _index)
-        //{
-        //    return (MOut[_index]);
-        //}
-
         public void ClearAllOutputSignals()
         {
             for (int i = 0; i < M.Count; i++)

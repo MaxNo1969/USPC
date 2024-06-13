@@ -1,4 +1,4 @@
-﻿using System;
+﻿ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
@@ -8,6 +8,7 @@ using System.Threading;
 using FPS;
 using PCI1730;
 using Data;
+using USPC.PCI_1730;
 
 namespace USPC
 {
@@ -87,8 +88,7 @@ namespace USPC
             try
             {
                 FormPosSaver.deser();
-                sl = new SignalList();
-                sl["РЕЗЕРВ1"].Val = true;
+                sl = new DefSignals();
                 for (int i = 0; i < numBoards;i++ )
                 {
                     data[i] = new USPCData();
@@ -104,8 +104,7 @@ namespace USPC
             finally
             {
                 log.add(LogRecord.LogReason.debug, "{0}: {1}: {2}", "Program", System.Reflection.MethodBase.GetCurrentMethod().Name, "Зашли в finally");
-                //if (boardState == BoardState.Opened || boardState == BoardState.Error)
-                pcxus.close();
+                if (boardState == BoardState.Opened || boardState == BoardState.Error)pcxus.close();
                 //Снимаем все выходные сигналы и останавливаем PCIE1730
                 sl.Dispose();
                 FormPosSaver.ser();
