@@ -92,15 +92,6 @@ namespace PCI1730
         
         private List<Latch> L = new List<Latch>();
         protected readonly object SignalsLock;
-        /// <summary>
-        /// Список входных сигналов
-        /// </summary>
-        //protected List<Signal> MIn;
-        /// <summary>
-        /// Список выходных сигналов
-        /// </summary>
-        //protected List<Signal> MOut;
-
 
         /// <summary>
         /// Установить сигнал
@@ -201,8 +192,6 @@ namespace PCI1730
         protected SignalList()
         {
             SignalsLock = new object();
-            //MIn = new List<SignalIn>();
-            //MOut = new List<SignalOut>();
             PCIE1730Settings st1730 = AppSettings.settings.pcie1730Settings;
             if (st1730 == null)
             {

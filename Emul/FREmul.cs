@@ -252,7 +252,8 @@ namespace EMUL
             CheckedListBox clb = (CheckedListBox)sender;
             if (clb.Name == "inputSignals")
             {
-                Program.sl[e.Index].Val = (e.NewValue == CheckState.Checked);
+                Signal s = (Signal)clb.Items[e.Index];
+                s.Val = (e.NewValue == CheckState.Checked);
             }
         }
 
