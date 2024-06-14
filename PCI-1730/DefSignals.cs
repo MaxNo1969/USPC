@@ -27,5 +27,37 @@ namespace USPC.PCI_1730
             }
         }
 
+        public bool controlICC = false;
+        public bool controlCYCLE = false;
+
+        /// <summary>
+        /// Виртуальная функция реакции
+        /// </summary>
+        protected override void Reaction()
+        {
+        }
+        /// <summary>
+        /// Виртуальная функция сигнал "Тревога"
+        /// </summary>
+        protected override void CheckAlarm()
+        {
+            if (controlCYCLE && !this["ЦИКЛ"].Val)
+            {
+                log.add(LogRecord.LogReason.error, "{0}: {1}: {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, "Пропал сигнал \"ЦИКЛ\"");
+                this.ClearAllOutputSignals();
+            }
+        }
+        public bool get(string _s)
+        {
+            if (this[_s] != null) return this[_s].Val;
+            //else throw new KeyNotFoundException(string.Format("Не найден сигнал \"{0}\"",_s));
+            else return false;
+        }
+        public void set(string _s,bool _val)
+        {
+            if (this[_s] != null) this[_s].Val = _val;
+            //else throw new KeyNotFoundException(string.Format("Не найден сигнал \"{0}\"", _s));
+        }
+
     }
 }

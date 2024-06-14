@@ -28,7 +28,7 @@ namespace USPC
         public static FRMain frMain = null;
         public static int medianFilterWidth = 5;
 
-        public static SignalList sl = null;
+        public static DefSignals sl = null;
 
         /// <summary>
         /// The main entry point for the application.

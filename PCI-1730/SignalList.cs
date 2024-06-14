@@ -72,12 +72,15 @@ namespace PCI1730
         {
             get
             {
-                return M.Find(x => x.name == _name);
-                //for (int i = 0; i < M.Count; i++)
-                //{
-                //    if (M[i].name == _name) return M[i];
-                //}
-                //throw new KeyNotFoundException(string.Format("Сигнал \"{0}\" не найден", _name));
+                try
+                {
+                    return M.Find(x => x.name == _name);
+                }
+                catch (Exception ex)
+                {
+                    log.add(LogRecord.LogReason.error, "{0}: {1}: Error: {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message);
+                    return null;
+                }
             }
         }
 
@@ -85,7 +88,10 @@ namespace PCI1730
         {
             get
             {
-                return M[_index];
+                if (_index < M.Count)
+                    return M[_index];
+                else
+                    return null;
             }
         }
 
@@ -113,25 +119,6 @@ namespace PCI1730
             return a1730.GetBit(_sg.position,true);
         }
 
-        /// <summary>
-        /// Установить сигнал
-        /// </summary>
-        /// <param name="_sg">Сигнал</param>
-        /// <param name="_val">Значение</param>
-        //public void set(SignalOut _sg, bool _val)
-        //{
-        //    a1730.SetBit(_sg.Position, _val, false);
-        //}
-
-        /// <summary>
-        /// Прочитать сигнал
-        /// </summary>
-        /// <param name="_sg">Сигнал</param>
-        /// <returns>Значение</returns>
-        //public bool get(SignalOut _sg)
-        //{
-        //    return a1730.GetBit(_sg.Position, false);
-        //}
         /// <summary>
         /// Записать текущие значения сигналов в плату PCIE1730
         /// </summary>

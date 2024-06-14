@@ -8,12 +8,14 @@ using System.Diagnostics;
 using PCI1730;
 using Settings;
 using System.Threading;
+using USPC.PCI_1730;
 
 namespace USPC
 {
     class TubeWorker:BackgroundWorker
     {
         UspcNetDataReader[] dataReaders = null;
+        DefSignals sl = Program.sl;
         bool speedCalced = false;
         public TubeWorker()
         {
@@ -201,6 +203,7 @@ namespace USPC
                         case WrkStates.startWorkCycle:
                             curState = WrkStates.waitTube;
                             tubeStarted = DateTime.Now;
+                            sl.set("РАБОТА", true);
                             break;
                         case WrkStates.waitTube:
                             //Труба поступила на вход установки

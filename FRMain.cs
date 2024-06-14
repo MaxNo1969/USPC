@@ -112,7 +112,7 @@ namespace USPC
             fSignals.Visible = FormPosSaver.visible(fSignals);
             miWindowsSignals.Checked = fSignals.Visible;
         }
-        #endregion Протокол и сигнвлы
+        #endregion Протокол и сигналы
 
         private void FRMain_Load(object sender, EventArgs e)
         {
@@ -155,6 +155,7 @@ namespace USPC
             {
                 startWorkTime = DateTime.UtcNow;
                 Thread.Sleep(200);
+                Program.sl.controlCYCLE = true;
                 if (zoneAdder == null)
                     zoneAdder = new ZoneBackGroundWorker();
                 if (worker == null)
@@ -439,7 +440,7 @@ namespace USPC
         private void эмуляцияToolStripMenuItem_Click(object sender, EventArgs e)
         {
             miEmul.Enabled = false;
-            FREmul frm = new FREmul();
+            FREmul frm = new FREmul(this);
             frm.FormClosed += new FormClosedEventHandler((object ob, FormClosedEventArgs ea) => { miEmul.Enabled = true; });
             frm.Show();
         }
