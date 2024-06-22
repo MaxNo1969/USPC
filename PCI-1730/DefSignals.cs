@@ -41,11 +41,11 @@ namespace USPC.PCI_1730
         /// </summary>
         protected override void CheckAlarm()
         {
-            if (controlCYCLE && !this["ЦИКЛ"].Val)
-            {
-                log.add(LogRecord.LogReason.error, "{0}: {1}: {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, "Пропал сигнал \"ЦИКЛ\"");
-                this.ClearAllOutputSignals();
-            }
+            //if (controlCYCLE && !this["ЦИКЛ"].Val)
+            //{
+            //    log.add(LogRecord.LogReason.error, "{0}: {1}: {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, "Пропал сигнал \"ЦИКЛ\"");
+            //    this.ClearAllOutputSignals();
+            //}
         }
         public bool get(string _s)
         {
@@ -59,5 +59,15 @@ namespace USPC.PCI_1730
             //else throw new KeyNotFoundException(string.Format("Не найден сигнал \"{0}\"", _s));
         }
 
+
+        internal bool checkSignals()
+        {
+            if (controlCYCLE && !this["ЦИКЛ"].Val)
+            {
+                log.add(LogRecord.LogReason.error, "{0}: {1}: Error: {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, "Пропал сигнал \"ЦИКЛ\"");
+                return false;
+            }
+            return true;
+        }
     }
 }

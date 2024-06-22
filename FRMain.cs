@@ -47,7 +47,7 @@ namespace USPC
         /// <summary>
         ///Добавление новых зон
         /// </summary>
-        ZoneBackGroundWorker zoneAdder = null;
+        //ZoneBackGroundWorker zoneAdder = null;
 
         
         /// <summary>
@@ -156,11 +156,11 @@ namespace USPC
                 startWorkTime = DateTime.UtcNow;
                 Thread.Sleep(200);
                 Program.sl.controlCYCLE = true;
-                if (zoneAdder == null)
-                    zoneAdder = new ZoneBackGroundWorker();
+                //if (zoneAdder == null)
+                //    zoneAdder = new ZoneBackGroundWorker();
+                //zoneAdder.ProgressChanged += new ProgressChangedEventHandler(zoneAdder_ProgressChanged);
                 if (worker == null)
                     worker = new TubeWorker();
-                zoneAdder.ProgressChanged += new ProgressChangedEventHandler(zoneAdder_ProgressChanged);
 
                 //testWorker = new BackgroundWorker()
                 //{
@@ -172,23 +172,23 @@ namespace USPC
                 //testWorker.DoWork += new DoWorkEventHandler(testWorker_DoWork);
                 //Program.result.Clear();
                 //testWorker.RunWorkerAsync();
-                zoneAdder.RunWorkerAsync();
+                //zoneAdder.RunWorkerAsync();
                 worker.RunWorkerAsync();
                 setSb("Info", "Работа");
                 setStartStopMenu(false);
             }
             else
             {
-                //if (worker != null && worker.IsBusy)
-                //{
-                //    worker.CancelAsync();
-                //    worker = null;
-                //}
-                if (zoneAdder != null && zoneAdder.IsBusy)
+                if (worker != null && worker.IsBusy)
                 {
-                    zoneAdder.CancelAsync();
-                    zoneAdder = null;
+                    worker.CancelAsync();
+                    worker = null;
                 }
+                //if (zoneAdder != null && zoneAdder.IsBusy)
+                //{
+                //    zoneAdder.CancelAsync();
+                //    zoneAdder = null;
+                //}
                 //if (testWorker != null && testWorker.IsBusy)
                 //{
                 //    testWorker.CancelAsync();
@@ -199,10 +199,10 @@ namespace USPC
             }
         }
 
-        void zoneAdder_ProgressChanged(object sender, ProgressChangedEventArgs e)
-        {
-            log.add(LogRecord.LogReason.info, "{0}: {1}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name);
-        }
+        //void zoneAdder_ProgressChanged(object sender, ProgressChangedEventArgs e)
+        //{
+        //    log.add(LogRecord.LogReason.info, "{0}: {1}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name);
+        //}
 
         void testWorker_DoWork(object sender, DoWorkEventArgs e)
         {
@@ -217,7 +217,7 @@ namespace USPC
                 }
                 else
                 {
-                    Program.result.AddNewZone();
+                    Program.result.addZone();
                     worker.ReportProgress(0);
                     Thread.Sleep(100);
                 }
@@ -226,33 +226,33 @@ namespace USPC
 
         private void PutDataOnCharts()
         {
-            double[] values = Program.result.cross.values[0].ToArray();
+            byte[] values = Program.result.crossValues[0].ToArray();
             UC4SensorView.PutDataOnChart(CrossView.ch1, values);
-            values = Program.result.cross.values[1].ToArray();
+            values = Program.result.crossValues[1].ToArray();
             UC4SensorView.PutDataOnChart(CrossView.ch2, values);
-            values = Program.result.cross.values[2].ToArray();
+            values = Program.result.crossValues[2].ToArray();
             UC4SensorView.PutDataOnChart(CrossView.ch3, values);
-            values = Program.result.cross.values[3].ToArray();
+            values = Program.result.crossValues[3].ToArray();
             UC4SensorView.PutDataOnChart(CrossView.ch4, values);
 
-            values = Program.result.linear.values[0].ToArray();
+            values = Program.result.linearValues[0].ToArray();
             UC4SensorView.PutDataOnChart(LinearView.ch1, values);
-            values = Program.result.linear.values[1].ToArray();
+            values = Program.result.linearValues[1].ToArray();
             UC4SensorView.PutDataOnChart(LinearView.ch2, values);
-            values = Program.result.linear.values[2].ToArray();
+            values = Program.result.linearValues[2].ToArray();
             UC4SensorView.PutDataOnChart(LinearView.ch3, values);
-            values = Program.result.linear.values[3].ToArray();
+            values = Program.result.linearValues[3].ToArray();
             UC4SensorView.PutDataOnChart(LinearView.ch4, values);
 
-
-            values = Program.result.thick.values[0].ToArray();
-            UC4SensorView.PutDataOnChart(ThickView.ch1, values);
-            values = Program.result.thick.values[1].ToArray();
-            UC4SensorView.PutDataOnChart(ThickView.ch2, values);
-            values = Program.result.thick.values[2].ToArray();
-            UC4SensorView.PutDataOnChart(ThickView.ch3, values);
-            values = Program.result.thick.values[3].ToArray();
-            UC4SensorView.PutDataOnChart(ThickView.ch4, values);
+            double[] dvalues = Program.result.thicknesValues[0].ToArray();
+            dvalues = Program.result.thicknesValues[0].ToArray();
+            UC4SensorView.PutDataOnChart(ThickView.ch1, dvalues);
+            dvalues = Program.result.thicknesValues[1].ToArray();
+            UC4SensorView.PutDataOnChart(ThickView.ch2, dvalues);
+            dvalues = Program.result.thicknesValues[2].ToArray();
+            UC4SensorView.PutDataOnChart(ThickView.ch3, dvalues);
+            dvalues = Program.result.thicknesValues[3].ToArray();
+            UC4SensorView.PutDataOnChart(ThickView.ch4, dvalues);
         }
 
         void testWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
@@ -404,11 +404,16 @@ namespace USPC
             fSignals.Visible = miWindowsSignals.Checked;
         }
 
+        public void openSettings()
+        {
+            FRSettings frm = new FRSettings(this);
+            frm.FormClosed += new FormClosedEventHandler((object _o, FormClosedEventArgs _e) => { /*btnSettings.Enabled = true;*/ miSettings.Enabled = true; });
+            frm.Show();
+        }
+
         private void miSettings_Click(object sender, EventArgs e)
         {
-            //btnSettings.Enabled = false;
-            //miSettings.Enabled = false;
-            FRSettings frm = new FRSettings();
+            FRSettings frm = new FRSettings(this);
             frm.FormClosed += new FormClosedEventHandler((object _o, FormClosedEventArgs _e) => { /*btnSettings.Enabled = true;*/ miSettings.Enabled = true; });
             frm.Show();
         }

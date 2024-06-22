@@ -3,112 +3,69 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using USPC;
+using PROTOCOL;
 
 namespace Data
 {
     class Result
     {
-        public int sensors;
+        public int crossSensors = 4;
+        public int linearSensors = 4;
+        public int thicknesSensors = 4;
         public int zones;
-        public int board;
 
-        public List<List<double>> values;
-        public virtual void addZone()
+        public List<List<byte>> crossValues;
+        public List<List<byte>> linearValues;
+        public List<List<double>> thicknesValues;
+        
+        public void addZone()
         {
-            int zBegin = zoneStart.Last();
-            int zEnd = Program.data[board].currentOffsetFrames;
-            Program.data[board].OffsetCounter(zEnd);
-            zoneStart.Add(zEnd);
         }
-        public List<int> zoneStart;
-        public Result(int _board,int _sensors)
+        public List<int>[] zoneStart = new List<int>[2];
+
+        public Result()
         {
-            board = _board;
-            sensors = _sensors;
             zones = 0;
-            values = new List<List<double>>();
-            for (int i = 0; i < sensors; i++)
+            crossValues = new List<List<byte>>();
+            for (int i = 0; i < crossSensors; i++)
             {
-                values.Add(new List<double>());
+                crossValues.Add(new List<byte>());
             }
-            zoneStart = new List<int>();
-            zoneStart.Add(0);
+            linearValues = new List<List<byte>>();
+            for (int i = 0; i < linearSensors; i++)
+            {
+                linearValues.Add(new List<byte>());
+            }
+            thicknesValues = new List<List<double>>();
+            for (int i = 0; i < thicknesSensors; i++)
+            {
+                thicknesValues.Add(new List<double>());
+            }
+            for (int i = 0; i < 2; i++)
+            {
+                zoneStart[i] = new List<int>();
+                zoneStart[i].Add(0);
+            }
         }
         public void Clear()
         {
-            for (int i = 0; i < sensors; i++)
+            for (int i = 0; i < crossSensors; i++)
             {
-                values[i].Clear();
+                crossValues[i].Clear();
             }
+            //crossValues.Clear();
+            for (int i = 0; i < linearSensors; i++)
+            {
+                linearValues[i].Clear();
+            }
+            //linearValues.Clear();
+            for (int i = 0; i < thicknesSensors; i++)
+            {
+                thicknesValues[i].Clear();
+            }
+            //thicknesValues.Clear();
         }
 
     }
 
-    class CrossResult : Result
-    {
-        public CrossResult(int _sensors):base(0,_sensors){}
-        public override void addZone()
-        {
-            Random r = new Random();
-            base.addZone();
-            int zBegin = zoneStart[zoneStart.Count() - 2];
-            int zEnd = zoneStart[zoneStart.Count() - 1];
-            
-            for (int i = 0; i < sensors; i++)
-            {
-                values[i].Add(90.0 + r.Next(10));
-            }
-        }
-    }
-    class LinearResult : Result
-    {
-        public LinearResult(int _sensors):base(0,_sensors){}
-        public override void addZone()
-        {
-            Random r = new Random();
-            base.addZone();
-            for (int i = 0; i < sensors; i++)
-            {
-                values[i].Add(90.0 + r.Next(10));
-            }
-        }
-    }
-    class ThickResult : Result
-    {
-        public ThickResult(int _sensors) : base(1,_sensors) { }
-        public override void addZone()
-        {
-            Random r = new Random();
-            base.addZone();
-            for (int i = 0; i < sensors; i++)
-            {
-                values[i].Add(90.0 + r.Next(10));
-            }
-        }
-    }
-    class TubeResult
-    {
-        public CrossResult cross;
-        public LinearResult linear;
-        public ThickResult thick;
-        public TubeResult()
-        {
-            cross = new CrossResult(4);
-            linear = new LinearResult(4);
-            thick = new ThickResult(4);
-        }
-        public void AddNewZone()
-        {
-            cross.addZone();
-            linear.addZone();
-            thick.addZone();
-        }
-
-        internal void Clear()
-        {
-            cross.Clear();
-            linear.Clear();
-            thick.Clear();
-        }
-    }
 }

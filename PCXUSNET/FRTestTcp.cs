@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using PROTOCOL;
+using Settings;
 
 namespace USPC
 {
@@ -23,7 +24,7 @@ namespace USPC
 
         private void btnTest_Click(object sender, EventArgs e)
         {
-            string serverAddress = Program.serverAddr;
+            string serverAddress = AppSettings.s.serverAddr;
             PCXUSNetworkClient client = new PCXUSNetworkClient(serverAddress);
             Object retval = new Object();
             int res = client.callNetworkFunction(edCommand.Text,out retval);

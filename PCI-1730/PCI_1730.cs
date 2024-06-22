@@ -51,6 +51,9 @@ namespace PCI1730
         /// </summary>
         protected byte[] values_out;
 
+        public readonly int portCount_in;
+        public readonly int portCount_out;
+
         /// <summary>
         /// Конструктор
         /// </summary>
@@ -59,8 +62,8 @@ namespace PCI1730
         /// <param name="_portCount_out">Количество исходящих сигналов</param>
         public PCI_1730(string _name, int _portCount_in, int _portCount_out)
         {
-            //portCount_in = _portCount_in;
-            //portCount_out = _portCount_out;
+            portCount_in = _portCount_in;
+            portCount_out = _portCount_out;
             name = _name;
             values_in = new byte[_portCount_in];
             values_out = new byte[_portCount_out];

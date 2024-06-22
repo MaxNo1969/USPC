@@ -6,6 +6,7 @@ using System.Runtime.InteropServices;
 using PROTOCOL;
 using System.Diagnostics;
 using System.IO;
+using System.Threading;
 
 namespace USPC
 {
@@ -146,6 +147,7 @@ namespace USPC
                 return false;
             }
             hPCXUS = 1;
+            Thread.Sleep(2000);
             return true;
         }
         
@@ -162,6 +164,7 @@ namespace USPC
         {
             if (!checkHandle()) return false;
             log.add(LogRecord.LogReason.info, "{0}: {1}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name);
+            Thread.Sleep(2000);
             return true;
         }
 

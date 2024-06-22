@@ -8,6 +8,7 @@ using System.Text;
 using System.Windows.Forms;
 using PROTOCOL;
 using FPS;
+using Settings;
 
 namespace USPC
 {
@@ -17,7 +18,7 @@ namespace USPC
         {
             InitializeComponent();
             Owner = _frMain;
-            string srv = Program.serverAddr;
+            string srv = AppSettings.s.serverAddr;
             List<string> info = new List<string>();
             double board_serial_number = Program.pcxus.getParamValueDouble("board_serial_number");
             if (Program.pcxus.Err == (int)ErrorCode.PCXUS_NO_ERROR)

@@ -15,6 +15,7 @@ namespace USPC
     class TubeWorker:BackgroundWorker
     {
         UspcNetDataReader[] dataReaders = null;
+        ZoneBackGroundWorker zbWorker = null;
         DefSignals sl = Program.sl;
         bool speedCalced = false;
         public TubeWorker()
@@ -31,12 +32,15 @@ namespace USPC
             dataReaders = new UspcNetDataReader[2];
             for (int i = 0; i < 2; i++)
                 dataReaders[i] = new UspcNetDataReader(i);
+            //Воркер по добавлению зон
+            zbWorker = new ZoneBackGroundWorker();
             speedCalced = false;
         }
 
         void worker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             log.add(LogRecord.LogReason.debug, "{0}: {1}: e.Cancelled = {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, e.Cancelled);
+            stopWorkers();
             //Снимем все сигналы, кроме слаботочки
             clearAllOutSignals();
             //Здесь можно обработать окончание работы с трубой - записать куда-нибудь результат и т.п.
@@ -119,12 +123,12 @@ namespace USPC
         private static WrkStates prevState = WrkStates.none;
 
         //Время ожидания сигнала "РАБОТА"
-        private static int iWrkTimeout = 30;
+        private const int iWrkTimeout = 30;
         //ToDo: Непонятно пока чего ждем
         //Время ожидания готовности чего-то
-        private static int iReadyTimeout = 30;
+        private const int iReadyTimeout = 30;
         //Время ожидания сигнала "КОНТРОЛЬ"
-        private static int iControlTimeout = 30;
+        private const int iControlTimeout = 30;
 
         private static DateTime tubeStarted;
         private static DateTime waitReadyStarted;
@@ -140,7 +144,15 @@ namespace USPC
                 if (dataReaders[i] != null && dataReaders[i].IsBusy)
                 {
                     dataReaders[i].CancelAsync();
+                    while (dataReaders[i].IsBusy) ;
+                    dataReaders[i] = null;
                 }
+            }
+            if (zbWorker != null && zbWorker.IsBusy)
+            {
+                zbWorker.CancelAsync();
+                while (zbWorker.IsBusy) ;
+                zbWorker = null;
             }
         }
 
@@ -154,6 +166,9 @@ namespace USPC
                     dataReaders[i].RunWorkerAsync();
                 }
             }
+            if(zbWorker != null && !zbWorker.IsBusy)
+                zbWorker.RunWorkerAsync();
+            
         }
         #endregion запуск/остановка сбора данных по всем платам
 
@@ -166,18 +181,18 @@ namespace USPC
                 //В эту строку запишем сообщение об ошибке
                 string errStr = string.Empty;
                 curState = WrkStates.startWorkCycle;
+                Program.sl["ЦИКЛ"].AlarmVal = true;
+                Program.sl["ЦИКЛ"].IsAlarm = true;
+
 
                 while (true)
                 {
                     //Проверяем сигналы ICC и  CYCLE - они должны быть выставлены воё время работы
-                    //Вроде не надо - будет исключение
-                    /*
-                    if (!SL.getInst().checkSignals())
+                    if (!Program.sl.checkSignals())
                     {
-                        errStr = "Отсутствуют сигналы";
+                        errStr = "Пропал сигнал \"ЦИКЛ\"";
                         curState = WrkStates.error;
                     }
-                    */ 
                     //Состояние изменилось
                     if (prevState != curState)
                     {
@@ -203,7 +218,7 @@ namespace USPC
                         case WrkStates.startWorkCycle:
                             curState = WrkStates.waitTube;
                             tubeStarted = DateTime.Now;
-                            sl.set("РАБОТА", true);
+                            //sl.set("РАБОТА", true);
                             break;
                         case WrkStates.waitTube:
                             //Труба поступила на вход установки
@@ -213,23 +228,21 @@ namespace USPC
 
                                 //Здесь подготовка модуля к работе
                                 {
-                                    //Установить сигнал "Питание БМ"
-                                    //SL.getInst().oPBM.Val = true;
+                                    //Инициализируем платы и загружаем конфигурацию
                                     prepareBoardsForWork();
                                 }
-                                //Выставляем сигнал "ГОТОВНОСТЬ"
-                                //SL.getInst().oWORK.Val = true;
-                                
+                                //Выставляем сигнал "РАБОТА"
+                                Program.sl.set("РАБОТА", true);                                
                                 waitReadyStarted = DateTime.Now;
                                 curState = WrkStates.moduleReady;
                                 break;
                             }
                             else
                             {
-                                //Не дождались сигнала "РАБОТА"
+                                //Не дождались сигнала "КОНТРОЛЬ"
                                 if((DateTime.Now - tubeStarted ).Seconds > iWrkTimeout)
                                 {
-                                    errStr = "Не дождались сигнала \"РАБОТА\"";
+                                    errStr = "Не дождались сигнала \"КОНТРОЛЬ\"";
                                     curState = WrkStates.error;
                                     break;
                                 }
@@ -261,29 +274,27 @@ namespace USPC
                             }
                             else
                             {
-                                //if (SL.getInst().iCNTR.Val == true)
-                                //{
+                                if (Program.sl["КОНТРОЛЬ"].Val == true)
+                                {
                                     controlIsSet = DateTime.Now;
                                     curState = WrkStates.work;
                                     //Включить сбор данных с модуля контроля. Ожидать пропадания сигнала КОНТРОЛЬ. 
                                     startWorkers();
-                                //}
+                                }
                                 break;
                             }
                         case WrkStates.work:
                             //Пропал сигнал контроль
-                            /*
-                            if (SL.getInst().iCNTR.Val == false)
+                            if (Program.sl["КОНТРОЛЬ"].Val == false)
                             {
                                 //Останавливаем сбор
-                                stopWorkers();
-                                SL.getInst().oWRK.Val = false;
+                                //stopWorkers();
+                                Program.sl.set(Program.sl["РАБОТА"], false);
                                 curState = WrkStates.endWork;
                                 break;
                             }
-                            */ 
                             //Труба доехала до базы
-                            if (Program.sl["БАЗА"].Val == true && controlIsSet != DateTime.MinValue && !speedCalced)
+                            if (Program.sl["БАЗА"].Val && controlIsSet != DateTime.MinValue && !speedCalced)
                             {
                                 int millisecondsToBase = (DateTime.Now - controlIsSet).Milliseconds;
                                 controlIsSet = DateTime.MinValue;
@@ -293,11 +304,19 @@ namespace USPC
                                 setSb("speed", AppSettings.s.speed.ToString());
                                 speedCalced = true;
                             }
+                            //if (Program.sl["СТРОБ"].Val)
+                            //{
+                            //    log.add(LogRecord.LogReason.debug, "{0}: {1}: {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, "СТРОБ");
+                            //    Program.sl.set(Program.sl["СТРБРЕЗ"], true);
+                            //    Program.result.AddNewZone();
+                            //    Program.sl.set(Program.sl["СТРБРЕЗ"], false);
+                            //    break;
+                            //}
                             break;
                         case WrkStates.endWork:
                             //По окончании сбора, обработки и передачи результата. 
-                            Program.sl["РАБОТА"].Val = false;
-                            Program.sl["РРЕЗУЛЬТАТ"].Val = false;
+                            Program.sl.set(Program.sl["РАБОТА"], false);
+                            Program.sl.set(Program.sl["РЕЗУЛЬТАТ"], false);
                             stopWorkers();
                             Thread.Sleep(100);
                             speedCalced = false;
@@ -321,7 +340,9 @@ namespace USPC
 
         private void prepareBoardsForWork()
         {
-            //throw new NotImplementedException();
+            Program.pcxus.close();
+            Program.pcxus.open(2);
+            Program.pcxus.load("config.us");
         }
 
     }

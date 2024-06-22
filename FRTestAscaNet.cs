@@ -9,6 +9,7 @@ using System.Windows.Forms;
 using PROTOCOL;
 using FPS;
 using System.Threading.Tasks;
+using Settings;
 
 namespace USPC
 {
@@ -301,7 +302,7 @@ namespace USPC
         private void timer_Tick(object sender, EventArgs e)
         {
             Object retval = new Object();
-            PCXUSNetworkClient client = new PCXUSNetworkClient(Program.serverAddr);
+            PCXUSNetworkClient client = new PCXUSNetworkClient(AppSettings.s.serverAddr);
             int res = client.callNetworkFunction(string.Format("{0},{1},{2},{3}","ascan",board,test,timeout),out retval);
             if (res == 0)
             {

@@ -45,6 +45,10 @@ namespace Settings
         [DisplayName("Скорость(м/с)"), Browsable(true), Description("Скорость движения трубы (м/с)")]
         public double speed { get; set; }
 
+        [Category("5.Сервер")]
+        [DisplayName("Сервер:"), Browsable(true), Description("Адрес сервера USPC")]
+        public string serverAddr { get; set; }
+
         /// <summary>
         /// Текущий выбранный типоразмер
         /// </summary>
@@ -57,6 +61,9 @@ namespace Settings
         [DisplayName("Типоразмеры"), Browsable(true),Description("Настройка типоразмеров"), Category("2.Типоразмеры")]
         [TypeConverter(typeof(CollectionTypeConverter))]
         public List<_TypeSize> tss { get; private set; }
+        
+        
+        
         /// <summary>
         /// Признак изменения настроек
         /// </summary>

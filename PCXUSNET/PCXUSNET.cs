@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using PROTOCOL;
+using Settings;
 
 namespace USPC
 {
@@ -50,7 +51,7 @@ namespace USPC
 
         public static double GetVal(int _board, int _channel, string _paramName)
         {
-            PCXUSNetworkClient client = new PCXUSNetworkClient(Program.serverAddr);
+            PCXUSNetworkClient client = new PCXUSNetworkClient(AppSettings.s.serverAddr);
             Object retval = new Object();
             string s = string.Format("{0},{1},{2},{3}", "readdouble", _paramName, _board, _channel);
             int ret = client.callNetworkFunction(s, out retval);

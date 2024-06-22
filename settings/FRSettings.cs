@@ -15,9 +15,10 @@ namespace Settings
         /// <summary>
         /// Конструктор
         /// </summary>
-        public FRSettings()
+        public FRSettings(Form _fr)
         {
             InitializeComponent();
+            Owner = _fr;
             //pg.PropertySort = PropertySort.NoSort;
             pg.PropertySort = PropertySort.Categorized;
             settings = AppSettings.settings;

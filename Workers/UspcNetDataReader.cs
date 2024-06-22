@@ -5,6 +5,7 @@ using System.Text;
 using System.ComponentModel;
 using PROTOCOL;
 using Data;
+using Settings;
 
 namespace USPC
 {
@@ -28,7 +29,7 @@ namespace USPC
 
             data = Program.data[_board];
             board = _board;
-            client = new PCXUSNetworkClient(Program.serverAddr);
+            client = new PCXUSNetworkClient(AppSettings.s.serverAddr);
             retval = new object();
 
         }

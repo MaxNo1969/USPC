@@ -106,7 +106,10 @@ namespace PCI1730
         /// <param name="_val">Значение</param>
         public void set(Signal _sg, bool _val)
         {
-            a1730.SetBit(_sg.position, _val,true);
+            if(_sg.input)
+                a1730.SetBit(_sg.position, _val,true);
+            else
+                a1730.SetBit(_sg.position, _val, false);
         }
 
         /// <summary>
@@ -184,16 +187,21 @@ namespace PCI1730
             {
                 log.add(LogRecord.LogReason.error, "{0}: {1}: {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, "Не удалось загрузить настройки PCIE-1730");
             }
-            try
+            if (AppSettings.s.pcie1730Settings.useEmul)
+                a1730 = new PCI_1730_virtual(st1730.ToString(), st1730.portInCnt, st1730.portOutCnt);
+            else
             {
-                if (Program.cmdLineArgs.ContainsKey("NOA1730"))
-                    a1730 = new PCI_1730_virtual(st1730.ToString(), st1730.portInCnt, st1730.portOutCnt);
-                else
+                try
+                {
                     a1730 = new PCI_1730_real(st1730.ToString(), st1730.portInCnt, st1730.portOutCnt);
-            }
-            catch(Exception ex)
-            {
-                throw ex;
+                }
+                catch (Exception ex)
+                {
+                    log.add(LogRecord.LogReason.error, "{0}: {1}: Error: {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message);
+                    log.add(LogRecord.LogReason.info, "{0}: {1}: {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, "Используем эмулятор.");
+                    AppSettings.s.pcie1730Settings.useEmul = true;
+                    a1730 = new PCI_1730_virtual(st1730.ToString(), st1730.portInCnt, st1730.portOutCnt);
+                }
             }
             ts = new ThreadStart(Run);
             th = new Thread(ts)
@@ -369,12 +377,12 @@ namespace PCI1730
         public void ClearAllOutputSignals()
         {
             for (int i = 0; i < M.Count; i++)
-                if(M[i].input == false)M[i].Val = false;
+                if(!M[i].input)M[i].Val = false;
         }
         public void ClearAllInputSignals()
         {
             for (int i = 0; i < M.Count; i++)
-                if(M[i].input == true)M[i].Val = false;
+                if(M[i].input)M[i].Val = false;
         }
     }
 }

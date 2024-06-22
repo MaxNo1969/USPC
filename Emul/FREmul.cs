@@ -68,12 +68,10 @@ namespace EMUL
 
         void timerZoneCallback(object _state)
         {
-            worker.ReportProgress(101, "СТРОБ!");
             sl.set(sl["СТРОБ"], true);
-            sl.get("СТРБРЕЗ");
-            if (sl["СТРБРЕЗ"].Wait(true, 300) == "Не дождались")
-                worker.ReportProgress(101, "СТРОБ! - не дождались ответа");
-            Thread.Sleep(100);
+            while(!sl.get(sl["СТРБРЕЗ"]))Application.DoEvents();
+            worker.ReportProgress(101, string.Format("СТРОБ!"));
+            //Thread.Sleep(100);
             sl.set(sl["СТРОБ"], false);
         }
 
@@ -102,7 +100,9 @@ namespace EMUL
             else if(e.ProgressPercentage==101)
             {
                 lblInfo.Text = e.UserState as string;
-                lb.Items.Add(e.UserState as string);
+                int currentItemNumber = lb.Items.Add(e.UserState as string);
+                lb.SelectedIndex = currentItemNumber;
+                
             }
             //Просто обновляем метку
             else if (e.ProgressPercentage == 102)
@@ -239,7 +239,7 @@ namespace EMUL
                     iBaseSet = true;
                     Thread.Sleep(200);
                     worker.ReportProgress(101, "Снимаем сигнал \"БАЗА\"...");
-                    sl.set("БАЗА", false);
+                    sl.set(sl["БАЗА"], false);
                 }
                 Thread.Sleep(500);
             }
@@ -251,17 +251,5 @@ namespace EMUL
             sl.set(sl["ЦИКЛ"], false);
 
         }
-
-        private void timerStrob_Tick(object sender, EventArgs e)
-        {
-            worker.ReportProgress(101,"СТРОБ!");            
-            sl.set(sl["СТРОБ"], true);
-            sl.get("СТРБРЕЗ");
-            if(sl["СТРБРЕЗ"].Wait(true,300)=="Не дождались")
-                worker.ReportProgress(101, "СТРОБ! - не дождались ответа");
-            Thread.Sleep(100);
-            sl.set(sl["СТРОБ"], false);
-        }
-    
     }
 }

@@ -17,32 +17,38 @@ namespace PCI1730
         /// <summary>
         /// Название устройства
         /// </summary>
-        [DisplayName("1. Название устройства"), Description("Название устройства"), Category("1.Настройка модуля"), DefaultValue(0)]
+        [DisplayName("1.Использовать эмулятор"), Description("Использовать эмулятор PCI-1730"), Category("1.Настройка модуля"), DefaultValue(true)]
+        [TypeConverter(typeof(BooleanTypeConverter))]
+        public bool useEmul { get; set; }
+        /// <summary>
+        /// Название устройства
+        /// </summary>
+        [DisplayName("2. Название устройства"), Description("Название устройства"), Category("1.Настройка модуля"), DefaultValue("PCI-1730")]
         public string name { get; set; }
         /// <summary>
         /// Номер устройства
         /// </summary>
-        [DisplayName("2.Номер устройства"), Description("Номер устройства"), Category("1.Настройка модуля"),DefaultValue(0)]
+        [DisplayName("3.Номер устройства"), Description("Номер устройства"), Category("1.Настройка модуля"),DefaultValue(0)]
         public int devNum { get; set; }
         /// <summary>
         /// Количество входящих портов
         /// </summary>
-        [DisplayName("3.Количество входящих портов"), Description("Количество входящих портов"), Category("1.Настройка модуля"),DefaultValue(4)]
+        [DisplayName("4.Количество входящих портов"), Description("Количество входящих портов"), Category("1.Настройка модуля"),DefaultValue(4)]
         public int portInCnt { get; set; }
         /// <summary>
         /// Количество исходящих портов
         /// </summary>
-        [DisplayName("4.Количество исходящих портов"), Description("Количество исходящих портов"), Category("1.Настройка модуля"), DefaultValue(4)]
+        [DisplayName("5.Количество исходящих портов"), Description("Количество исходящих портов"), Category("1.Настройка модуля"), DefaultValue(4)]
         public int portOutCnt { get; set; }
         /// <summary>
         /// Задержка в потоке чтения портов
         /// </summary>
-        [DisplayName("5.Задежка"), Description("Задержка в потоке чтения портов"), Category("1.Настройка модуля")]
+        [DisplayName("6.Задежка"), Description("Задержка в потоке чтения портов"), Category("1.Настройка модуля")]
         public int timeout { get; set; }
         /// <summary>
         /// Управление подключенными сигналами
         /// </summary>
-        [DisplayName("6.Сигналы"), Description("Управление подключенными сигналами"), Category("1.Настройка модуля")]
+        [DisplayName("7.Сигналы"), Description("Управление подключенными сигналами"), Category("1.Настройка модуля")]
         [TypeConverter(typeof(CollectionTypeConverter))]
         public List<SignalSettings> sl {get; set;}
         /// <summary>

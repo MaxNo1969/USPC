@@ -1,5 +1,6 @@
 ﻿using PROTOCOL;
 using System.Diagnostics;
+using System;
 
 namespace PCI1730
 {
@@ -46,6 +47,7 @@ namespace PCI1730
         {
             if (disposed)
                 return;
+            Array.Copy(_values_out, values_out, portCount_out);
         }
     }
 }
