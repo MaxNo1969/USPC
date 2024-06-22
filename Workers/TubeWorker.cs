@@ -172,6 +172,7 @@ namespace USPC
         }
         #endregion запуск/остановка сбора данных по всем платам
 
+        bool controlCycle = false;
 
         void worker_DoWork(object sender, DoWorkEventArgs e)
         {
@@ -181,14 +182,11 @@ namespace USPC
                 //В эту строку запишем сообщение об ошибке
                 string errStr = string.Empty;
                 curState = WrkStates.startWorkCycle;
-                Program.sl["ЦИКЛ"].AlarmVal = true;
-                Program.sl["ЦИКЛ"].IsAlarm = true;
-
 
                 while (true)
                 {
                     //Проверяем сигналы ICC и  CYCLE - они должны быть выставлены воё время работы
-                    if (!Program.sl.checkSignals())
+                    if (controlCycle && !Program.sl.checkSignals())
                     {
                         errStr = "Пропал сигнал \"ЦИКЛ\"";
                         curState = WrkStates.error;
@@ -216,23 +214,23 @@ namespace USPC
                             throw new Exception(errStr);
                         //Начало рабочего цикла
                         case WrkStates.startWorkCycle:
-                            curState = WrkStates.waitTube;
-                            tubeStarted = DateTime.Now;
-                            //sl.set("РАБОТА", true);
-                            break;
-                        case WrkStates.waitTube:
-                            //Труба поступила на вход установки
-                            if (Program.sl["КОНТРОЛЬ"].Val == true)
                             {
-                                clearAllOutSignals();
-
                                 //Здесь подготовка модуля к работе
                                 {
                                     //Инициализируем платы и загружаем конфигурацию
                                     prepareBoardsForWork();
                                 }
                                 //Выставляем сигнал "РАБОТА"
-                                Program.sl.set("РАБОТА", true);                                
+                                Program.sl.set("РАБОТА", true);
+                                waitReadyStarted = DateTime.Now;
+                                curState = WrkStates.moduleReady;
+                                break;
+                            }
+                        case WrkStates.waitTube:
+                            //Труба поступила на вход установки
+                            if (Program.sl["КОНТРОЛЬ"].Val == true)
+                            {
+                                clearAllOutSignals();
                                 waitReadyStarted = DateTime.Now;
                                 curState = WrkStates.moduleReady;
                                 break;
@@ -316,7 +314,7 @@ namespace USPC
                         case WrkStates.endWork:
                             //По окончании сбора, обработки и передачи результата. 
                             Program.sl.set(Program.sl["РАБОТА"], false);
-                            Program.sl.set(Program.sl["РЕЗУЛЬТАТ"], false);
+                            Program.sl.set(Program.sl["РЕЗУЛЬТАТ"], true);
                             stopWorkers();
                             Thread.Sleep(100);
                             speedCalced = false;
