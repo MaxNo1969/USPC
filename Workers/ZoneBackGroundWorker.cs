@@ -33,7 +33,7 @@ namespace USPC
 
         void worker_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
-            log.add(LogRecord.LogReason.info, "{0}: {1}: e.ProgressPercentage = {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, e.ProgressPercentage);
+            //log.add(LogRecord.LogReason.info, "{0}: {1}: e.ProgressPercentage = {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, e.ProgressPercentage);
         }
 
         void worker_DoWork(object sender, DoWorkEventArgs e)
@@ -53,8 +53,7 @@ namespace USPC
                 log.add(LogRecord.LogReason.info, "{0}: {1}: ZoneTime = {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, zoneTime);
                 ReportProgress(Program.data[0].currentOffsetFrames * 100 / USPCData.countFrames);
                 Program.sl.set(Program.sl["СТРБРЕЗ"], true);
-                Thread.Sleep(zoneTime);
-                Thread.Sleep(500);
+                Thread.Sleep(100);
                 Program.sl.set(Program.sl["СТРБРЕЗ"], false);
             }
         }

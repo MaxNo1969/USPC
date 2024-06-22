@@ -69,7 +69,7 @@ namespace PCI1730
         /// <summary>
         /// Значение сигнала
         /// </summary>
-        public bool val;
+        private bool val;
         /// <summary>
         /// Предыдущее значение сигнала
         /// </summary>
@@ -174,6 +174,8 @@ namespace PCI1730
             }
             set
             {
+                //if (name == "РЕЗУЛЬТАТ")
+                //    log.add(LogRecord.LogReason.debug, "{0}: {1}: {2}={3}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, name, value);
                 if (input)
                     log.add(LogRecord.LogReason.warning, "{0}: {1}: {2}: {3}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, name, "Попытка выставить входной сигнал");
                 lock (SignalsLock)

@@ -31,7 +31,7 @@ namespace Data
         //public const int countFramesPerChannel = countFrames / countSensors;
         //public const int countFramesPerZone = countFrames / countZones;
 
-        public const int scopeVelocity = 6400;
+        //public const int scopeVelocity = 6400;
 
         public static int lengthCaretka = 20;
         
@@ -58,13 +58,12 @@ namespace Data
         public void OffsetCounter(int offs)
         {
             currentOffsetFrames += offs;
-            currentOffsetZones++;
             labels.Add(new BufferStamp(DateTime.Now,currentOffsetFrames));
         }
 
         public double TofToMm(int _tof)
         {
-            return 2.5e-6 * _tof * scopeVelocity;
+            return 2.5e-6 * _tof * Program.scopeVelocity;
         }
 
         public double TofToMm(AcqAscan _scan)
@@ -74,7 +73,7 @@ namespace Data
 
         public uint MmToTof(double _mm)
         {
-            return (uint)(_mm / (2.5e-6 * scopeVelocity));
+            return (uint)(_mm / (2.5e-6 * Program.scopeVelocity));
         }
 
         public double[] sensorThickness(int _sensor)

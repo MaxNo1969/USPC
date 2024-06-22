@@ -32,7 +32,7 @@ namespace Data
                     {
                         scans[frame + sensor].Channel = (byte)sensor;
                         double val = _thick + (r.NextDouble() - 0.5) * 2;
-                        uint G1Tof = (uint)(val / (2.5e-6 * USPCData.scopeVelocity));
+                        uint G1Tof = (uint)(val / (2.5e-6 * Program.scopeVelocity));
                         scans[frame + sensor].G1Tof = G1Tof;
                     }
                 }
@@ -73,39 +73,54 @@ namespace Data
                 }
             }
         }
-        public static AcqAscan thickScan(double _thick)
-        {
-            AcqAscan scan = new AcqAscan();
-            double val = _thick + (r.NextDouble() - 0.5) * 2;
-            uint G1Tof = (uint)(val / (2.5e-6 * USPCData.scopeVelocity));
-            scan.G1Tof = G1Tof;
-            return scan;
-        }
-        public static AcqAscan defScan(int _percent)
-        {
-            AcqAscan scan = new AcqAscan();
-            byte G1Amp = (byte)(_percent + r.Next(-10, 10));
-            scan.G1Amp = G1Amp;
-            return scan;
-        }
+        //public static AcqAscan thickScan(double _thick)
+        //{
+        //    AcqAscan scan = new AcqAscan();
+        //    double val = _thick + (r.NextDouble() - 0.5) * 2;
+        //    uint G1Tof = (uint)(val / (2.5e-6 * Program.scopeVelocity));
+        //    scan.G1Tof = G1Tof;
+        //    return scan;
+        //}
+        //public static AcqAscan defScan(int _percent)
+        //{
+        //    AcqAscan scan = new AcqAscan();
+        //    byte G1Amp = (byte)(_percent + r.Next(-10, 10));
+        //    scan.G1Amp = G1Amp;
+        //    return scan;
+        //}
 
-        public static AcqAscan[] thickPacket(double _thick, int _size)
-        {
-            int numberOfScans = _size + r.Next(-10, 10);
-            AcqAscan[] scans = new AcqAscan[numberOfScans];
-            for (int i = 0; i < numberOfScans;i++)
-            {
-                scans[i] = thickScan(_thick);
-            }
-            return scans;
-        }
-        public static AcqAscan[] defPacket(int _percent, int _size)
+        //public static AcqAscan[] thickPacket(double _thick, int _size)
+        //{
+        //    int numberOfScans = _size + r.Next(-10, 10);
+        //    AcqAscan[] scans = new AcqAscan[numberOfScans];
+        //    for (int i = 0; i < numberOfScans;i++)
+        //    {
+        //        scans[i] = thickScan(_thick);
+        //    }
+        //    return scans;
+        //}
+        //public static AcqAscan[] defPacket(int _percent, int _size)
+        //{
+        //    int numberOfScans = _size + r.Next(-10, 10);
+        //    AcqAscan[] scans = new AcqAscan[numberOfScans];
+        //    for (int i = 0; i < numberOfScans; i++)
+        //    {
+        //        scans[i] = defScan(_percent);
+        //    }
+        //    return scans;
+        //}
+
+        public static AcqAscan[] packet(double _thick,int _percent,int _size)
         {
             int numberOfScans = _size + r.Next(-10, 10);
             AcqAscan[] scans = new AcqAscan[numberOfScans];
             for (int i = 0; i < numberOfScans; i++)
             {
-                scans[i] = defScan(_percent);
+                byte G1Amp = (byte)(_percent + r.Next(-10, 10));
+                scans[i].G1Amp = G1Amp;
+                double val = _thick + (r.NextDouble() - 0.5) * 2;
+                uint G1Tof = (uint)(val / (2.5e-6 * Program.scopeVelocity));
+                scans[i].G1Tof = G1Tof;
             }
             return scans;
         }

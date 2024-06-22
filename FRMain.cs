@@ -160,7 +160,10 @@ namespace USPC
                 //    zoneAdder = new ZoneBackGroundWorker();
                 //zoneAdder.ProgressChanged += new ProgressChangedEventHandler(zoneAdder_ProgressChanged);
                 if (worker == null)
+                {
                     worker = new TubeWorker();
+                    worker.zbWorker.ProgressChanged += new ProgressChangedEventHandler(zbWorker_ProgressChanged);
+                }
 
                 //testWorker = new BackgroundWorker()
                 //{
@@ -199,6 +202,13 @@ namespace USPC
             }
         }
 
+        void zbWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)
+        {
+            log.add(LogRecord.LogReason.debug, "{0}: {1}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name);
+            Action action = () => Program.frMain.PutDataOnCharts();
+            Program.frMain.Invoke(action);
+        }
+
         //void zoneAdder_ProgressChanged(object sender, ProgressChangedEventArgs e)
         //{
         //    log.add(LogRecord.LogReason.info, "{0}: {1}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name);
@@ -226,33 +236,45 @@ namespace USPC
 
         private void PutDataOnCharts()
         {
-            byte[] values = Program.result.crossValues[0].ToArray();
-            UC4SensorView.PutDataOnChart(CrossView.ch1, values);
-            values = Program.result.crossValues[1].ToArray();
-            UC4SensorView.PutDataOnChart(CrossView.ch2, values);
-            values = Program.result.crossValues[2].ToArray();
-            UC4SensorView.PutDataOnChart(CrossView.ch3, values);
-            values = Program.result.crossValues[3].ToArray();
-            UC4SensorView.PutDataOnChart(CrossView.ch4, values);
-
-            values = Program.result.linearValues[0].ToArray();
-            UC4SensorView.PutDataOnChart(LinearView.ch1, values);
-            values = Program.result.linearValues[1].ToArray();
-            UC4SensorView.PutDataOnChart(LinearView.ch2, values);
-            values = Program.result.linearValues[2].ToArray();
-            UC4SensorView.PutDataOnChart(LinearView.ch3, values);
-            values = Program.result.linearValues[3].ToArray();
-            UC4SensorView.PutDataOnChart(LinearView.ch4, values);
-
-            double[] dvalues = Program.result.thicknesValues[0].ToArray();
-            dvalues = Program.result.thicknesValues[0].ToArray();
-            UC4SensorView.PutDataOnChart(ThickView.ch1, dvalues);
-            dvalues = Program.result.thicknesValues[1].ToArray();
-            UC4SensorView.PutDataOnChart(ThickView.ch2, dvalues);
-            dvalues = Program.result.thicknesValues[2].ToArray();
-            UC4SensorView.PutDataOnChart(ThickView.ch3, dvalues);
-            dvalues = Program.result.thicknesValues[3].ToArray();
-            UC4SensorView.PutDataOnChart(ThickView.ch4, dvalues);
+            double[] values01 = new double[USPCData.countZones];
+            double[] values02 = new double[USPCData.countZones];
+            double[] values03 = new double[USPCData.countZones];
+            double[] values04 = new double[USPCData.countZones];
+            double[] values05 = new double[USPCData.countZones];
+            double[] values06 = new double[USPCData.countZones];
+            double[] values07 = new double[USPCData.countZones];
+            double[] values08 = new double[USPCData.countZones];
+            double[] values09 = new double[USPCData.countZones];
+            double[] values10 = new double[USPCData.countZones];
+            double[] values11 = new double[USPCData.countZones];
+            double[] values12 = new double[USPCData.countZones];
+            for (int i = 0; i < USPCData.countZones; i++)
+            {
+                values01[i] = (Program.result.zoneSensorResults[i][0] == double.MaxValue) ? 0 : Program.result.zoneSensorResults[i][0];
+                values02[i] = (Program.result.zoneSensorResults[i][0] == double.MaxValue) ? 0 : Program.result.zoneSensorResults[i][1];
+                values03[i] = (Program.result.zoneSensorResults[i][0] == double.MaxValue) ? 0 : Program.result.zoneSensorResults[i][2];
+                values04[i] = (Program.result.zoneSensorResults[i][0] == double.MaxValue) ? 0 : Program.result.zoneSensorResults[i][3];
+                values05[i] = (Program.result.zoneSensorResults[i][0] == double.MaxValue) ? 0 : Program.result.zoneSensorResults[i][4];
+                values06[i] = (Program.result.zoneSensorResults[i][0] == double.MaxValue) ? 0 : Program.result.zoneSensorResults[i][5];
+                values07[i] = (Program.result.zoneSensorResults[i][0] == double.MaxValue) ? 0 : Program.result.zoneSensorResults[i][6];
+                values08[i] = (Program.result.zoneSensorResults[i][0] == double.MaxValue) ? 0 : Program.result.zoneSensorResults[i][7];
+                values09[i] = (Program.result.zoneSensorResults[i][0] == double.MaxValue) ? 0 : Program.result.zoneSensorResults[i][8];
+                values10[i] = (Program.result.zoneSensorResults[i][0] == double.MaxValue) ? 0 : Program.result.zoneSensorResults[i][9];
+                values11[i] = (Program.result.zoneSensorResults[i][0] == double.MaxValue) ? 0 : Program.result.zoneSensorResults[i][10];
+                values12[i] = (Program.result.zoneSensorResults[i][0] == double.MaxValue) ? 0 : Program.result.zoneSensorResults[i][11];
+            }
+            UC4SensorView.PutDataOnChart(CrossView.ch1, values01);
+            UC4SensorView.PutDataOnChart(CrossView.ch2, values02);
+            UC4SensorView.PutDataOnChart(CrossView.ch3, values03);
+            UC4SensorView.PutDataOnChart(CrossView.ch4, values04);
+            UC4SensorView.PutDataOnChart(LinearView.ch1, values05);
+            UC4SensorView.PutDataOnChart(LinearView.ch2, values06);
+            UC4SensorView.PutDataOnChart(LinearView.ch3, values07);
+            UC4SensorView.PutDataOnChart(LinearView.ch4, values08);
+            UC4SensorView.PutDataOnChart(ThickView.ch1, values09);
+            UC4SensorView.PutDataOnChart(ThickView.ch2, values10);
+            UC4SensorView.PutDataOnChart(ThickView.ch3, values11);
+            UC4SensorView.PutDataOnChart(ThickView.ch4, values12);
         }
 
         void testWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)

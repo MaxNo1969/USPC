@@ -136,12 +136,12 @@ namespace PCI1730
                 if (p.verbal)
                 {
                     bool v = a1730.GetBit(p.position,false);
-                    if (p.val != v)
+                    if (p.Val != v)
                     {
-                        log.add(LogRecord.LogReason.info,"{0}: {1} : {2} выставляем в {3}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name,p.name,p.val.ToString());
+                        log.add(LogRecord.LogReason.info,"{0}: {1} : {2} выставляем в {3}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name,p.name,p.Val.ToString());
                     }
                 }
-                a1730.SetBit(p.position, p.val,false);
+                a1730.SetBit(p.position, p.Val,false);
             }
             a1730.Write(values_out);
         }
@@ -231,11 +231,11 @@ namespace PCI1730
                 bool v = a1730.GetBit(p.position,true);
                 lock (SignalsLock)
                 {
-                    p.front = p.val != v;
+                    p.front = p.Val != v;
                     if (p.front)
                     {
-                        p.val_prev = p.val;
-                        p.val = v;
+                        p.val_prev = p.Val;
+                        p.Val = v;
                         p.last_changed = dt;
 
                         if (p.verbal)
@@ -253,7 +253,7 @@ namespace PCI1730
                     Latch lp = L[i];
                     if (!lp.terminated)
                     {
-                        if (lp.signal.val == lp.val)
+                        if (lp.signal.Val == lp.val)
                         {
                             lp.terminated = true;
                             lp.reason = "Ok";
@@ -287,10 +287,10 @@ namespace PCI1730
                         continue;
                     if (!p.IsAlarm)
                         continue;
-                    if (p.AlarmVal != p.val)
+                    if (p.AlarmVal != p.Val)
                     {
                         string msg;
-                        if (p.val)
+                        if (p.Val)
                         {
                             if (p.eOn.Length != 0)
                                 msg = p.eOn;

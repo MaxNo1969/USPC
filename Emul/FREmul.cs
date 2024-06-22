@@ -68,6 +68,7 @@ namespace EMUL
 
         void timerZoneCallback(object _state)
         {
+            if (worker == null || !worker.IsBusy) return;
             sl.set(sl["СТРОБ"], true);
             while(!sl.get(sl["СТРБРЕЗ"]))Application.DoEvents();
             worker.ReportProgress(101, string.Format("СТРОБ!"));
@@ -79,8 +80,8 @@ namespace EMUL
         {
             log.add(LogRecord.LogReason.info, "{0}: {1}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name);
             //Снимаем все сигналы 
-            sl.ClearAllOutputSignals();
-            sl.ClearAllInputSignals();
+            //sl.ClearAllOutputSignals();
+            //sl.ClearAllInputSignals();
             pbTube.Value = 0;
             btnStart.Enabled = true;
             btnStop.Enabled = false;
@@ -202,9 +203,8 @@ namespace EMUL
             worker.ReportProgress(101, string.Format("strobTime = {0}", strobTime));
 
             worker.ReportProgress(101, "Включаем сигнал \"ЦИКЛ\"");
+            dtStartWait = DateTime.Now;
             sl.set(sl["ЦИКЛ"], true);
-            worker.ReportProgress(101, "Выставляем сигнал \"КОНТРОЛЬ\"...");
-            sl.set(sl["КОНТРОЛЬ"], true);
             //Ожидаем сигнал "РАБОТА"
             worker.ReportProgress(101, "Ожидаем сигнал \"РАБОТА\"(модуль готов к работе)...");
             while (!sl.get("РАБОТА"))
@@ -223,6 +223,8 @@ namespace EMUL
                 }
                 Thread.Sleep(signalWaitCycleTime);
             }
+            worker.ReportProgress(101, "Выставляем сигнал \"КОНТРОЛЬ\"...");
+            sl.set(sl["КОНТРОЛЬ"], true);
             bool iBaseSet = false;
             TubeStartTime = DateTime.Now;
             timerStrob = new System.Threading.Timer(timerZoneCallback,null,0,strobTime);
@@ -230,26 +232,36 @@ namespace EMUL
             {
                 double msEplaced = (DateTime.Now - TubeStartTime).TotalMilliseconds;
                 percent = (int)(msEplaced * 100.0 / (double)MoveTubeTime);
-                if (percent > 100) break;
-                worker.ReportProgress(percent);
+                if (percent > 100)
+                {
+                    timerStrob.Dispose();
+                    worker.ReportProgress(101, "Снимаем сигнал \"КОНТРОЛЬ\"");
+                    sl.set(sl["КОНТРОЛЬ"], false);
+                    while (!sl.get("РЕЗУЛЬТАТ")) Application.DoEvents();
+                    worker.ReportProgress(101, "Получили результат...");
+                    sl.set(sl["БАЗА"], false);
+                    worker.ReportProgress(101, "Снимаем сигнал \"БАЗА\"...");
+                    worker.ReportProgress(101, "Закончено...");
+                    break;
+                }
+                else
+                {
+                    worker.ReportProgress(percent);
+                }
                 if ((DateTime.Now - TubeStartTime).TotalMilliseconds >= timeToBase && !iBaseSet)
                 {
                     worker.ReportProgress(101, "Доехали до базы...");
                     sl.set(sl["БАЗА"], true);
                     iBaseSet = true;
-                    Thread.Sleep(200);
-                    worker.ReportProgress(101, "Снимаем сигнал \"БАЗА\"...");
-                    sl.set(sl["БАЗА"], false);
+                    //Thread.Sleep(200);
+                    //worker.ReportProgress(101, "Снимаем сигнал \"БАЗА\"...");
+                    //sl.set(sl["БАЗА"], false);
                 }
                 Thread.Sleep(500);
             }
-            worker.ReportProgress(101, "Закончено...");
-            timerStrob.Dispose();
-            worker.ReportProgress(101, "Снимаем сигнал \"КОНТРОЛЬ\"");
-            sl.set(sl["КОНТРОЛЬ"], false);
             worker.ReportProgress(101, "Снимаем сигнал \"ЦИКЛ\"");
             sl.set(sl["ЦИКЛ"], false);
-
+            return;
         }
     }
 }

@@ -15,7 +15,7 @@ namespace USPC
     class TubeWorker:BackgroundWorker
     {
         UspcNetDataReader[] dataReaders = null;
-        ZoneBackGroundWorker zbWorker = null;
+        public ZoneBackGroundWorker zbWorker = null;
         DefSignals sl = Program.sl;
         bool speedCalced = false;
         public TubeWorker()
@@ -42,7 +42,7 @@ namespace USPC
             log.add(LogRecord.LogReason.debug, "{0}: {1}: e.Cancelled = {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, e.Cancelled);
             stopWorkers();
             //Снимем все сигналы, кроме слаботочки
-            clearAllOutSignals();
+            //clearAllOutSignals();
             //Здесь можно обработать окончание работы с трубой - записать куда-нибудь результат и т.п.
             setSb("Info", "Для начала работы нажмите F5");
         }
@@ -222,6 +222,8 @@ namespace USPC
                                 }
                                 //Выставляем сигнал "РАБОТА"
                                 Program.sl.set("РАБОТА", true);
+                                log.add(LogRecord.LogReason.debug, "{0}: {1}: {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, "Начали контролировать \"ЦИКЛ\"");
+                                controlCycle = true;
                                 waitReadyStarted = DateTime.Now;
                                 curState = WrkStates.moduleReady;
                                 break;
@@ -294,10 +296,10 @@ namespace USPC
                             //Труба доехала до базы
                             if (Program.sl["БАЗА"].Val && controlIsSet != DateTime.MinValue && !speedCalced)
                             {
-                                int millisecondsToBase = (DateTime.Now - controlIsSet).Milliseconds;
+                                double millisecondsToBase = (DateTime.Now - controlIsSet).TotalMilliseconds;
                                 controlIsSet = DateTime.MinValue;
                                 //Получаем значение скорости трубы
-                                AppSettings.s.speed = (double)AppSettings.s.distanceToBase / ((double)millisecondsToBase*1000.0);
+                                AppSettings.s.speed = (double)AppSettings.s.distanceToBase / millisecondsToBase;
                                 log.add(LogRecord.LogReason.info, "Рассчитаная скорость: {0}", AppSettings.s.speed);
                                 setSb("speed", AppSettings.s.speed.ToString());
                                 speedCalced = true;
@@ -314,7 +316,9 @@ namespace USPC
                         case WrkStates.endWork:
                             //По окончании сбора, обработки и передачи результата. 
                             Program.sl.set(Program.sl["РАБОТА"], false);
+                            Program.sl["РАБОТА"].Val = false;
                             Program.sl.set(Program.sl["РЕЗУЛЬТАТ"], true);
+                            Program.sl["РЕЗУЛЬТАТ"].Val = true;
                             stopWorkers();
                             Thread.Sleep(100);
                             speedCalced = false;

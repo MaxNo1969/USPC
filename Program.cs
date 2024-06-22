@@ -29,6 +29,7 @@ namespace USPC
         public static int medianFilterWidth = 5;
 
         public static DefSignals sl = null;
+        public static double scopeVelocity = 6400.0;
 
         /// <summary>
         /// The main entry point for the application.

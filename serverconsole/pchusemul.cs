@@ -21,7 +21,6 @@ namespace USPC
         private Int32 hPCXUS = 0;
         private int error = 0;
 
-        AcqAscan[] scans = null;
         int bufferSize = 0;
         int numberOfScans = 0;
         
@@ -179,7 +178,6 @@ namespace USPC
         {
             if(!checkHandle())return false;
             bufferSize = _bufferSize;
-            scans = new AcqAscan[bufferSize];
             boardStatus = ACQ_STATUS.ACQ_WAITING_START;
             log.add(LogRecord.LogReason.info, "{0}: {1}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name);
             return true;
@@ -217,7 +215,6 @@ namespace USPC
         public bool clear(Int32 _board)
         {
             if (!checkHandle()) return false;
-            scans = null;
             scanCounter = 0;
             bufferSize = 0;
             log.add(LogRecord.LogReason.info, "{0}: {1}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name);
@@ -230,29 +227,27 @@ namespace USPC
             log.add(LogRecord.LogReason.info, "{0}: {1}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name);
             return 0;
         }
+        const double scopeVelocity = 6400.0;
         public Int32 read(Int32 _board, ref AcqAscan[] _data, int _timeout = 200)
         {
             if (!checkHandle()) return 0;
-            if (boardStatus == ACQ_STATUS.ACQ_RUNNING && scans != null)
+            if (boardStatus == ACQ_STATUS.ACQ_RUNNING)
             {
                 Random r = new Random();
                 numberOfScans = 300 + r.Next(50);
+                byte channel = 0;
                 for (int i = 0; i < numberOfScans; i++)
                 {
-                    _data[i].Channel = 0;
+                    _data[i].Channel = channel++;
+                    if (channel == 12) channel = 0;
                     _data[i].ScanCounter = scanCounter;
                     _data[i].PulserCounter = scanCounter;
                     scanCounter++;
                     _data[i].G1Amp = (byte)(90 + r.Next(10));
                     _data[i].G2Amp = (byte)(90 + r.Next(10));
-                    double Distance = 3.53;
-                    uint wt = (uint)(Distance * 1000.0 / 5.0);
-                    _data[i].G1WTmsb = (byte)(wt & 0x00ff);
-                    _data[i].G1WTlsb = (byte)(wt >> 16);
-                    Distance = 5.1;
-                    wt = (uint)(Distance * 1000.0 / 5.0);
-                    _data[i].G2WTmsb = (byte)(wt & 0x00ff);
-                    _data[i].G2WTlsb = (byte)(wt >> 16);
+                    double val = 8 + (r.NextDouble() - 0.5) * 2;
+                    uint G1Tof = (uint)(val / (2.5e-6 * scopeVelocity));
+                    _data[i].G1Tof = G1Tof;
                 }
             }
             //log.add(LogRecord.LogReason.info, "{0}: {1}: {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name,numberOfScans);
