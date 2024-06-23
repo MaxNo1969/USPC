@@ -193,7 +193,7 @@ namespace Data
                 for (int s = 0; s < 4; s++)
                     zoneSensorResults[z][s] = Program.typeSize.currentTypeSize.maxDetected;
                 for (int s = 4; s < 12; s++)
-                    zoneSensorResults[z][s] = 100;
+                    zoneSensorResults[z][s] = 101;
             }
         }
         public void Clear()

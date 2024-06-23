@@ -93,19 +93,7 @@ namespace USPC
         public static Color GetDefectColor(double measure)
         {
             // возвращает цвет зоны в зависимости от толщины в этой зоне
-            if (measure > class2Treshold)
-                return Good;
-            else if (measure <= defectTreshold)
-                return Brack;
-            else
-                return Class2;
-        }
-        //! Возвращает цвет измерения
-        //! Добавление нового метода для коррктного отображения в ViewTubeDetails
-        public static Color GetColor(double measure, th_status thCode)
-        {
-            // возвращает цвет зоны в зависимости от толщины в этой зоне
-            if (thCode != th_status.TH_OK)
+            if (measure > 100)
                 return NotMeasured;
             else if (measure > class2Treshold)
                 return Good;
@@ -114,6 +102,7 @@ namespace USPC
             else
                 return Class2;
         }
+
         //! Принимает решение по всей трубе и вычисляет зоны отреза
         public static void MakeDecision(List<double> thickness)
         {
