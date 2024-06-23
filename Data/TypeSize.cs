@@ -42,12 +42,12 @@ namespace Data
         [DisplayName(" 5.Порог класса 2"), Description("Порог класса 2"), Category("2.Пороги")]
         public double class2Treshold { get; set; }
         /// <summary>
-        /// Порог класса 1 внутрений
+        /// Минимальная толщина
         /// </summary>
         [DisplayName(" 6.Минимальная толщина"), Description("Минимальная толщина"), Category("2.Пороги")]
         public double minDetected { get; set; }
         /// <summary>
-        /// Порог класса 2 внутрений
+        /// Максимальная толщина
         /// </summary>
         [DisplayName(" 7.Максимальная толщина"), Description("Максимальная толщина"), Category("2.Пороги")]
         public double maxDetected { get; set; }

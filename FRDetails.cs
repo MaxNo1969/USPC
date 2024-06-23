@@ -35,8 +35,8 @@ namespace USPC
 
         private void putDataOnChart()
         {
-            measChart.putDataOnChart(data.evalZone(zone, sensor, cbMedian.Checked));
-            measChart.putColorDecision(data, zone, sensor);
+            //measChart.putDataOnChart(data.evalZone(zone, sensor, cbMedian.Checked));
+            //measChart.putColorDecision(data, zone, sensor);
             sbMeas.Items[0].Text = string.Format("Зона: {0}", zone);
             sbMeas.Items[1].Text = string.Format("Датчик: {0}", sensor + 1);
             sbMeas.Items[2].Text = string.Format("Измерение: {0}", measCur.x);

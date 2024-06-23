@@ -26,7 +26,7 @@ namespace USPC
         private void UpdateChart()
         {
             //double[] data = Program.data[0].minZoneThickness;
-            chartResult.putDataOnChart(Program.data[0].minZoneThickness);
+            //chartResult.putDataOnChart(Program.data[0].minZoneThickness);
             //chartResult.putColorDecision();
         }
 

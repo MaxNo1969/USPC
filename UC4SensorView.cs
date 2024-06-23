@@ -60,7 +60,9 @@ namespace USPC
             a.AxisX.MajorGrid.Enabled = false;
             
             a.AxisY.Minimum = 0;
-            a.AxisY.Maximum = 100;
+            //a.AxisY.Maximum = 100;
+            a.AxisY.Maximum = double.NaN;
+
             a.AxisY.Interval = 0;
             a.AxisY.LabelStyle.Enabled = false;
             a.AxisY.MajorGrid.Enabled = false;

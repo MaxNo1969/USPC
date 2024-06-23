@@ -208,7 +208,7 @@ namespace CHART
         }
         public void putDataOnChart()
         {
-            if (data != null && data.Length > 0) this.putDataOnChart(data);
+            //if (data != null && data.Length > 0) this.putDataOnChart(data);
         }
     }
 }

@@ -45,6 +45,24 @@ namespace USPC
             }
         }
 
+        //! Минимальная толщина трубы для функции GetColor - берем из настроек
+        public static double minThickness
+        {
+            get
+            {
+                return Program.typeSize.currentTypeSize.minDetected;
+            }
+        }
+
+        //! Максимальная толщина трубы для функции GetColor - берем из настроек
+        public static double maxThickness
+        {
+            get
+            {
+                return Program.typeSize.currentTypeSize.maxDetected;
+            }
+        }
+
         //! Минимальный годный участок
         //public static int minGoodLength = 1;
         //! Решение по трубе (Брак, Годно, Класс 2)
@@ -56,31 +74,20 @@ namespace USPC
         //! Зона с минимальной толщиной
         public static int min_thickness_zone = -1;
 
-        //! Максимальная толщина трубы для функции GetColor - берем из настроек
-        public static double maxThickness
-        {
-            get
-            {
-                return Program.typeSize.currentTypeSize.maxDetected;
-            }
-        }
-
         //! Конструктор
         public DrawResults()
         {
         }
         //! Возвращает цвет измерения (зоны, датчика, смещения - чего угодно)
-        public static Color GetColor(double measure)
+        public static Color GetThicknessColor(double measure)
         {
             // возвращает цвет зоны в зависимости от толщины в этой зоне
             if (measure >= maxThickness)
                 return NotMeasured;
-            else if (measure > class2Treshold)
+            else if (measure > minThickness)
                 return Good;
-            else if (measure <= defectTreshold)
+            else 
                 return Brack;
-            else
-                return Class2;
         }
         //! Возвращает цвет измерения (зоны, датчика, смещения - чего угодно)
         public static Color GetDefectColor(double measure)

@@ -78,7 +78,7 @@ namespace USPC
                     CustomProperties = "DrawingStyle=Emboss, PointWidth=1"
                 };
                 c.Series.Add(ser);
-                c.putDataOnChart(data.minZoneSensorThickness[i]);
+                c.putDataOnChart(data.minZoneSensorThickness[i],true);
                 c.putColorDecision(data.minZoneSensorThickness[i], i);
                 c.DoubleClick += new EventHandler(c_DoubleClick);
                 c.Parent = lay;
