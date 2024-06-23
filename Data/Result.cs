@@ -150,16 +150,29 @@ namespace Data
                     int channel = scan.Channel;
                     double def = scan.G1Amp;
                     double thick = 2.5e-6 * scan.G1Tof * Program.scopeVelocity;
-                    if (channel < 0) continue;
-                    else if (channel < 4)
+                    if (numBoard == 0)
                     {
-                        listSensors[channel].Add(thick);
-                        if (thick < zoneSensorResults[zones][channel])zoneSensorResults[zones][channel]  = thick;
+                        if (channel < 4)
+                        {
+                            listSensors[channel].Add(thick);
+                            if (thick < zoneSensorResults[zones][channel]) zoneSensorResults[zones][channel] = thick;
+                        }
+                        else
+                        {
+                            log.add(LogRecord.LogReason.warning, "{0}: {1}: {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, "Номер канала на первой плате больше 4");
+                        }
                     }
                     else
                     {
-                        listSensors[channel].Add(def);
-                        if (def < zoneSensorResults[zones][channel]) zoneSensorResults[zones][channel] = def;
+                        if (channel < 8)
+                        {
+                            listSensors[channel + 4].Add(def);
+                            if (def < zoneSensorResults[zones][channel + 4]) zoneSensorResults[zones][channel + 4] = def;
+                        }
+                        else
+                        {
+                            log.add(LogRecord.LogReason.warning, "{0}: {1}: {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, "Номер канала на второй плате больше 8");
+                        }
                     }
                 }
                 zones++;
@@ -172,13 +185,14 @@ namespace Data
         public Result()
         {
             zones = 0;
-            double[] sensorResults = new double[sensors];
             zoneSensorResults = new double[USPCData.countZones][];
             for (int z = 0; z < USPCData.countZones; z++)
             {
                 zoneSensorResults[z] = new double[sensors];
-                for (int s = 0; s < sensors; s++)
-                    zoneSensorResults[z][s] = double.MaxValue;
+                for (int s = 0; s < 4; s++)
+                    zoneSensorResults[z][s] = Program.typeSize.currentTypeSize.maxDetected;
+                for (int s = 4; s < 12; s++)
+                    zoneSensorResults[z][s] = 100;
             }
         }
         public void Clear()

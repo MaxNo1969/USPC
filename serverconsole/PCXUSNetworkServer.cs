@@ -105,7 +105,7 @@ namespace USPC
                         }
                     case "load":
                         {
-                            string configPath = @"c:\uspc\UT_files";
+                            string configPath = @"c:\uspc.3\UT_files";
                             string fName = (cmdAndParams.Count() > 1)?cmdAndParams[1]:"default.us";
                             fName = configPath + "\\" + fName;
                             int board = (cmdAndParams.Count() > 2) ? ConvertToInt(cmdAndParams[2], -1) : -1;
@@ -118,7 +118,7 @@ namespace USPC
                         
                     case "save":
                         {
-                            string configPath = @"c:\uspc\UT_files";
+                            string configPath = @"c:\uspc.3\UT_files";
                             string fName = (cmdAndParams.Count() > 1) ? cmdAndParams[1] : "default.us";
                             fName = configPath + "\\" + fName;
                             int board = (cmdAndParams.Count() > 2) ? ConvertToInt(cmdAndParams[2], -1) : -1;

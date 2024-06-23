@@ -23,8 +23,8 @@ namespace USPC
         public static PCXUSNET pcxus = null;
         public static int bufferSize = 1024 * 100;
         public static USPCData[] data = new USPCData[numBoards];
-        public static Result result = new Result();
         public static TypeSize typeSize = new TypeSize();
+        public static Result result = new Result();
         public static FRMain frMain = null;
         public static int medianFilterWidth = 5;
 
@@ -103,6 +103,7 @@ namespace USPC
                 log.add(LogRecord.LogReason.debug, "{0}: {1}: {2}", "Program", System.Reflection.MethodBase.GetCurrentMethod().Name, "Зашли в finally");
                 if (boardState == BoardState.Opened || boardState == BoardState.Error)pcxus.close();
                 //Снимаем все выходные сигналы и останавливаем PCIE1730
+                sl.ClearAllOutputSignals();
                 sl.Dispose();
                 FormPosSaver.ser();
             }
