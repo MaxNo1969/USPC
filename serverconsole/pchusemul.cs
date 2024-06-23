@@ -239,7 +239,8 @@ namespace USPC
                 for (int i = 0; i < numberOfScans; i++)
                 {
                     _data[i].Channel = channel++;
-                    if (channel == 12) channel = 0;
+                    if (_board == 0 && channel == 4) channel = 0;
+                    if (_board == 1 && channel == 8) channel = 0;
                     _data[i].ScanCounter = scanCounter;
                     _data[i].PulserCounter = scanCounter;
                     scanCounter++;
