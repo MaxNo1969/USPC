@@ -250,18 +250,18 @@ namespace USPC
             double[] values12 = new double[USPCData.countZones];
             for (int i = 0; i < USPCData.countZones; i++)
             {
-                values01[i] = (Program.result.zoneSensorResults[i][0] == double.MaxValue) ? 0 : Program.result.zoneSensorResults[i][0];
-                values02[i] = (Program.result.zoneSensorResults[i][0] == double.MaxValue) ? 0 : Program.result.zoneSensorResults[i][1];
-                values03[i] = (Program.result.zoneSensorResults[i][0] == double.MaxValue) ? 0 : Program.result.zoneSensorResults[i][2];
-                values04[i] = (Program.result.zoneSensorResults[i][0] == double.MaxValue) ? 0 : Program.result.zoneSensorResults[i][3];
-                values05[i] = (Program.result.zoneSensorResults[i][0] == double.MaxValue) ? 0 : Program.result.zoneSensorResults[i][4];
-                values06[i] = (Program.result.zoneSensorResults[i][0] == double.MaxValue) ? 0 : Program.result.zoneSensorResults[i][5];
-                values07[i] = (Program.result.zoneSensorResults[i][0] == double.MaxValue) ? 0 : Program.result.zoneSensorResults[i][6];
-                values08[i] = (Program.result.zoneSensorResults[i][0] == double.MaxValue) ? 0 : Program.result.zoneSensorResults[i][7];
-                values09[i] = (Program.result.zoneSensorResults[i][0] == double.MaxValue) ? 0 : Program.result.zoneSensorResults[i][8];
-                values10[i] = (Program.result.zoneSensorResults[i][0] == double.MaxValue) ? 0 : Program.result.zoneSensorResults[i][9];
-                values11[i] = (Program.result.zoneSensorResults[i][0] == double.MaxValue) ? 0 : Program.result.zoneSensorResults[i][10];
-                values12[i] = (Program.result.zoneSensorResults[i][0] == double.MaxValue) ? 0 : Program.result.zoneSensorResults[i][11];
+                values01[i] = Program.result.zoneSensorResults[i][0];
+                values02[i] = Program.result.zoneSensorResults[i][1];
+                values03[i] = Program.result.zoneSensorResults[i][2];
+                values04[i] = Program.result.zoneSensorResults[i][3];
+                values05[i] = Program.result.zoneSensorResults[i][4];
+                values06[i] = Program.result.zoneSensorResults[i][5];
+                values07[i] = Program.result.zoneSensorResults[i][6];
+                values08[i] = Program.result.zoneSensorResults[i][7];
+                values09[i] = Program.result.zoneSensorResults[i][8];
+                values10[i] = Program.result.zoneSensorResults[i][9];
+                values11[i] = Program.result.zoneSensorResults[i][10];
+                values12[i] = Program.result.zoneSensorResults[i][11];
             }
             UC4SensorView.PutDataOnChart(CrossView.ch1, values01);
             UC4SensorView.PutDataOnChart(CrossView.ch2, values02);
