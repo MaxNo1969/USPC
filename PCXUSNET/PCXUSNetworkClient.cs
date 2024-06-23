@@ -50,11 +50,19 @@ namespace USPC
                     {
                         case "read":
                             {
-                                IFormatter formatter = new BinaryFormatter();
-                                AcqAscan[] scans = (AcqAscan[])formatter.Deserialize(stream);
-                                //log.add(LogRecord.LogReason.debug, "{0}: {1}: command = \"{2}\", {3} scans readed", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, _func, scans.Length);
-                                ret = (Object)scans;
-                                return result;
+                                try
+                                {
+                                    IFormatter formatter = new BinaryFormatter();
+                                    AcqAscan[] scans = (AcqAscan[])formatter.Deserialize(stream);
+                                    log.add(LogRecord.LogReason.debug, "{0}: {1}: command = \"{2}\", {3} scans readed", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, _func, scans.Length);
+                                    ret = (Object)scans;
+                                    return result;
+                                }
+                                catch (Exception ex)
+                                {
+                                    log.add(LogRecord.LogReason.error, "{0}: {1}: read Error = {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name,ex.Message);
+                                    return result;
+                                }
                             }
                         case "readdouble":
                             {
@@ -86,7 +94,7 @@ namespace USPC
                             {
                                 IFormatter formatter = new BinaryFormatter();
                                 AcqSatus status = (AcqSatus)formatter.Deserialize(stream);
-                                //log.add(LogRecord.LogReason.debug, "{0}: {1}: command = \"{2}\", {3}, ", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, _func, ((ACQ_STATUS)status.status).ToString());
+                                log.add(LogRecord.LogReason.debug, "{0}: {1}: command = \"{2}\", {3}, ", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, _func, ((ACQ_STATUS)status.status).ToString());
                                 ret = (Object)status;
                                 return result;
                             }

@@ -123,12 +123,12 @@ namespace USPC
         private static WrkStates prevState = WrkStates.none;
 
         //Время ожидания сигнала "РАБОТА"
-        private const int iWrkTimeout = 30;
+        private const int iWrkTimeout = 300;
         //ToDo: Непонятно пока чего ждем
         //Время ожидания готовности чего-то
-        private const int iReadyTimeout = 30;
+        private const int iReadyTimeout = 300;
         //Время ожидания сигнала "КОНТРОЛЬ"
-        private const int iControlTimeout = 30;
+        private const int iControlTimeout = 300;
 
         private static DateTime tubeStarted;
         private static DateTime waitReadyStarted;
@@ -240,7 +240,7 @@ namespace USPC
                             else
                             {
                                 //Не дождались сигнала "КОНТРОЛЬ"
-                                if((DateTime.Now - tubeStarted ).Seconds > iWrkTimeout)
+                                if((DateTime.Now - tubeStarted ).TotalSeconds > iWrkTimeout)
                                 {
                                     errStr = "Не дождались сигнала \"КОНТРОЛЬ\"";
                                     curState = WrkStates.error;
@@ -250,7 +250,7 @@ namespace USPC
                             }
                         case WrkStates.moduleReady:
                             //Тут надо проверить таймоут ожидания начала движения трубы
-                            if ((waitReadyStarted - DateTime.Now).Seconds > iReadyTimeout)
+                            if ((waitReadyStarted - DateTime.Now).TotalSeconds > iReadyTimeout)
                             {
                                 errStr = "Не дождались начала движения трубы";
                                 curState = WrkStates.error;
@@ -344,7 +344,8 @@ namespace USPC
         {
             Program.pcxus.close();
             Program.pcxus.open(2);
-            Program.pcxus.load("config.us");
+            //Program.pcxus.load("tube147x11 (12 kanala 16,40).us");
+            Program.pcxus.load("default.us");
         }
 
     }

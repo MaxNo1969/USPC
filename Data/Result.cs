@@ -151,7 +151,7 @@ namespace Data
                     int channel = scan.Channel;
                     double def = scan.G1Amp;
                     double thick = 2.5e-6 * scan.G1Tof * Program.scopeVelocity;
-                    if (numBoard==0)
+                    if (numBoard == 0)
                     {
                         if (channel < 4)
                         {
