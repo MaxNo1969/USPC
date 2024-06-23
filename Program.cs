@@ -23,8 +23,8 @@ namespace USPC
         public static PCXUSNET pcxus = null;
         public static int bufferSize = 1024 * 100;
         public static USPCData[] data = new USPCData[numBoards];
-        public static Result result = new Result();
         public static TypeSize typeSize = new TypeSize();
+        public static Result result = new Result();
         public static FRMain frMain = null;
         public static int medianFilterWidth = 5;
 
