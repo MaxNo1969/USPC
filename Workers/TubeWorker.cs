@@ -142,14 +142,12 @@ namespace USPC
                 {
                     dataReaders[i].CancelAsync();
                     while (dataReaders[i].IsBusy)Application.DoEvents();
-                    dataReaders[i] = null;
                 }
             }
             if (zbWorker != null && zbWorker.IsBusy)
             {
                 zbWorker.CancelAsync();
                 while (zbWorker.IsBusy)Application.DoEvents();
-                zbWorker = null;
             }
         }
 
@@ -277,6 +275,8 @@ namespace USPC
                             Thread.Sleep(100);
                             speedCalced = false;
                             e.Cancel = true;
+                            Action action = () => Program.frMain.setStartStopMenu(true);
+                            Program.frMain.Invoke(action);
                             return;
                         default:
                             break;
@@ -288,6 +288,7 @@ namespace USPC
             catch (Exception ex)
             {
                 speedCalced = false;
+                sl["РАБОТА"].Val = false;
                 stopWorkers();
                 log.add(LogRecord.LogReason.error, "{0}: {1}: Error: {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message);
                 e.Cancel = true;
