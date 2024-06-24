@@ -244,8 +244,7 @@ namespace USPC
                     _data[i].ScanCounter = scanCounter;
                     _data[i].PulserCounter = scanCounter;
                     scanCounter++;
-                    _data[i].G1Amp = (byte)(90 + r.Next(10));
-                    _data[i].G2Amp = (byte)(90 + r.Next(10));
+                    _data[i].G1Amp = (byte)(95 + r.Next(10));
                     double val = 8 + (r.NextDouble() - 0.5) * 2;
                     uint G1Tof = (uint)(val / (2.5e-6 * scopeVelocity));
                     _data[i].G1Tof = G1Tof;

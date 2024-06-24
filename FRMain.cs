@@ -127,6 +127,10 @@ namespace USPC
             CrossView.lblName.Text = "Поперечный контроль";
             LinearView.lblName.Text = "Продольный контроль";
             ThickView.lblName.Text = "Котроль толщины";
+            ThickView.ch1.ChartAreas["Default"].AxisY.Maximum = 12.0;
+            ThickView.ch2.ChartAreas["Default"].AxisY.Maximum = 12.0;
+            ThickView.ch3.ChartAreas["Default"].AxisY.Maximum = 12.0;
+            ThickView.ch4.ChartAreas["Default"].AxisY.Maximum = 12.0;
             
             setSb("Info", "Для начала работы нажмите F5");
         }
@@ -233,18 +237,18 @@ namespace USPC
                 values11[i] = Program.result.zoneSensorResults[i][10];
                 values12[i] = Program.result.zoneSensorResults[i][11];
             }
-            UC4SensorView.PutDataOnChart(CrossView.ch1, values09);
-            UC4SensorView.PutDataOnChart(CrossView.ch2, values10);
-            UC4SensorView.PutDataOnChart(CrossView.ch3, values11);
-            UC4SensorView.PutDataOnChart(CrossView.ch4, values12);
-            UC4SensorView.PutDataOnChart(LinearView.ch1, values05);
-            UC4SensorView.PutDataOnChart(LinearView.ch2, values06);
-            UC4SensorView.PutDataOnChart(LinearView.ch3, values07);
-            UC4SensorView.PutDataOnChart(LinearView.ch4, values08);
-            UC4SensorView.PutDataOnChart(ThickView.ch1, values01);
-            UC4SensorView.PutDataOnChart(ThickView.ch2, values02);
-            UC4SensorView.PutDataOnChart(ThickView.ch3, values03);
-            UC4SensorView.PutDataOnChart(ThickView.ch4, values04);
+            UC4SensorView.PutDefDataOnChart(CrossView.ch1, values09);
+            UC4SensorView.PutDefDataOnChart(CrossView.ch2, values10);
+            UC4SensorView.PutDefDataOnChart(CrossView.ch3, values11);
+            UC4SensorView.PutDefDataOnChart(CrossView.ch4, values12);
+            UC4SensorView.PutDefDataOnChart(LinearView.ch1, values05);
+            UC4SensorView.PutDefDataOnChart(LinearView.ch2, values06);
+            UC4SensorView.PutDefDataOnChart(LinearView.ch3, values07);
+            UC4SensorView.PutDefDataOnChart(LinearView.ch4, values08);
+            UC4SensorView.PutThickDataOnChart(ThickView.ch1, values01);
+            UC4SensorView.PutThickDataOnChart(ThickView.ch2, values02);
+            UC4SensorView.PutThickDataOnChart(ThickView.ch3, values03);
+            UC4SensorView.PutThickDataOnChart(ThickView.ch4, values04);
         }
 
         void testWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
