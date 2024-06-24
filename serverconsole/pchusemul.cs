@@ -235,12 +235,26 @@ namespace USPC
             {
                 Random r = new Random();
                 numberOfScans = 300 + r.Next(50);
-                byte channel = 0;
+                byte[] channel = new byte[2];
                 for (int i = 0; i < numberOfScans; i++)
                 {
-                    _data[i].Channel = channel++;
-                    if (_board == 0 && channel == 4) channel = 0;
-                    if (_board == 1 && channel == 8) channel = 0;
+                    _data[i].Channel = channel[_board]++;
+                    if (_board == 0)
+                    {
+                        if(channel[_board] == 4)
+                        {
+                            channel[_board] = 0;
+                        }
+                    }
+
+                    if (_board == 1)
+                    {
+
+                        if (channel[_board] == 8)
+                        {
+                            channel[_board] = 0;
+                        }
+                    }
                     _data[i].ScanCounter = scanCounter;
                     _data[i].PulserCounter = scanCounter;
                     scanCounter++;
