@@ -9,6 +9,7 @@ using PCI1730;
 using Settings;
 using System.Threading;
 using USPC.PCI_1730;
+using System.Windows.Forms;
 
 namespace USPC
 {
@@ -113,8 +114,6 @@ namespace USPC
             none, //Не установлено
             startWorkCycle, //Начало рабочего цикла по трубе
             waitTube, //Ожидаем трубу на входе в установку
-            moduleReady, //Установка готова к работе
-            waitCntrl, //Ждем появления сигнала "Контроль"
             work, //Работа - крутим цикл приема данных до снятия сигнала "Контроль"
             endWork, //Работа закончена
             error //Приключилась ошибка
@@ -130,10 +129,8 @@ namespace USPC
         //Время ожидания сигнала "КОНТРОЛЬ"
         private const int iControlTimeout = 300;
 
-        private static DateTime tubeStarted;
-        private static DateTime waitReadyStarted;
+        private static DateTime tubeStarted = DateTime.MinValue;
         private static DateTime waitControlStarted;
-        private static DateTime controlIsSet = DateTime.MinValue;
 
         #region запуск/остановка сбора данных по всем платам
         void stopWorkers()
@@ -144,14 +141,14 @@ namespace USPC
                 if (dataReaders[i] != null && dataReaders[i].IsBusy)
                 {
                     dataReaders[i].CancelAsync();
-                    while (dataReaders[i].IsBusy) ;
+                    while (dataReaders[i].IsBusy)Application.DoEvents();
                     dataReaders[i] = null;
                 }
             }
             if (zbWorker != null && zbWorker.IsBusy)
             {
                 zbWorker.CancelAsync();
-                while (zbWorker.IsBusy) ;
+                while (zbWorker.IsBusy)Application.DoEvents();
                 zbWorker = null;
             }
         }
@@ -221,26 +218,29 @@ namespace USPC
                                     prepareBoardsForWork();
                                 }
                                 //Выставляем сигнал "РАБОТА"
-                                Program.sl.set("РАБОТА", true);
+                                Program.sl["РАБОТА"].Val = true;
                                 log.add(LogRecord.LogReason.debug, "{0}: {1}: {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, "Начали контролировать \"ЦИКЛ\"");
                                 controlCycle = true;
-                                waitReadyStarted = DateTime.Now;
-                                curState = WrkStates.moduleReady;
+                                waitControlStarted = DateTime.Now;
+                                curState = WrkStates.waitTube;
                                 break;
                             }
                         case WrkStates.waitTube:
                             //Труба поступила на вход установки
                             if (Program.sl["КОНТРОЛЬ"].Val == true)
                             {
-                                clearAllOutSignals();
-                                waitReadyStarted = DateTime.Now;
-                                curState = WrkStates.moduleReady;
+                                Program.sl["РЕЗУЛЬТАТ"].Val = false;
+                                Program.sl["СТРБРЕЗ"].Val = false;
+                                //Включить сбор данных с модуля контроля. Ожидать пропадания сигнала КОНТРОЛЬ. 
+                                startWorkers();
+                                tubeStarted = DateTime.Now;
+                                curState = WrkStates.work;
                                 break;
                             }
                             else
                             {
                                 //Не дождались сигнала "КОНТРОЛЬ"
-                                if((DateTime.Now - tubeStarted ).TotalSeconds > iWrkTimeout)
+                                if((DateTime.Now - waitControlStarted ).TotalSeconds > iWrkTimeout)
                                 {
                                     errStr = "Не дождались сигнала \"КОНТРОЛЬ\"";
                                     curState = WrkStates.error;
@@ -248,80 +248,35 @@ namespace USPC
                                 }
                                 break;
                             }
-                        case WrkStates.moduleReady:
-                            //Тут надо проверить таймоут ожидания начала движения трубы
-                            if ((waitReadyStarted - DateTime.Now).TotalSeconds > iReadyTimeout)
-                            {
-                                errStr = "Не дождались начала движения трубы";
-                                curState = WrkStates.error;
-                                break;
-                            }
-                            else
-                            {
-                                curState = WrkStates.waitCntrl;
-                                waitControlStarted = DateTime.Now;
-                                break;
-                            }
-                        //При появлении сигнала КОНТРОЛЬ запоминаем время для вычисления скорости
-                        //Если сигнал КОНТРОЛЬ не появился за определенное время (10 секунд) – 
-                        //аварийное завершение режима с выводом со-ответствующего сообщения.
-                        case WrkStates.waitCntrl:
-                            if ((DateTime.Now - waitControlStarted).Seconds > iControlTimeout)
-                            {
-                                errStr = "Не дождались трубы на входе в модуль";
-                                curState = WrkStates.error;
-                                break;
-                            }
-                            else
-                            {
-                                if (Program.sl["КОНТРОЛЬ"].Val == true)
-                                {
-                                    controlIsSet = DateTime.Now;
-                                    curState = WrkStates.work;
-                                    //Включить сбор данных с модуля контроля. Ожидать пропадания сигнала КОНТРОЛЬ. 
-                                    startWorkers();
-                                }
-                                break;
-                            }
                         case WrkStates.work:
                             //Пропал сигнал контроль
                             if (Program.sl["КОНТРОЛЬ"].Val == false)
                             {
-                                //Останавливаем сбор
-                                //stopWorkers();
-                                Program.sl.set(Program.sl["РАБОТА"], false);
                                 curState = WrkStates.endWork;
                                 break;
                             }
                             //Труба доехала до базы
-                            if (Program.sl["БАЗА"].Val && controlIsSet != DateTime.MinValue && !speedCalced)
+                            if (Program.sl["БАЗА"].Val && tubeStarted != DateTime.MinValue && !speedCalced)
                             {
-                                double millisecondsToBase = (DateTime.Now - controlIsSet).TotalMilliseconds;
-                                controlIsSet = DateTime.MinValue;
+                                double millisecondsToBase = (DateTime.Now - tubeStarted).TotalMilliseconds;
+                                tubeStarted = DateTime.MinValue;
                                 //Получаем значение скорости трубы
                                 AppSettings.s.speed = (double)AppSettings.s.distanceToBase / millisecondsToBase;
                                 log.add(LogRecord.LogReason.info, "Рассчитаная скорость: {0}", AppSettings.s.speed);
                                 setSb("speed", AppSettings.s.speed.ToString());
                                 speedCalced = true;
                             }
-                            //if (Program.sl["СТРОБ"].Val)
-                            //{
-                            //    log.add(LogRecord.LogReason.debug, "{0}: {1}: {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, "СТРОБ");
-                            //    Program.sl.set(Program.sl["СТРБРЕЗ"], true);
-                            //    Program.result.AddNewZone();
-                            //    Program.sl.set(Program.sl["СТРБРЕЗ"], false);
-                            //    break;
-                            //}
                             break;
                         case WrkStates.endWork:
                             //По окончании сбора, обработки и передачи результата. 
-                            Program.sl.set(Program.sl["РАБОТА"], false);
+                            //Program.sl.set(Program.sl["РАБОТА"], false);
                             Program.sl["РАБОТА"].Val = false;
-                            Program.sl.set(Program.sl["РЕЗУЛЬТАТ"], true);
+                            //Program.sl.set(Program.sl["РЕЗУЛЬТАТ"], true);
                             Program.sl["РЕЗУЛЬТАТ"].Val = true;
                             stopWorkers();
                             Thread.Sleep(100);
                             speedCalced = false;
+                            e.Cancel = true;
                             return;
                         default:
                             break;
