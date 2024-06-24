@@ -131,8 +131,13 @@ namespace Data
 
         public ListZones values = new ListZones();
         public double[][] zoneSensorResults;
-        public void addZone()
+        public void addZone(int[] _offsets)
         {
+            ListSensors listSensors = new ListSensors();
+            for (int sens = 0; sens < sensors; sens++)
+            {
+                listSensors.Add(new ListValues());
+            }
             for (int numBoard = 0; numBoard < 2; numBoard++)
             {
                 USPCData data = Program.data[numBoard];
@@ -140,11 +145,6 @@ namespace Data
                 data.currentOffsetZones++;                
                 data.offsets[data.currentOffsetZones] = currentOffsetFrames;
                 int numberOfFrames = data.offsets[data.currentOffsetZones] - data.offsets[data.currentOffsetZones - 1];
-                ListSensors listSensors = new ListSensors();
-                for (int sens = 0; sens < sensors; sens++)
-                {
-                    listSensors.Add(new ListValues());
-                }
                 for (int frameOffset = 0; frameOffset < numberOfFrames; frameOffset++)
                 {
                     AcqAscan scan = data.ascanBuffer[data.offsets[data.currentOffsetZones - 1]+frameOffset];
@@ -176,11 +176,10 @@ namespace Data
                         }
                     }
                 }
-                zones++;
-                values.Add(listSensors);
             }
-
-            log.add(LogRecord.LogReason.debug,"{0}: {1}: {2} {3}",GetType().Name,System.Reflection.MethodBase.GetCurrentMethod().Name,"Добавлена зона",zones);
+            zones++;
+            values.Add(listSensors);
+            log.add(LogRecord.LogReason.debug, "{0}: {1}: {2} {3}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, "Добавлена зона", zones);
         }
 
         public const int notMeasured = 101;
