@@ -152,6 +152,7 @@ namespace Data
                     int channel = scan.Channel;
                     double def = scan.G1Amp;
                     double thick = 2.5e-6 * scan.G1Tof * Program.scopeVelocity;
+                    //С первой платы получаем данные по толщинометрии
                     if (numBoard == 0)
                     {
                         if (channel < 4)
@@ -164,9 +165,17 @@ namespace Data
                             log.add(LogRecord.LogReason.warning, "{0}: {1}: {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, "Номер канала на первой плате больше 4");
                         }
                     }
+                    //Со второй платы данные по дефектоскопии
                     else
                     {
-                        if (channel < 8)
+                        //Продольная дефектоскопия
+                        if (channel < 4)
+                        {
+                            listSensors[channel + 4].Add(def);
+                            if (def < zoneSensorResults[zones][channel + 4]) zoneSensorResults[zones][channel + 4] = def;
+                        }
+                        //Поперечная дефектоскопия
+                        else if (channel < 8)
                         {
                             listSensors[channel + 4].Add(def);
                             if (def < zoneSensorResults[zones][channel + 4]) zoneSensorResults[zones][channel + 4] = def;

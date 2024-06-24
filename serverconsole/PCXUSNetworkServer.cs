@@ -109,7 +109,7 @@ namespace USPC
                             string fName = (cmdAndParams.Count() > 1)?cmdAndParams[1]:"default.us";
                             fName = configPath + "\\" + fName;
                             int board = (cmdAndParams.Count() > 2) ? ConvertToInt(cmdAndParams[2], -1) : -1;
-                            int test = (cmdAndParams.Count() > 3) ? ConvertToInt(cmdAndParams[2], -1) : -1;
+                            int test = (cmdAndParams.Count() > 3) ? ConvertToInt(cmdAndParams[3], -1) : -1;
                             ret = (pcxus.load(fName, board, test)) ? 0 : (UInt32)pcxus.Err;
                             _stream.Write(BitConverter.GetBytes(ret), 0, sizeof(Int32));
                             _stream.Close();
@@ -157,9 +157,9 @@ namespace USPC
                     case "ascan":
                         {
                             const int defTimeout = 20;
-                            int board = (cmdAndParams.Length > 2) ? ConvertToInt(cmdAndParams[1], 0) : 0;
-                            int test = (cmdAndParams.Length > 3) ? ConvertToInt(cmdAndParams[2], 0) : 0;
-                            int timeout = (cmdAndParams.Length > 4) ? ConvertToInt(cmdAndParams[3],defTimeout) : defTimeout;
+                            int board = (cmdAndParams.Length > 1) ? ConvertToInt(cmdAndParams[1], 0) : 0;
+                            int test = (cmdAndParams.Length > 2) ? ConvertToInt(cmdAndParams[2], 0) : 0;
+                            int timeout = (cmdAndParams.Length > 3) ? ConvertToInt(cmdAndParams[3],defTimeout) : defTimeout;
                             Ascan ascan = new Ascan();
                             int counter = 0;
                             while (!pcxus.readAscan(ref ascan, timeout,board,test) || counter++ < 5) ;
@@ -177,7 +177,7 @@ namespace USPC
                         }
                     case "config":
                         {
-                            int board = (cmdAndParams.Length>2)?ConvertToInt(cmdAndParams[1]):0;
+                            int board = (cmdAndParams.Length>1)?ConvertToInt(cmdAndParams[1]):0;
                             //int bufferSize = (cmdAndParams.Length>3)?ConvertToInt(cmdAndParams[2]):bufferSize;
                             ret = (pcxus.config(board,bufferSize)) ? 0 : (UInt32)pcxus.Err;
                             _stream.Write(BitConverter.GetBytes(ret), 0, sizeof(UInt32));
@@ -186,7 +186,7 @@ namespace USPC
                         }
                     case "status":
                         {
-                            int board = (cmdAndParams.Length>2)?ConvertToInt(cmdAndParams[1]):0;
+                            int board = (cmdAndParams.Length>1)?ConvertToInt(cmdAndParams[1]):0;
                             AcqSatus packet = new AcqSatus();
                             Int32 status = (Int32)ACQ_STATUS.ACQ_NO_CONFIGURED;
                             Int32 NumberOfScansAcqured = 0;
@@ -207,8 +207,8 @@ namespace USPC
                         }
                     case "start":
                         {
-                            int board = (cmdAndParams.Length > 2) ? ConvertToInt(cmdAndParams[1]) : 0;
-                            int NumberOfScansToAcquire = (cmdAndParams.Length > 3) ? ConvertToInt(cmdAndParams[2]) : -1;
+                            int board = (cmdAndParams.Length > 1) ? ConvertToInt(cmdAndParams[1]) : 0;
+                            int NumberOfScansToAcquire = (cmdAndParams.Length > 2) ? ConvertToInt(cmdAndParams[2]) : -1;
                             ret = (pcxus.start(board)) ? 0 : (UInt32)pcxus.Err;
                             _stream.Write(BitConverter.GetBytes(ret), 0, sizeof(UInt32));
                             _stream.Close();
@@ -216,7 +216,7 @@ namespace USPC
                         }
                     case "read":
                         {
-                            int board = (cmdAndParams.Length > 2) ? ConvertToInt(cmdAndParams[1]) : 0;
+                            int board = (cmdAndParams.Length > 1) ? ConvertToInt(cmdAndParams[1]) : 0;
                             ret = (uint)pcxus.read(board, ref data);
                             ret = (ret > 0) ? ret : (UInt32)pcxus.Err;
                             _stream.Write(BitConverter.GetBytes(ret), 0, sizeof(UInt32));
@@ -230,7 +230,7 @@ namespace USPC
                         }
                     case "stop":
                         {
-                            int board = (cmdAndParams.Length > 2) ? ConvertToInt(cmdAndParams[1]) : 0;
+                            int board = (cmdAndParams.Length > 1) ? ConvertToInt(cmdAndParams[1]) : 0;
                             ret = (pcxus.stop(board)) ? 0 : (UInt32)pcxus.Err;
                             _stream.Write(BitConverter.GetBytes(ret), 0, sizeof(UInt32));
                             _stream.Close();
@@ -238,7 +238,7 @@ namespace USPC
                         }
                     case "clear":
                         {
-                            int board = (cmdAndParams.Length > 2) ? ConvertToInt(cmdAndParams[1]) : 0;
+                            int board = (cmdAndParams.Length > 1) ? ConvertToInt(cmdAndParams[1]) : 0;
                             ret = (pcxus.clear(board)) ? 0 : (UInt32)pcxus.Err;
                             _stream.Write(BitConverter.GetBytes(ret), 0, sizeof(UInt32));
                             _stream.Close();

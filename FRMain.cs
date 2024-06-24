@@ -174,6 +174,9 @@ namespace USPC
                 //Program.result.Clear();
                 //testWorker.RunWorkerAsync();
                 //zoneAdder.RunWorkerAsync();
+                for (int board = 0; board < Program.numBoards; board++)
+                    Program.data[board].Start();
+                Program.result.Clear();
                 worker.RunWorkerAsync();
                 setSb("Info", "Работа");
                 setStartStopMenu(false);
