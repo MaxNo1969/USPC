@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Drawing;
 using Settings;
+using Data;
 
 namespace USPC
 {
@@ -25,7 +26,9 @@ namespace USPC
         //! Цвет годной, хорошей трубы
         private static Color Good = Color.Green;
         //! Цвет неопределенного измерения
-        private static Color NotMeasured = Color.Gray;
+        //private static Color NotMeasured = Color.Gray;
+
+        private static Color NotMeasured = Color.White;
 
         //! Все пороги берем из текущего типоразмера
         //! Порог брака
@@ -82,7 +85,7 @@ namespace USPC
         public static Color GetThicknessColor(double measure)
         {
             // возвращает цвет зоны в зависимости от толщины в этой зоне
-            if (measure >= maxThickness)
+            if (measure == Result.notMeasured)
                 return NotMeasured;
             else if (measure > minThickness)
                 return Good;
@@ -93,7 +96,7 @@ namespace USPC
         public static Color GetDefectColor(double measure)
         {
             // возвращает цвет зоны в зависимости от толщины в этой зоне
-            if (measure > 100)
+            if (measure == Result.notMeasured)
                 return NotMeasured;
             else if (measure > class2Treshold)
                 return Good;

@@ -182,7 +182,8 @@ namespace Data
 
             log.add(LogRecord.LogReason.debug,"{0}: {1}: {2} {3}",GetType().Name,System.Reflection.MethodBase.GetCurrentMethod().Name,"Добавлена зона",zones);
         }
-        
+
+        public const int notMeasured = 101;
         public Result()
         {
             zones = 0;
@@ -191,9 +192,9 @@ namespace Data
             {
                 zoneSensorResults[z] = new double[sensors];
                 for (int s = 0; s < 4; s++)
-                    zoneSensorResults[z][s] = Program.typeSize.currentTypeSize.maxDetected;
+                    zoneSensorResults[z][s] = notMeasured;
                 for (int s = 4; s < 12; s++)
-                    zoneSensorResults[z][s] = 101;
+                    zoneSensorResults[z][s] = notMeasured;
             }
         }
         public void Clear()
