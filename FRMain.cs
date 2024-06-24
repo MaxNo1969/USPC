@@ -233,18 +233,18 @@ namespace USPC
                 values11[i] = Program.result.zoneSensorResults[i][10];
                 values12[i] = Program.result.zoneSensorResults[i][11];
             }
-            UC4SensorView.PutDataOnChart(CrossView.ch1, values01);
-            UC4SensorView.PutDataOnChart(CrossView.ch2, values02);
-            UC4SensorView.PutDataOnChart(CrossView.ch3, values03);
-            UC4SensorView.PutDataOnChart(CrossView.ch4, values04);
+            UC4SensorView.PutDataOnChart(CrossView.ch1, values09);
+            UC4SensorView.PutDataOnChart(CrossView.ch2, values10);
+            UC4SensorView.PutDataOnChart(CrossView.ch3, values11);
+            UC4SensorView.PutDataOnChart(CrossView.ch4, values12);
             UC4SensorView.PutDataOnChart(LinearView.ch1, values05);
             UC4SensorView.PutDataOnChart(LinearView.ch2, values06);
             UC4SensorView.PutDataOnChart(LinearView.ch3, values07);
             UC4SensorView.PutDataOnChart(LinearView.ch4, values08);
-            UC4SensorView.PutDataOnChart(ThickView.ch1, values09);
-            UC4SensorView.PutDataOnChart(ThickView.ch2, values10);
-            UC4SensorView.PutDataOnChart(ThickView.ch3, values11);
-            UC4SensorView.PutDataOnChart(ThickView.ch4, values12);
+            UC4SensorView.PutDataOnChart(ThickView.ch1, values01);
+            UC4SensorView.PutDataOnChart(ThickView.ch2, values02);
+            UC4SensorView.PutDataOnChart(ThickView.ch3, values03);
+            UC4SensorView.PutDataOnChart(ThickView.ch4, values04);
         }
 
         void testWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
