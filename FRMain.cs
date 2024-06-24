@@ -39,12 +39,6 @@ namespace USPC
         TubeWorker worker=null;
 
         /// <summary>
-        ///тестовый воркер
-        /// </summary>
-        BackgroundWorker testWorker = null;
-
-        
-        /// <summary>
         ///Добавление новых зон
         /// </summary>
         //ZoneBackGroundWorker zoneAdder = null;
@@ -204,35 +198,11 @@ namespace USPC
 
         void zbWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
-            log.add(LogRecord.LogReason.debug, "{0}: {1}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name);
-            Action action = () => Program.frMain.PutDataOnCharts();
+            //log.add(LogRecord.LogReason.debug, "{0}: {1}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name);
+            Action action = () => { Program.frMain.PutDataOnCharts(); Program.frMain.setPb(e.ProgressPercentage); };
             Program.frMain.Invoke(action);
         }
 
-        //void zoneAdder_ProgressChanged(object sender, ProgressChangedEventArgs e)
-        //{
-        //    log.add(LogRecord.LogReason.info, "{0}: {1}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name);
-        //}
-
-        void testWorker_DoWork(object sender, DoWorkEventArgs e)
-        {
-            BackgroundWorker worker = (BackgroundWorker)sender;
-            log.add(LogRecord.LogReason.info, "{0}: {1}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name);
-            while (true)
-            {
-                if (worker.CancellationPending)
-                {
-                    e.Cancel = true;
-                    break;
-                }
-                else
-                {
-                    Program.result.addZone();
-                    worker.ReportProgress(0);
-                    Thread.Sleep(100);
-                }
-            }
-        }
 
         private void PutDataOnCharts()
         {
