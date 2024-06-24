@@ -174,8 +174,6 @@ namespace PCI1730
             }
             set
             {
-                //if (name == "РЕЗУЛЬТАТ")
-                //    log.add(LogRecord.LogReason.debug, "{0}: {1}: {2}={3}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, name, value);
                 if (input)
                     log.add(LogRecord.LogReason.warning, "{0}: {1}: {2}: {3}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, name, "Попытка выставить входной сигнал");
                 lock (SignalsLock)
@@ -189,6 +187,10 @@ namespace PCI1730
                     OnSet();
                 }
             }
+        }
+        public void setVal(bool _val)
+        {
+            val = _val;
         }
         /// <summary>
         /// Ожидать сигнал _tm мс 

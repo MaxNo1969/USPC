@@ -235,7 +235,7 @@ namespace PCI1730
                     if (p.front)
                     {
                         p.val_prev = p.Val;
-                        p.Val = v;
+                        p.setVal(v);
                         p.last_changed = dt;
 
                         if (p.verbal)
