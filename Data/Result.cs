@@ -138,10 +138,11 @@ namespace Data
             {
                 listSensors.Add(new ListValues());
             }
-            for (int numBoard = 0; numBoard < 2; numBoard++)
+            for (int numBoard = 0; numBoard < Program.numBoards; numBoard++)
             {
                 USPCData data = Program.data[numBoard];
-                int currentOffsetFrames = data.currentOffsetFrames;
+                //int currentOffsetFrames = data.currentOffsetFrames;
+                int currentOffsetFrames = _offsets[numBoard];
                 data.currentOffsetZones++;                
                 data.offsets[data.currentOffsetZones] = currentOffsetFrames;
                 int numberOfFrames = data.offsets[data.currentOffsetZones] - data.offsets[data.currentOffsetZones - 1];
@@ -198,6 +199,7 @@ namespace Data
         }
         public void Clear()
         {
+            zones = 0;
             values.Clear();
         }
 

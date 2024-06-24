@@ -13,7 +13,7 @@ namespace USPC
 {
     class ZoneBackGroundWorker:BackgroundWorker
     {
-        private const int waitStrobeTime = 5*60*1000;
+        private const int waitStrobeTime = 30*1000;
          
         public ZoneBackGroundWorker()
         {
@@ -47,6 +47,22 @@ namespace USPC
                     e.Cancel = true;
                     return;
                 }
+                //if (Program.sl["СТРОБ"].Val)
+                //{
+                //        for (int board = 0; board < Program.numBoards; board++)
+                //        {
+                //            currentOffsets[board] = Program.data[board].currentOffsetFrames;
+                //        }
+                //        log.add(LogRecord.LogReason.info, "{0}: {1}: {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, "СТРОБ");
+                //        Program.result.addZone(currentOffsets);
+                //        //int zoneTime = (int)((double)AppSettings.s.zoneSize/(double)AppSettings.s.speed);
+                //        //log.add(LogRecord.LogReason.info, "{0}: {1}: ZoneTime = {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, zoneTime);
+                //        ReportProgress(Program.data[0].currentOffsetFrames * 100 / USPCData.countFrames);
+                //        Program.sl.set(Program.sl["СТРБРЕЗ"], true);
+                //        Thread.Sleep(100);
+                //        Program.sl.set(Program.sl["СТРБРЕЗ"], false);
+                //}
+                ////Thread.Sleep(100);
                 string s = Program.sl["СТРОБ"].Wait(true, waitStrobeTime);
                 if (s != "Не дождались")
                 {
