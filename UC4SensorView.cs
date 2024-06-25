@@ -95,6 +95,11 @@ namespace USPC
                 _c.Series[0].Points[ind].Color = DrawResults.GetThicknessColor(val);
             }
         }
+
+        public static void ClearChart(Chart _c)
+        {
+            _c.Series[0].Points.Clear();
+        }
         /// <summary>
         /// Переопределяем виртуальную функцию для предотвращения мерцания
         /// </summary>

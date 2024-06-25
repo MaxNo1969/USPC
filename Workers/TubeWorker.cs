@@ -272,11 +272,11 @@ namespace USPC
                             //Program.sl.set(Program.sl["РЕЗУЛЬТАТ"], true);
                             Program.sl["РЕЗУЛЬТАТ"].Val = true;
                             stopWorkers();
+                            Action action = () => Program.frMain.setStartStopMenu(true);
+                            Program.frMain.Invoke(action);
                             Thread.Sleep(100);
                             speedCalced = false;
                             e.Cancel = true;
-                            Action action = () => Program.frMain.setStartStopMenu(true);
-                            Program.frMain.Invoke(action);
                             return;
                         default:
                             break;

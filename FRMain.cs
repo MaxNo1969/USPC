@@ -135,6 +135,23 @@ namespace USPC
             setSb("Info", "Для начала работы нажмите F5");
         }
 
+        public void ClearCharts()
+        {
+            UC4SensorView.ClearChart(CrossView.ch1);
+            UC4SensorView.ClearChart(CrossView.ch2);
+            UC4SensorView.ClearChart(CrossView.ch3);
+            UC4SensorView.ClearChart(CrossView.ch4);
+
+            UC4SensorView.ClearChart(LinearView.ch1);
+            UC4SensorView.ClearChart(LinearView.ch2);
+            UC4SensorView.ClearChart(LinearView.ch3);
+            UC4SensorView.ClearChart(LinearView.ch4);
+
+            UC4SensorView.ClearChart(ThickView.ch1);
+            UC4SensorView.ClearChart(ThickView.ch2);
+            UC4SensorView.ClearChart(ThickView.ch3);
+            UC4SensorView.ClearChart(ThickView.ch4);
+        }
 
         public void setStartStopMenu(bool _start)
         {
@@ -153,7 +170,7 @@ namespace USPC
             {
                 startWorkTime = DateTime.UtcNow;
                 Thread.Sleep(200);
-                Program.sl.controlCYCLE = true;
+                //Program.sl.controlCYCLE = true;
                 //if (zoneAdder == null)
                 //    zoneAdder = new ZoneBackGroundWorker();
                 //zoneAdder.ProgressChanged += new ProgressChangedEventHandler(zoneAdder_ProgressChanged);
@@ -177,6 +194,7 @@ namespace USPC
                 for (int board = 0; board < Program.numBoards; board++)
                     Program.data[board].Start();
                 Program.result.Clear();
+                ClearCharts();
                 worker.RunWorkerAsync();
                 setSb("Info", "Работа");
                 setStartStopMenu(false);
