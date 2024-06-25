@@ -109,10 +109,10 @@ namespace USPC
                 catch (Exception ex)
                 {
                     log.add(LogRecord.LogReason.error, "{0}: {1}: Error:{2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message);
-                    Program.pcxus.stop(board);
-                    Program.pcxus.clear(board);
-                    e.Cancel = true;
-                    return;
+                    //Program.pcxus.stop(board);
+                    //Program.pcxus.clear(board);
+                    //e.Cancel = true;
+                    //return;
                 }
                 //Thread.Sleep(50);
             }

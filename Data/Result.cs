@@ -193,10 +193,8 @@ namespace Data
         }
 
         public const int notMeasured = 101;
-        public Result()
+        public void ClearZoneSensorResult()
         {
-            zones = 0;
-            zoneSensorResults = new double[USPCData.countZones][];
             for (int z = 0; z < USPCData.countZones; z++)
             {
                 zoneSensorResults[z] = new double[sensors];
@@ -206,10 +204,17 @@ namespace Data
                     zoneSensorResults[z][s] = notMeasured;
             }
         }
+        public Result()
+        {
+            zones = 0;
+            zoneSensorResults = new double[USPCData.countZones][];
+            ClearZoneSensorResult();
+        }
         public void Clear()
         {
             zones = 0;
             values.Clear();
+            ClearZoneSensorResult();
         }
 
     }

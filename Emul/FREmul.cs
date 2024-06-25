@@ -72,7 +72,6 @@ namespace EMUL
             sl.set(sl["СТРОБ"], true);
             while(!sl.get(sl["СТРБРЕЗ"]))Application.DoEvents();
             worker.ReportProgress(101, string.Format("СТРОБ!"));
-            //Thread.Sleep(100);
             sl.set(sl["СТРОБ"], false);
         }
 
