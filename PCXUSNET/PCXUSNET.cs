@@ -118,14 +118,17 @@ namespace USPC
             error = netClient.callNetworkFunction(string.Format("{0},{1}", "status", _board), out obj);
             if (error == 0)
             {
-                AcqSatus status = (AcqSatus)obj;
-                _status = status.status;
-                _NumberOfScansAcquired = status.NumberOfScansAcquired;
-                _NumberOfScansRead = status.NumberOfScansRead;
-                _BufferSize = status.bufferSize;
-                _scanSize = status.scanSize;
+                if (obj != null)
+                {
+                    AcqSatus status = (AcqSatus)obj;
+                    _status = status.status;
+                    _NumberOfScansAcquired = status.NumberOfScansAcquired;
+                    _NumberOfScansRead = status.NumberOfScansRead;
+                    _BufferSize = status.bufferSize;
+                    _scanSize = status.scanSize;
+                }
             }
-            return (error==0);
+            return true;
         }
 
         public bool start(Int32 _board)
