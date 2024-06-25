@@ -89,21 +89,22 @@ namespace USPC
                 //}
                 try
                 {
-                    if (!Program.pcxus.status(board, ref acqStatus.status, ref acqStatus.NumberOfScansAcquired, ref acqStatus.NumberOfScansRead, ref acqStatus.bufferSize, ref acqStatus.scanSize))
-                        throw new Exception("Ошибка получения статуса");
-                    Int32 NumberOfScans = client.callNetworkFunction(string.Format("read,{0}", board), out retval);
-                    if (retval != null)
+                    if (Program.pcxus.status(board, ref acqStatus.status, ref acqStatus.NumberOfScansAcquired, ref acqStatus.NumberOfScansRead, ref acqStatus.bufferSize, ref acqStatus.scanSize))
                     {
-                        AcqAscan[] buffer = (AcqAscan[])retval;
-                        if (dataAcquired != null) dataAcquired(NumberOfScans, buffer);
-                        Array.Copy(buffer, 0, data.ascanBuffer, data.currentOffsetFrames, NumberOfScans);
-                        data.labels.Add(new BufferStamp(DateTime.Now, data.currentOffsetFrames));
-                        data.currentOffsetFrames += NumberOfScans;
-                        ReportProgress(NumberOfScans, (object)buffer);
-                    }
-                    else
-                    {
-                        log.add(LogRecord.LogReason.error, "{0}: {1}: Error:{2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, "read не вернула пакет");
+                        Int32 NumberOfScans = client.callNetworkFunction(string.Format("read,{0}", board), out retval);
+                        if (retval != null)
+                        {
+                            AcqAscan[] buffer = (AcqAscan[])retval;
+                            if (dataAcquired != null) dataAcquired(NumberOfScans, buffer);
+                            Array.Copy(buffer, 0, data.ascanBuffer, data.currentOffsetFrames, NumberOfScans);
+                            data.labels.Add(new BufferStamp(DateTime.Now, data.currentOffsetFrames));
+                            data.currentOffsetFrames += NumberOfScans;
+                            ReportProgress(NumberOfScans, (object)buffer);
+                        }
+                        else
+                        {
+                            log.add(LogRecord.LogReason.error, "{0}: {1}: Error:{2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, "read не вернула пакет");
+                        }
                     }
                 }
                 catch (Exception ex)
