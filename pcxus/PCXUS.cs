@@ -726,7 +726,7 @@ namespace USPC
             }
             else
             {
-                log.add(LogRecord.LogReason.info, "{0}: {1}: {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, "success");
+                //log.add(LogRecord.LogReason.info, "{0}: {1}: {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, "success");
                 return true;
             }
         }
@@ -792,7 +792,7 @@ namespace USPC
             }
             else
             {
-                log.add(LogRecord.LogReason.info, "{0}: {1}: {2} = {3}, {4} = {5}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, "NumberOfRead", NumberOfRead, "ScansBacklog", ScansBacklog);
+                //log.add(LogRecord.LogReason.info, "{0}: {1}: {2} = {3}, {4} = {5}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, "NumberOfRead", NumberOfRead, "ScansBacklog", ScansBacklog);
                 return NumberOfRead;
             }
         }

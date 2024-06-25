@@ -156,6 +156,9 @@ namespace USPC
         public void setStartStopMenu(bool _start)
         {
             miStart.Text = (_start) ? "Старт" : "Стоп";
+            menu.Refresh();
+            btnStart.Text = (_start) ? "СТАРТ" : "СТОП";
+            tb.Refresh();
         }
 
         //BackgroundWorker testWorker = null;
@@ -169,28 +172,12 @@ namespace USPC
             if (miStart.Text == "Старт")
             {
                 startWorkTime = DateTime.UtcNow;
-                Thread.Sleep(200);
-                //Program.sl.controlCYCLE = true;
-                //if (zoneAdder == null)
-                //    zoneAdder = new ZoneBackGroundWorker();
-                //zoneAdder.ProgressChanged += new ProgressChangedEventHandler(zoneAdder_ProgressChanged);
+                //Thread.Sleep(200);
                 if (worker == null)
                 {
                     worker = new TubeWorker();
                     worker.zbWorker.ProgressChanged += new ProgressChangedEventHandler(zbWorker_ProgressChanged);
                 }
-
-                //testWorker = new BackgroundWorker()
-                //{
-                //    WorkerReportsProgress = true,
-                //    WorkerSupportsCancellation = true,
-                //};
-                //testWorker.ProgressChanged += new ProgressChangedEventHandler(testWorker_ProgressChanged);
-                //testWorker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(testWorker_RunWorkerCompleted);
-                //testWorker.DoWork += new DoWorkEventHandler(testWorker_DoWork);
-                //Program.result.Clear();
-                //testWorker.RunWorkerAsync();
-                //zoneAdder.RunWorkerAsync();
                 for (int board = 0; board < Program.numBoards; board++)
                     Program.data[board].Start();
                 Program.result.Clear();
@@ -601,6 +588,11 @@ namespace USPC
         {
             ToolStripComboBox cb = (ToolStripComboBox)sender;
             Program.typeSize.select((string)cb.Items[cb.SelectedIndex]);
+        }
+
+        private void btnStart_Click(object sender, EventArgs e)
+        {
+            startStop();
         }
     }
 }

@@ -283,6 +283,9 @@ namespace PCI1730
                 for (int i = 0; i < M.Count(); i++)
                 {
                     Signal p = M[i];
+                    //Как такое может быть непонятно, но бывает
+                    if (p == null)
+                        continue;
                     if (!p.input)
                         continue;
                     if (!p.IsAlarm)

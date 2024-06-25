@@ -107,26 +107,30 @@ namespace USPC
         }
 
         //! Принимает решение по всей трубе и вычисляет зоны отреза
-        public static void MakeDecision(List<double> thickness)
-        {
-            decision = "Годно";			// решение не принято
-            // ищем зону с минимальной значение толщины
-            double min = 10e7;
-            for (int i = 0; i < (int)thickness.Count; i++)
-            {
-                if (thickness[i] < min)
-                {
-                    min = thickness[i];
-                    min_thickness = thickness[i];
-                    min_thickness_zone = i + 1;
-                }
-            }
-            min_thickness = (double)System.Math.Round(min_thickness, -2);
-        }
+        //public static void MakeDecision(List<double> thickness)
+        //{
+        //    decision = "Годно";			// решение не принято
+        //    // ищем зону с минимальной значение толщины
+        //    double min = 10e7;
+        //    for (int i = 0; i < (int)thickness.Count; i++)
+        //    {
+        //        if (thickness[i] < min)
+        //        {
+        //            min = thickness[i];
+        //            min_thickness = thickness[i];
+        //            min_thickness_zone = i + 1;
+        //        }
+        //    }
+        //    min_thickness = (double)System.Math.Round(min_thickness, -2);
+        //}
 
-        public static bool IsBrak(double measure)
+        public static bool IsBrakDef(double measure)
         {
             return (measure <= defectTreshold);
+        }
+        public static bool IsBrakThick(double measure)
+        {
+            return (measure <= minThickness);
         }
     }
 }

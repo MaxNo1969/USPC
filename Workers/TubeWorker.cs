@@ -154,6 +154,8 @@ namespace USPC
         void startWorkers()
         {
             log.add(LogRecord.LogReason.debug, "{0}: {1}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name);
+            if (zbWorker != null && !zbWorker.IsBusy)
+                zbWorker.RunWorkerAsync();
             for (int i = 0; i < 2; i++)
             {
                 if (dataReaders[i] != null && !dataReaders[i].IsBusy)
@@ -161,8 +163,6 @@ namespace USPC
                     dataReaders[i].RunWorkerAsync();
                 }
             }
-            if(zbWorker != null && !zbWorker.IsBusy)
-                zbWorker.RunWorkerAsync();
             
         }
         #endregion запуск/остановка сбора данных по всем платам

@@ -73,18 +73,18 @@ namespace USPC
                 strReadedFromStream = strReadedFromStream.Trim(new char[] {'\0'});
                 string[] cmdAndParams = strReadedFromStream.Split(new char[] { ',' });
                 cmdAndParams[0] = cmdAndParams[0].ToLower();
-                if (cmdAndParams[0] != "ascan")
-                {
-                    if (cmdAndParams.Length < 1)
-                    {
-                        log.add(LogRecord.LogReason.error, "{0}: {1}: {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, "empty command");
-                        return;
-                    }
-                    if (cmdAndParams.Length < 2)
-                        log.add(LogRecord.LogReason.info, "{0}: {1}: {2}={3}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, "Command", cmdAndParams[0]);
-                    else
-                        log.add(LogRecord.LogReason.info, "{0}: {1}: {2}={3},{4}={5}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, "Command", cmdAndParams[0], "Params", string.Join(",", cmdAndParams.Skip(1)));
-                }
+                //if (cmdAndParams[0] != "ascan")
+                //{
+                //    if (cmdAndParams.Length < 1)
+                //    {
+                //        log.add(LogRecord.LogReason.error, "{0}: {1}: {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, "empty command");
+                //        return;
+                //    }
+                //    if (cmdAndParams.Length < 2)
+                //        log.add(LogRecord.LogReason.info, "{0}: {1}: {2}={3}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, "Command", cmdAndParams[0]);
+                //    else
+                //        log.add(LogRecord.LogReason.info, "{0}: {1}: {2}={3},{4}={5}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, "Command", cmdAndParams[0], "Params", string.Join(",", cmdAndParams.Skip(1)));
+                //}
                 UInt32 ret = 0;
                 switch (cmdAndParams[0])
                 {
@@ -222,7 +222,7 @@ namespace USPC
                             _stream.Write(BitConverter.GetBytes(ret), 0, sizeof(UInt32));
                             AcqAscan[] retarray = new AcqAscan[ret];
                             Array.Copy(data, retarray, ret);
-                            log.add(LogRecord.LogReason.debug, "retarray.Length = {0}", retarray.Length);
+                            //log.add(LogRecord.LogReason.debug, "retarray.Length = {0}", retarray.Length);
                             IFormatter formatter = new BinaryFormatter();
                             formatter.Serialize(_stream, retarray);
                             _stream.Close();

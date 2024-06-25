@@ -124,13 +124,14 @@ namespace Data
     class Result
     {
         public int sensors = 12;
-        public int crossSensors = 4;
-        public int linearSensors = 4;
-        public int thicknesSensors = 4;
         public int zones;
 
+        
         public ListZones values = new ListZones();
+        //Итоги в разрезе зона/датчик
         public double[][] zoneSensorResults;
+        //Итоги по зоне
+        public bool[] zoneResults;
         public void addZone(int[] _offsets)
         {
             ListSensors listSensors = new ListSensors();
@@ -187,6 +188,18 @@ namespace Data
                     }
                 }
             }
+            zoneResults[zones] = true;
+            for (int sensor = 0; sensor < sensors; sensor++)
+            {
+                if(sensor<4)
+                {
+                    if(DrawResults.IsBrakThick(zoneSensorResults[zones][sensor]))zoneResults[zones]=false;
+                }
+                else
+                {
+                    if (DrawResults.IsBrakDef(zoneSensorResults[zones][sensor])) zoneResults[zones] = false;
+                }
+            }
             zones++;
             values.Add(listSensors);
             log.add(LogRecord.LogReason.debug, "{0}: {1}: {2} {3}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, "Добавлена зона", zones);
@@ -202,12 +215,14 @@ namespace Data
                     zoneSensorResults[z][s] = notMeasured;
                 for (int s = 4; s < 12; s++)
                     zoneSensorResults[z][s] = notMeasured;
+                zoneResults[z] = false;
             }
         }
         public Result()
         {
             zones = 0;
             zoneSensorResults = new double[USPCData.countZones][];
+            zoneResults = new bool[USPCData.countZones];
             ClearZoneSensorResult();
         }
         public void Clear()
