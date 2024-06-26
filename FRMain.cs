@@ -193,16 +193,6 @@ namespace USPC
                     worker.CancelAsync();
                     worker = null;
                 }
-                //if (zoneAdder != null && zoneAdder.IsBusy)
-                //{
-                //    zoneAdder.CancelAsync();
-                //    zoneAdder = null;
-                //}
-                //if (testWorker != null && testWorker.IsBusy)
-                //{
-                //    testWorker.CancelAsync();
-                //    testWorker = null;
-                //}
                 setSb("Info", "Нажмите F5 для начала работы");
                 setStartStopMenu(true);
             }
@@ -358,7 +348,7 @@ namespace USPC
         {
             long usedMem = GC.GetTotalMemory(false);
             sb.Items["heap"].Text = string.Format("{0,6}M", usedMem / (1024 * 1024));
-            sb.Items["speed"].Text = string.Format("{0,7:F2}", AppSettings.s.speed);
+            sb.Items["speed"].Text = string.Format("{0,7:F5}", AppSettings.s.speed);
             sb.Items["dataSize"].Text = Program.data[0].currentOffsetFrames.ToString();
             //NotOpened, Opened, loaded, error
             Color color;
