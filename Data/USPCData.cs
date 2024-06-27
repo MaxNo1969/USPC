@@ -23,15 +23,9 @@ namespace Data
     [Serializable]
     class USPCData
     {
-        public const int countZones = 100;
+        public const int countZones = 40;
         public const int countSensors = 12;
-        public const int zoneLength = 50;
         public const int countFrames = 900000;
-        //public const int countFrames = 9000;
-        //public const int countFramesPerChannel = countFrames / countSensors;
-        //public const int countFramesPerZone = countFrames / countZones;
-
-        //public const int scopeVelocity = 6400;
 
         public static int lengthCaretka = 20;
         
@@ -200,42 +194,6 @@ namespace Data
             System.Threading.WaitCallback callback = save;
             ThreadPool.QueueUserWorkItem(save, (object)_fileName);
             return true;
-        }
-        
-        public void SamplesPerZone(int tubeLength, int deadArea0, int deadArea1)
-        {
-            //samplesPerZone = (double)zoneLength * currentOffsetFrames / (tubeLength + lengthCaretka);
-            samplesPerZone = (int) ((double)zoneLength * currentOffsetFrames / tubeLength);	
-	        for(int i = 0; i < countZones; ++i)
-            {
-                offsets[i] = samplesPerZone * i;
-            }
-	        //смещение в отчётах датчиков на каретке
-	        //TL::foreach<OffsetsTable::items_list, __sensors_offset_in_samples__>()(&Singleton<OffsetsTable>::Instance().items, this);
-	        currentOffsetZones = (int)((double)(tubeLength) / zoneLength);
-	        int lastZoneSize = tubeLength - currentOffsetZones * zoneLength;
-	        if(lastZoneSize > zoneLength / 3)  ++currentOffsetZones;
-	        //число отчётов в мёртвой зоне начало
-	        double t = deadArea0;
-	        t *= samplesPerZone;
-	        t /=  zoneLength;
-            deadZoneSamplesBeg  = (int)t;
-	        deadZoneSamplesBeg /= countSensors;
-	        deadZoneSamplesBeg *= countSensors;
-	        //число отчётов в мёртвой зоне конец
-	        t = tubeLength - deadArea1;
-	        t *= samplesPerZone;
-	        t /=  zoneLength;
-            deadZoneSamplesEnd  = (int)t;
-            deadZoneSamplesEnd /= countSensors;
-	        --deadZoneSamplesEnd;
-	        deadZoneSamplesEnd *= countSensors;
-
-	        for(int i = 0; i < countZones; ++i)
-            {
-                offsets[i] /= countSensors;
-		        offsets[i] *= countSensors;
-            }
         }
 
         public void save(Object obj)
