@@ -178,8 +178,9 @@ namespace USPC
                     case "config":
                         {
                             int board = (cmdAndParams.Length>1)?ConvertToInt(cmdAndParams[1]):0;
+                            int interruptFluidity = (cmdAndParams.Length > 2) ? ConvertToInt(cmdAndParams[2]) : 0;
                             //int bufferSize = (cmdAndParams.Length>3)?ConvertToInt(cmdAndParams[2]):bufferSize;
-                            ret = (pcxus.config(board,bufferSize)) ? 0 : (UInt32)pcxus.Err;
+                            ret = (pcxus.config(board,bufferSize,interruptFluidity)) ? 0 : (UInt32)pcxus.Err;
                             _stream.Write(BitConverter.GetBytes(ret), 0, sizeof(UInt32));
                             _stream.Close();
                             return;

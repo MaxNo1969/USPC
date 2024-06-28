@@ -171,6 +171,7 @@ namespace USPC
         #endregion запуск/остановка сбора данных по всем платам
 
         bool controlCycle = false;
+        bool boardsPrepared = false;
 
         void worker_DoWork(object sender, DoWorkEventArgs e)
         {
@@ -215,8 +216,12 @@ namespace USPC
                             {
                                 //Здесь подготовка модуля к работе
                                 {
-                                    //Инициализируем платы и загружаем конфигурацию
-                                    prepareBoardsForWork();
+                                    if (!boardsPrepared)
+                                    {
+                                        //Инициализируем платы и загружаем конфигурацию
+                                        prepareBoardsForWork();
+                                        boardsPrepared = true;
+                                    }
                                 }
                                 if (Program.sl["ЦИКЛ"].Val)
                                 {

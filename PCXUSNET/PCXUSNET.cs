@@ -107,9 +107,9 @@ namespace USPC
             return (error == 0);
         }
 
-        public bool config(Int32 _board, Int32 _bufferSize)
+        public bool config(Int32 _board, Int32 _bufferSize, Int32 _interruptFluidity)
         {
-            error = netClient.callNetworkFunction(string.Format("{0},{1},{2}", "config", _board,_bufferSize), out obj);
+            error = netClient.callNetworkFunction(string.Format("{0},{1},{2}", "config", _board,_bufferSize,_interruptFluidity), out obj);
             return (error == 0);
         }
 

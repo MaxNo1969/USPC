@@ -55,7 +55,7 @@ namespace USPC
             //{
             //    return;
             //}
-            Program.pcxus.config(board, Program.bufferSize);
+            Program.pcxus.config(board, Program.bufferSize,AppSettings.s.InterruptFluidity);
             //Получим информацию о статусе
             //if (client.callNetworkFunction(string.Format("status,{0}", board), out retval) != 0)
             //{

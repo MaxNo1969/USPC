@@ -41,8 +41,6 @@ namespace Data
 	    public double[] minZoneThickness;	//Минимальная толщина по зоне
         public double[][] minZoneSensorThickness;	//Минимальная толщина по зоне/датчику
         public int samplesPerZone;
-	    public int deadZoneSamplesBeg;
-        public int deadZoneSamplesEnd;
         public void Start()                     // Выполнить перед началом цикла сбора кадров с платы
         {
             currentOffsetFrames = 0;

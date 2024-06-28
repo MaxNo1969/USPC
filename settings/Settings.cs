@@ -35,7 +35,8 @@ namespace Settings
         /// </summary>
         [Category("3.Оборудование")]
         public PCIE1730Settings pcie1730Settings { get; set; }
-
+        [DisplayName("InterruptFluidity"), Browsable(true), Description("InterruptFluidity"), Category("3.Оборудование")]
+        public int InterruptFluidity { get; set; }
         /// <summary>
         /// Настройки установки. Скорость движения трубы
         /// </summary>

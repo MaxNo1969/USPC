@@ -163,7 +163,7 @@ namespace Data
                         }
                         else
                         {
-                            log.add(LogRecord.LogReason.warning, "{0}: {1}: {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, "Номер канала на первой плате больше 4");
+                            //log.add(LogRecord.LogReason.warning, "{0}: {1}: {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, "Номер канала на первой плате больше 4");
                         }
                     }
                     //Со второй платы данные по дефектоскопии
@@ -183,7 +183,7 @@ namespace Data
                         }
                         else
                         {
-                            log.add(LogRecord.LogReason.warning, "{0}: {1}: {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, "Номер канала на второй плате больше 8");
+                            //log.add(LogRecord.LogReason.warning, "{0}: {1}: {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, "Номер канала на второй плате больше 8");
                         }
                     }
                 }

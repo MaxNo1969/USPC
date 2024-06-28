@@ -174,7 +174,7 @@ namespace USPC
             return true;
         }
 
-        public bool config(Int32 _board, Int32 _bufferSize)
+        public bool config(Int32 _board, Int32 _bufferSize, Int32 _interruptFluidity)
         {
             if(!checkHandle())return false;
             bufferSize = _bufferSize;

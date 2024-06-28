@@ -678,7 +678,7 @@ namespace USPC
             }
         }
 
-        public bool config(Int32 _board, Int32 _bufferSize)
+        public bool config(Int32 _board, Int32 _bufferSize, Int32 _interruptFuidity)
         {
             if(!checkHandle())return false;
             Int32 AcqMode = 0x800; 
@@ -686,8 +686,8 @@ namespace USPC
             Int32[] Conditions = new Int32[8];
             Int32 PrePostScans = 0;
             Int32 FrequencyDivider = 0;
-            //Int32 InterruptFluidity = 464;
-            Int32 InterruptFluidity = 64;
+            Int32 InterruptFluidity = _interruptFuidity;
+            //Int32 InterruptFluidity = 64;
             Int32 Param = 0;
             // Setup acquisition
             error = PCXUS.PCXUS_ACQ_CONFIG(

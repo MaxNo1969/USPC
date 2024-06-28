@@ -14,7 +14,7 @@ namespace USPC
         bool load(string _fName, int _board = -1, int _test = -1);
         bool close();
         bool save(string _fName, int _board = -1, int _test = -1);
-        bool config(Int32 _board, Int32 _bufferSize);
+        bool config(Int32 _board, Int32 _bufferSize, Int32 _interruptFluidity);
         bool status(Int32 _board, ref Int32 _status, ref Int32 _NumberOfScansAcquired, ref Int32 _NumberOfScansRead, ref Int32 _BufferSize, ref Int32 _scanSize);
         bool start(Int32 _board);
         bool stop(Int32 _board);
