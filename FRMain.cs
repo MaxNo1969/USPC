@@ -177,6 +177,7 @@ namespace USPC
                 {
                     worker = new TubeWorker();
                     worker.zbWorker.ProgressChanged += new ProgressChangedEventHandler(zbWorker_ProgressChanged);
+                    //worker.zoneThread.zoneAdded += new OnZoneAdded(zoneAdded);
                 }
                 for (int board = 0; board < Program.numBoards; board++)
                     Program.data[board].Start();
@@ -201,10 +202,9 @@ namespace USPC
         void zbWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
             //log.add(LogRecord.LogReason.debug, "{0}: {1}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name);
-            Action action = () => { Program.frMain.PutDataOnCharts(); Program.frMain.setPb(e.ProgressPercentage); };
+            Action action = () => { Program.frMain.PutDataOnCharts(); Program.frMain.setPb(Program.result.zones * AppSettings.s.zoneSize * 100 / AppSettings.s.tubeLength); };
             Program.frMain.Invoke(action);
         }
-
 
         private void PutDataOnCharts()
         {
@@ -428,7 +428,7 @@ namespace USPC
         /// <param name="_percent">Просент</param>
         public void setPb(int _percent)
         {
-            pb.Value = _percent;
+            if(_percent<100)pb.Value = _percent;
         }
 
         private void miStart_Click(object sender, EventArgs e)

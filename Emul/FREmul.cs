@@ -195,72 +195,73 @@ namespace EMUL
             log.add(LogRecord.LogReason.debug, "{0}: {1}: {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, "started");
             int percent = 0;
             int timeToBase = (int)((double)AppSettings.s.distanceToBase / (double)AppSettings.s.speed);
-            worker.ReportProgress(101, string.Format("distanceToBase = {0}, speed = {1}, timeToBase = {2}", AppSettings.s.distanceToBase, AppSettings.s.speed,timeToBase));
-            MoveTubeTime = (int)((double)AppSettings.s.tubeLength/(double)AppSettings.s.speed);
+            worker.ReportProgress(101, string.Format("distanceToBase = {0}, speed = {1}, timeToBase = {2}", AppSettings.s.distanceToBase, AppSettings.s.speed, timeToBase));
+            MoveTubeTime = (int)((double)AppSettings.s.tubeLength / (double)AppSettings.s.speed);
             worker.ReportProgress(101, string.Format("MoveTubeTime = {0}", MoveTubeTime));
             int strobTime = (int)((double)AppSettings.s.zoneSize / (double)AppSettings.s.speed);
             worker.ReportProgress(101, string.Format("strobTime = {0}", strobTime));
 
-            worker.ReportProgress(101, "Включаем сигнал \"ЦИКЛ\"");
-            dtStartWait = DateTime.Now;
-            sl.set(sl["ЦИКЛ"], true);
-            //Ожидаем сигнал "РАБОТА"
-            worker.ReportProgress(101, "Ожидаем сигнал \"РАБОТА\"(модуль готов к работе)...");
-            while (!sl.get("РАБОТА"))
-            {
-                //Проверяем кнопку СТОП
-                if (worker.CancellationPending)
-                {
-                    e.Cancel = true;
-                    return;
-                }
-                if ((DateTime.Now - dtStartWait).Milliseconds > WaitWorkTime)
-                {
-                    worker.ReportProgress(101, "Не дождались сигнала \"РАБОТА\"...");
-                    e.Cancel = true;
-                    return;
-                }
-                Thread.Sleep(signalWaitCycleTime);
-            }
-            worker.ReportProgress(101, "Выставляем сигнал \"КОНТРОЛЬ\"...");
-            sl.set(sl["КОНТРОЛЬ"], true);
-            bool iBaseSet = false;
-            TubeStartTime = DateTime.Now;
-            timerStrob = new System.Threading.Timer(timerZoneCallback,null,0,strobTime);
             while (!worker.CancellationPending)
             {
-                double msEplaced = (DateTime.Now - TubeStartTime).TotalMilliseconds;
-                percent = (int)(msEplaced * 100.0 / (double)MoveTubeTime);
-                if (percent > 100)
+                worker.ReportProgress(101, "Снимаем сигнал \"РЕЗУЛЬТАТ\"");
+                sl["РЕЗУЛЬТАТ"].Val = false;
+                worker.ReportProgress(101, "Включаем сигнал \"ЦИКЛ\"");
+                dtStartWait = DateTime.Now;
+                sl.set(sl["ЦИКЛ"], true);
+                //Ожидаем сигнал "РАБОТА"
+                worker.ReportProgress(101, "Ожидаем сигнал \"РАБОТА\"(модуль готов к работе)...");
+                while (!sl.get("РАБОТА"))
                 {
-                    timerStrob.Dispose();
-                    worker.ReportProgress(101, "Снимаем сигнал \"КОНТРОЛЬ\"");
-                    sl.set(sl["КОНТРОЛЬ"], false);
-                    while (!sl.get("РЕЗУЛЬТАТ")) Application.DoEvents();
-                    worker.ReportProgress(101, "Получили результат...");
-                    sl.set(sl["БАЗА"], false);
-                    worker.ReportProgress(101, "Снимаем сигнал \"БАЗА\"...");
-                    worker.ReportProgress(101, "Закончено...");
-                    break;
+                    //Проверяем кнопку СТОП
+                    if (worker.CancellationPending)
+                    {
+                        e.Cancel = true;
+                        return;
+                    }
+                    if ((DateTime.Now - dtStartWait).Milliseconds > WaitWorkTime)
+                    {
+                        worker.ReportProgress(101, "Не дождались сигнала \"РАБОТА\"...");
+                        e.Cancel = true;
+                        return;
+                    }
+                    Thread.Sleep(signalWaitCycleTime);
                 }
-                else
+                worker.ReportProgress(101, "Выставляем сигнал \"КОНТРОЛЬ\"...");
+                sl.set(sl["КОНТРОЛЬ"], true);
+                bool iBaseSet = false;
+                TubeStartTime = DateTime.Now;
+                timerStrob = new System.Threading.Timer(timerZoneCallback, null, 0, strobTime);
+                while (!worker.CancellationPending)
                 {
-                    worker.ReportProgress(percent);
+                    double msEplaced = (DateTime.Now - TubeStartTime).TotalMilliseconds;
+                    percent = (int)(msEplaced * 100.0 / (double)MoveTubeTime);
+                    if (percent > 100)
+                    {
+                        timerStrob.Dispose();
+                        worker.ReportProgress(101, "Снимаем сигнал \"КОНТРОЛЬ\"");
+                        sl.set(sl["КОНТРОЛЬ"], false);
+                        while (!sl.get("РЕЗУЛЬТАТ")) Application.DoEvents();
+                        worker.ReportProgress(101, "Получили результат...");
+                        sl.set(sl["БАЗА"], false);
+                        worker.ReportProgress(101, "Снимаем сигнал \"БАЗА\"...");
+                        worker.ReportProgress(101, "Закончено...");
+                        break;
+                    }
+                    else
+                    {
+                        worker.ReportProgress(percent);
+                    }
+                    if ((DateTime.Now - TubeStartTime).TotalMilliseconds >= timeToBase && !iBaseSet)
+                    {
+                        worker.ReportProgress(101, "Доехали до базы...");
+                        sl.set(sl["БАЗА"], true);
+                        iBaseSet = true;
+                    }
+                    Thread.Sleep(500);
                 }
-                if ((DateTime.Now - TubeStartTime).TotalMilliseconds >= timeToBase && !iBaseSet)
-                {
-                    worker.ReportProgress(101, "Доехали до базы...");
-                    sl.set(sl["БАЗА"], true);
-                    iBaseSet = true;
-                    //Thread.Sleep(200);
-                    //worker.ReportProgress(101, "Снимаем сигнал \"БАЗА\"...");
-                    //sl.set(sl["БАЗА"], false);
-                }
-                Thread.Sleep(500);
+                worker.ReportProgress(101, "Снимаем сигнал \"ЦИКЛ\"");
+                sl.set(sl["ЦИКЛ"], false);
             }
-            worker.ReportProgress(101, "Снимаем сигнал \"ЦИКЛ\"");
-            sl.set(sl["ЦИКЛ"], false);
-            return;
         }
     }
 }

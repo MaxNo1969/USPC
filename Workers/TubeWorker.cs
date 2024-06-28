@@ -17,6 +17,7 @@ namespace USPC
     {
         UspcNetDataReader[] dataReaders = null;
         public ZoneBackGroundWorker zbWorker = null;
+        //public ZoneThread zoneThread = null;
         DefSignals sl = Program.sl;
         bool speedCalced = false;
         public TubeWorker()
@@ -35,6 +36,7 @@ namespace USPC
                 dataReaders[i] = new UspcNetDataReader(i);
             //Воркер по добавлению зон
             zbWorker = new ZoneBackGroundWorker();
+            //zoneThread = new ZoneThread();
             speedCalced = false;
         }
 
@@ -147,7 +149,7 @@ namespace USPC
             if (zbWorker != null && zbWorker.IsBusy)
             {
                 zbWorker.CancelAsync();
-                while (zbWorker.IsBusy)Application.DoEvents();
+                while (zbWorker.IsBusy) Application.DoEvents();
             }
         }
 

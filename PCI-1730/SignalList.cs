@@ -226,6 +226,8 @@ namespace PCI1730
             for (int i = 0; i < M.Count(); i++)
             {
                 Signal p = M[i];
+                if (p == null)
+                    continue;
                 if (!p.input)
                     continue;
                 bool v = a1730.GetBit(p.position,true);
