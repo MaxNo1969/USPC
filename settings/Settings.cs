@@ -37,6 +37,12 @@ namespace Settings
         public PCIE1730Settings pcie1730Settings { get; set; }
         [DisplayName("InterruptFluidity"), Browsable(true), Description("InterruptFluidity"), Category("3.Оборудование")]
         public int InterruptFluidity { get; set; }
+        [DisplayName("Размер буфера"), Browsable(true), Description("Размер буфера платы USPC"), Category("3.Оборудование")]
+        public int BufferSize { get; set; }
+        [DisplayName("Задержка чтения данных"), Browsable(true), Description("Задержка чтения данных с платы"), Category("3.Оборудование")]
+        public int BoardReadTimeout { get; set; }
+        [DisplayName("Задержка снятия строба"), Browsable(true), Description("Задержка снятия строба"), Category("3.Оборудование")]
+        public int StrobResetTimeout { get; set; }
         /// <summary>
         /// Настройки установки. Скорость движения трубы
         /// </summary>

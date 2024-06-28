@@ -286,6 +286,8 @@ namespace USPC
                             }
                             break;
                         case WrkStates.endWork:
+                            //Перестаём контролировать цикл
+                            controlCycle = false;
                             //По окончании сбора, обработки и передачи результата. 
                             //Program.sl.set(Program.sl["РАБОТА"], false);
                             Program.sl["РАБОТА"].Val = false;

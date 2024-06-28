@@ -13,8 +13,6 @@ namespace USPC
 {
     public partial class FRTestAcqNet : Form
     {
-        //public FRMain frMain;
-        //public AcqAscan[] data = new AcqAscan[1024*100];
         UspcNetDataReader[] dataReader = new UspcNetDataReader[Program.numBoards];
         void StartStopToggle(bool _start)
         {
@@ -25,6 +23,13 @@ namespace USPC
         {
             InitializeComponent();
             Owner = _fr;
+            FRWaitLongProcess waitWindow = new FRWaitLongProcess(this);
+            waitWindow.Show();
+            waitWindow.setMes("Открываем платы USPC...");
+            Program.pcxus.open(2);
+            waitWindow.setMes("Загружаем файл конфигурации...");
+            Program.pcxus.load("default.us");
+            waitWindow.Close();
             for (int i = 0; i < Program.numBoards; i++)
             {
                 dataReader[i] = new UspcNetDataReader(i);

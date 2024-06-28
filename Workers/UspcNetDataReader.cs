@@ -6,6 +6,7 @@ using System.ComponentModel;
 using PROTOCOL;
 using Data;
 using Settings;
+using System.Threading;
 
 namespace USPC
 {
@@ -55,7 +56,7 @@ namespace USPC
             //{
             //    return;
             //}
-            Program.pcxus.config(board, Program.bufferSize,AppSettings.s.InterruptFluidity);
+            Program.pcxus.config(board, AppSettings.s.BufferSize, AppSettings.s.InterruptFluidity);
             //Получим информацию о статусе
             //if (client.callNetworkFunction(string.Format("status,{0}", board), out retval) != 0)
             //{
@@ -115,7 +116,7 @@ namespace USPC
                     //e.Cancel = true;
                     //return;
                 }
-                //Thread.Sleep(50);
+                Thread.Sleep(AppSettings.s.BoardReadTimeout);
             }
         }
     }

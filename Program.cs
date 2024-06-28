@@ -21,7 +21,6 @@ namespace USPC
         public static BoardState boardState = BoardState.NotOpened;
         public static int numBoards = 2;
         public static PCXUSNET pcxus = null;
-        public static int bufferSize = 1024 * 1000;
         public static USPCData[] data = new USPCData[numBoards];
         public static TypeSize typeSize = new TypeSize();
         public static Result result = new Result();

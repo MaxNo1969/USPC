@@ -14,7 +14,7 @@ namespace USPC
     class PCXUSNetworkServer
     {
         const int CMD_SIZE = 512;
-        const int bufferSize = 1024 * 100;
+        const int bufferSize = 5000000;
         static AcqAscan[] data = new AcqAscan[bufferSize];
 
         TCPServer server = null;
@@ -73,18 +73,18 @@ namespace USPC
                 strReadedFromStream = strReadedFromStream.Trim(new char[] {'\0'});
                 string[] cmdAndParams = strReadedFromStream.Split(new char[] { ',' });
                 cmdAndParams[0] = cmdAndParams[0].ToLower();
-                //if (cmdAndParams[0] != "ascan")
-                //{
-                //    if (cmdAndParams.Length < 1)
-                //    {
-                //        log.add(LogRecord.LogReason.error, "{0}: {1}: {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, "empty command");
-                //        return;
-                //    }
-                //    if (cmdAndParams.Length < 2)
-                //        log.add(LogRecord.LogReason.info, "{0}: {1}: {2}={3}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, "Command", cmdAndParams[0]);
-                //    else
-                //        log.add(LogRecord.LogReason.info, "{0}: {1}: {2}={3},{4}={5}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, "Command", cmdAndParams[0], "Params", string.Join(",", cmdAndParams.Skip(1)));
-                //}
+                if (cmdAndParams[0] != "ascan")
+                {
+                    if (cmdAndParams.Length < 1)
+                    {
+                        log.add(LogRecord.LogReason.error, "{0}: {1}: {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, "empty command");
+                        return;
+                    }
+                    if (cmdAndParams.Length < 2)
+                        log.add(LogRecord.LogReason.info, "{0}: {1}: {2}={3}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, "Command", cmdAndParams[0]);
+                    else
+                        log.add(LogRecord.LogReason.info, "{0}: {1}: {2}={3},{4}={5}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, "Command", cmdAndParams[0], "Params", string.Join(",", cmdAndParams.Skip(1)));
+                }
                 UInt32 ret = 0;
                 switch (cmdAndParams[0])
                 {
@@ -178,8 +178,8 @@ namespace USPC
                     case "config":
                         {
                             int board = (cmdAndParams.Length>1)?ConvertToInt(cmdAndParams[1]):0;
-                            int interruptFluidity = (cmdAndParams.Length > 2) ? ConvertToInt(cmdAndParams[2]) : 0;
-                            //int bufferSize = (cmdAndParams.Length>3)?ConvertToInt(cmdAndParams[2]):bufferSize;
+                            int bufferSize = (cmdAndParams.Length > 2) ? ConvertToInt(cmdAndParams[2]) : 0;
+                            int interruptFluidity = (cmdAndParams.Length > 3) ? ConvertToInt(cmdAndParams[3]) : 0;
                             ret = (pcxus.config(board,bufferSize,interruptFluidity)) ? 0 : (UInt32)pcxus.Err;
                             _stream.Write(BitConverter.GetBytes(ret), 0, sizeof(UInt32));
                             _stream.Close();

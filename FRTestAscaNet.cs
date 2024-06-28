@@ -69,7 +69,12 @@ namespace USPC
             ///double val;
             FRWaitLongProcess waitWindow = new FRWaitLongProcess(this);
             waitWindow.Show();
-            info.Video = (AscanInfo.VideoMode)GetVal("scope_video",waitWindow);
+            waitWindow.setMes("Открываем платы USPC...");
+            Program.pcxus.open(2);
+            waitWindow.setMes("Загружаем файл конфигурации...");
+            Program.pcxus.load("default.us");
+            waitWindow.setMes("Читаем параметры..."); 
+            info.Video = (AscanInfo.VideoMode)GetVal("scope_video", waitWindow);
             info.ZeroVideo = GetVal("scope_zero",waitWindow);
             info.GIFPhase = (AscanInfo.PhaseType)GetVal("gateIF_phase",waitWindow);
             info.G1Phase = (AscanInfo.PhaseType)GetVal("gate1_phase");
