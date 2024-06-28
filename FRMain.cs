@@ -189,6 +189,8 @@ namespace USPC
             }
             else
             {
+                //Приостановке снимаем сигнал "РАБОТА"
+                Program.sl["РАБОТА"].Val = false;
                 if (worker != null && worker.IsBusy)
                 {
                     worker.CancelAsync();
