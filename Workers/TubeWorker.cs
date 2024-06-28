@@ -127,11 +127,12 @@ namespace USPC
         private const int iWrkTimeout = 300;
         //ToDo: Непонятно пока чего ждем
         //Время ожидания готовности чего-то
-        private const int iReadyTimeout = 300;
+        private const int iCycleTimeout = 300;
         //Время ожидания сигнала "КОНТРОЛЬ"
         private const int iControlTimeout = 300;
 
         private static DateTime tubeStarted = DateTime.MinValue;
+        private static DateTime waitCycleStarted;
         private static DateTime waitControlStarted;
 
         #region запуск/остановка сбора данных по всем платам
@@ -179,11 +180,11 @@ namespace USPC
                 //В эту строку запишем сообщение об ошибке
                 string errStr = string.Empty;
                 curState = WrkStates.startWorkCycle;
-
+                waitCycleStarted = DateTime.Now;
                 while (true)
                 {
                     //Проверяем сигналы ICC и  CYCLE - они должны быть выставлены воё время работы
-                    if (controlCycle && !Program.sl.checkSignals())
+                    if (controlCycle && !Program.sl["ЦИКЛ"].Val)
                     {
                         errStr = "Пропал сигнал \"ЦИКЛ\"";
                         curState = WrkStates.error;
@@ -217,13 +218,25 @@ namespace USPC
                                     //Инициализируем платы и загружаем конфигурацию
                                     prepareBoardsForWork();
                                 }
-                                //Выставляем сигнал "РАБОТА"
-                                Program.sl["РАБОТА"].Val = true;
-                                log.add(LogRecord.LogReason.debug, "{0}: {1}: {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, "Начали контролировать \"ЦИКЛ\"");
-                                controlCycle = true;
-                                waitControlStarted = DateTime.Now;
-                                curState = WrkStates.waitTube;
-                                break;
+                                if (Program.sl["ЦИКЛ"].Val)
+                                {
+                                    //Выставляем сигнал "РАБОТА"
+                                    Program.sl["РАБОТА"].Val = true;
+                                    log.add(LogRecord.LogReason.debug, "{0}: {1}: {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, "Начали контролировать \"ЦИКЛ\"");
+                                    controlCycle = true;
+                                    waitControlStarted = DateTime.Now;
+                                    curState = WrkStates.waitTube;
+                                    break;
+                                }
+                                else
+                                {
+                                    if ((DateTime.Now - waitCycleStarted).TotalSeconds > iCycleTimeout)
+                                    {
+                                        errStr = "Не дождались сигнала \"ЦИКЛ\"";
+                                        curState = WrkStates.error;
+                                    }
+                                    break;
+                                }
                             }
                         case WrkStates.waitTube:
                             //Труба поступила на вход установки
