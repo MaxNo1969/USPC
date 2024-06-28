@@ -234,7 +234,7 @@ namespace USPC
             if (boardStatus == ACQ_STATUS.ACQ_RUNNING)
             {
                 Random r = new Random();
-                numberOfScans = 300 + r.Next(50);
+                numberOfScans = 1000 + r.Next(50);
                 byte[] channel = new byte[2];
                 for (int i = 0; i < numberOfScans; i++)
                 {

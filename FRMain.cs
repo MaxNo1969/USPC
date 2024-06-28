@@ -16,6 +16,7 @@ using Settings;
 using Data;
 using CHART;
 using System.Threading.Tasks;
+using System.IO;
 
 namespace USPC
 {
@@ -519,23 +520,56 @@ namespace USPC
         private void saveToolStripMenuItem_Click(object sender, EventArgs e)
         {
             SaveFileDialog sfd = new SaveFileDialog();
-            sfd.Filter = "Файлы данных (*.bintube)|*.bintube|Все файлы (*.*)|*.*";
+            //sfd.Filter = "Файлы данных (*.bintube)|*.bintube|Все файлы (*.*)|*.*";
+            sfd.Filter = "Файлы CSV (*.csv)|*.scv|Все файлы (*.*)|*.*";
             if (sfd.ShowDialog() == DialogResult.OK)
             {
+                //try
+                //{
+                //    BackgroundWorker w = new BackgroundWorker();
+                //    w.WorkerReportsProgress = true;
+                //    w.WorkerSupportsCancellation = true;
+                //    w.DoWork += new DoWorkEventHandler(w_DoWork);
+                //    w.RunWorkerCompleted += new RunWorkerCompletedEventHandler(w_RunWorkerCompleted);
+                //    w.ProgressChanged += new ProgressChangedEventHandler(w_ProgressChanged);
+                //    pb.Visible = true;
+                //    w.RunWorkerAsync(new WorkerArgs("Сохранение", sfd.FileName));
+                //}
+                //catch (Exception ex)
+                //{
+                //    MessageBox.Show(ex.Message);
+                //}
                 try
                 {
-                    BackgroundWorker w = new BackgroundWorker();
-                    w.WorkerReportsProgress = true;
-                    w.WorkerSupportsCancellation = true;
-                    w.DoWork += new DoWorkEventHandler(w_DoWork);
-                    w.RunWorkerCompleted += new RunWorkerCompletedEventHandler(w_RunWorkerCompleted);
-                    w.ProgressChanged += new ProgressChangedEventHandler(w_ProgressChanged);
-                    pb.Visible = true;
-                    w.RunWorkerAsync(new WorkerArgs("Сохранение", sfd.FileName));
+                    sfd.FileName = "1.csv";
+                    using (StreamWriter writer = new StreamWriter(sfd.FileName))
+                    {
+                        string s;
+                        
+                        for(int i = 0;i<Program.data[0].currentOffsetFrames;i++)
+                        {
+                            AcqAscan scan = Program.data[0].ascanBuffer[i];
+                            s = string.Format("{0};{1};{2}",scan.Channel,scan.G1Amp,scan.G1Tof);
+                            writer.WriteLine(s);
+                        }
+                    }
+                    sfd.FileName = "2.csv";
+                    using (StreamWriter writer = new StreamWriter(sfd.FileName))
+                    {
+                        string s;
+
+                        for (int i = 0; i < Program.data[1].currentOffsetFrames; i++)
+                        {
+                            AcqAscan scan = Program.data[1].ascanBuffer[i];
+                            s = string.Format("{0};{1};{2}", scan.Channel, scan.G1Amp, USPCData.TofToMm((int)scan.G1Tof));
+                            writer.WriteLine(s);
+                        }
+                    }
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show(ex.Message);
+                    log.add(LogRecord.LogReason.error, "{0}: {1}: Error: {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message);
+                    return;
                 }
             }
         }

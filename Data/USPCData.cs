@@ -53,17 +53,17 @@ namespace Data
             labels.Add(new BufferStamp(DateTime.Now,currentOffsetFrames));
         }
 
-        public double TofToMm(int _tof)
+        public static double TofToMm(int _tof)
         {
             return 2.5e-6 * _tof * Program.scopeVelocity;
         }
 
-        public double TofToMm(AcqAscan _scan)
+        public static double TofToMm(AcqAscan _scan)
         {
             return TofToMm((int)_scan.G1Tof);
         }
 
-        public uint MmToTof(double _mm)
+        public static uint MmToTof(double _mm)
         {
             return (uint)(_mm / (2.5e-6 * Program.scopeVelocity));
         }

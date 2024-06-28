@@ -44,13 +44,28 @@ namespace Settings
         [DisplayName("Задержка снятия строба"), Browsable(true), Description("Задержка снятия строба"), Category("3.Оборудование")]
         public int StrobResetTimeout { get; set; }
         /// <summary>
-        /// Настройки установки. Скорость движения трубы
+        /// Настройки установки. Расстояние до базы. Для вычисления скорости
         /// </summary>
-        [Category("4.Установка")]
-        [DisplayName("Расстояние до базы(мм):"), Browsable(true), Description("Расстояние до базы (мм)")]
+        [DisplayName("Расстояние до базы(мм):"), Browsable(true), Description("Расстояние до базы (мм)"), Category("4.Установка")]
         public int distanceToBase { get; set; }
-        [DisplayName("Скорость(м/с)"), Browsable(true), Description("Скорость движения трубы (м/с)")]
+        /// <summary>
+        /// Настройки установки. Скорость движения каретки
+        /// </summary>
+        [DisplayName("Скорость(м/с)"), Browsable(true), Description("Скорость движения каретки (м/с)"), Category("4.Установка")]
         public double speed { get; set; }
+
+        /// <summary>
+        /// Настройки установки. Смещение блока датчиков (мм)
+        /// </summary>
+        [DisplayName("Смещение блока датчиков (мм)"), Browsable(true), Description("Смещение блока датчиков (мм)"), Category("4.Установка")]
+        public int offsetSensorsBlock { get; set; }
+
+        /// <summary>
+        /// Настройки установки. Смещение датчиков в блоке(мм)
+        /// </summary>
+        [DisplayName("Смещение датчиков в блоке(мм)"), Browsable(true), Description("Смещение датчиков в блоке(мм)"), Category("4.Установка")]
+        public int offsetSensors { get; set; }
+
 
         [Category("5.Сервер")]
         [DisplayName("Сервер:"), Browsable(true), Description("Адрес сервера USPC")]
