@@ -24,7 +24,6 @@ namespace USPC
         {
             InitializeComponent();
             Owner = _owner;
-            MdiParent = Program.frMain;
             KeyPreview = true;
             KeyDown += new KeyEventHandler(FRSensorView_KeyDown);
             data = _data;
@@ -79,7 +78,7 @@ namespace USPC
                     CustomProperties = "DrawingStyle=Emboss, PointWidth=1"
                 };
                 c.Series.Add(ser);
-                c.putDataOnChart(data.minZoneSensorThickness[i]);
+                c.putDataOnChart(data.minZoneSensorThickness[i],true);
                 c.putColorDecision(data.minZoneSensorThickness[i], i);
                 c.DoubleClick += new EventHandler(c_DoubleClick);
                 c.Parent = lay;

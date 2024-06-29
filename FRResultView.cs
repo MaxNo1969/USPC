@@ -19,15 +19,15 @@ namespace USPC
         {
             InitializeComponent();
             Owner = _form;
-            MdiParent = _form;
             setupResultChart();
             UpdateChart();
         }
 
         private void UpdateChart()
         {
-            chartResult.putDataOnChart(Program.data.minZoneThickness);
-            chartResult.putColorDecision(Program.data);
+            //double[] data = Program.data[0].minZoneThickness;
+            //chartResult.putDataOnChart(Program.data[0].minZoneThickness);
+            //chartResult.putColorDecision();
         }
 
         /// <summary>
@@ -36,19 +36,18 @@ namespace USPC
         private void setupResultChart()
         {
             
-            chartResult.ChartAreas[0].InnerPlotPosition.Auto = false;
-            chartResult.ChartAreas[0].InnerPlotPosition.X = 3;
-            chartResult.ChartAreas[0].InnerPlotPosition.Y = 0;
-            chartResult.ChartAreas[0].InnerPlotPosition.Width = 96;
-            chartResult.ChartAreas[0].InnerPlotPosition.Height = 96;
+            //chartResult.ChartAreas[0].InnerPlotPosition.Auto = false;
+            //chartResult.ChartAreas[0].InnerPlotPosition.X = 0;
+            //chartResult.ChartAreas[0].InnerPlotPosition.Y = 0;
+            //chartResult.ChartAreas[0].InnerPlotPosition.Width = 100;
+            //chartResult.ChartAreas[0].InnerPlotPosition.Height = 100;
 
             chartResult.ChartAreas[0].AxisX.Minimum = 0;
             chartResult.ChartAreas[0].AxisX.Maximum = USPCData.countZones;
             chartResult.ChartAreas[0].AxisX.Interval = 10;
-            //chartResult.ChartAreas[0].AxisY.Minimum = Program.typeSize.minDetected;
-            chartResult.ChartAreas[0].AxisY.Minimum = 0;
-            chartResult.ChartAreas[0].AxisY.Maximum = Program.typeSize.maxDetected;
-            chartResult.ChartAreas[0].AxisY.Interval = 1;
+            //chartResult.ChartAreas[0].AxisY.Minimum = 0;
+            //chartResult.ChartAreas[0].AxisY.Maximum = Program.typeSize.maxDetected;
+            //chartResult.ChartAreas[0].AxisY.Interval = 1;
 
             chartResult.Series.Clear();
             var ser = new Series
@@ -68,9 +67,9 @@ namespace USPC
             MouseEventArgs mea = e as MouseEventArgs;
             HitTestResult htRes = c.HitTest(mea.X, mea.Y, ChartElementType.DataPoint);
             int zone = htRes.PointIndex;
-            FRSensorView frSensorView = new FRSensorView(this, Program.data);
-            frSensorView.Init();
-            frSensorView.Show();
+            //FRSensorView frSensorView = new FRSensorView(this, Program.data);
+            //frSensorView.Init();
+            //frSensorView.Show();
         }
 
         private void FRResultView_Load(object sender, EventArgs e)

@@ -295,7 +295,7 @@ namespace USPC
         public double gate2_level_alarm;
     }
 
-        // AscanInfo structre must hold parameters requested to display Ascan and gates
+    // Информация о текущем статусе захвата
     [Serializable()]
     public struct AcqSatus
     {
@@ -435,7 +435,8 @@ namespace USPC
     }
     #endregion constants
 
-    public class PCXUS
+
+    public class PCXUS : IPCXUS
     {
       
         #region DLL_IMPORTS
@@ -529,18 +530,17 @@ namespace USPC
                 return true;
         }
 
-        public double setParamValueDouble(string _paramName, int _board = 0, int _test = 0, UnitCode _unit = UnitCode.UNIT_us)
+        public void setParamValueDouble(double _val,string _paramName, int _board = 0, int _test = 0, UnitCode _unit = UnitCode.UNIT_us)
         {
-            double dblValue = 0;
             double[] dblArrayValue1 = new double[PCXUS.MAX_ROW];
             double[] dblArrayValue2 = new double[PCXUS.MAX_ROW];
             StringBuilder strValue = new StringBuilder(PCXUS.MAX_STRING);
             int Clipped = 0;
-            error = PCXUS.PCXUS_WRITE(hPCXUS, _board, _test, (int)_unit, _paramName, ref dblValue, dblArrayValue1, dblArrayValue2, strValue, ref Clipped);
+            error = PCXUS.PCXUS_WRITE(hPCXUS, _board, _test, (int)_unit, _paramName, ref _val, dblArrayValue1, dblArrayValue2, strValue, ref Clipped);
             if (error != 0)
             {
                 log.add(LogRecord.LogReason.error, "{0}: {1}: PCXUS_READ error : 0x{2:X8}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, error);
-                return dblValue;
+                return;
             }
             else
             {
@@ -549,8 +549,8 @@ namespace USPC
                     log.add(LogRecord.LogReason.info, "{0}:{1}: {2} = {3}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, "Clipped", Clipped);
                     error = (int)ErrorCode.PCXUS_INVALID_SETTING;
                 }
-                log.add(LogRecord.LogReason.info, "{0}:{1}: {2} = {3}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, _paramName, dblValue);
-                return dblValue;
+                log.add(LogRecord.LogReason.info, "{0}:{1}: {2} = {3}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, _paramName, _val);
+                return;
             }
         }
 
@@ -607,6 +607,7 @@ namespace USPC
             try
             {
                 error = PCXUS_Open(out hPCXUS, _mode);
+                log.add(LogRecord.LogReason.info, "{0}: {1}: hPCXUS: 0x{2:X8}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, hPCXUS);
                 if (error != 0)
                 {
                     log.add(LogRecord.LogReason.error, "{0}: {1}: Error: 0x{2:X8}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, error);
@@ -677,7 +678,7 @@ namespace USPC
             }
         }
 
-        public bool config(Int32 _board, Int32 _bufferSize)
+        public bool config(Int32 _board, Int32 _bufferSize, Int32 _interruptFuidity)
         {
             if(!checkHandle())return false;
             Int32 AcqMode = 0x800; 
@@ -685,7 +686,7 @@ namespace USPC
             Int32[] Conditions = new Int32[8];
             Int32 PrePostScans = 0;
             Int32 FrequencyDivider = 0;
-            Int32 InterruptFluidity = 464;
+            Int32 InterruptFluidity = _interruptFuidity;
             //Int32 InterruptFluidity = 64;
             Int32 Param = 0;
             // Setup acquisition
@@ -725,7 +726,8 @@ namespace USPC
             }
             else
             {
-                log.add(LogRecord.LogReason.info, "{0}: {1}: {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, "success");
+                log.add(LogRecord.LogReason.info, "{0}: {1}: Status={2},NumberOfScansAcquired={3},NumberOfScansRead={4},BufferSize={5}", 
+                    GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, _status,_NumberOfScansAcquired,_NumberOfScansRead,_BufferSize);
                 return true;
             }
         }
@@ -777,24 +779,8 @@ namespace USPC
                 return true;
             }
         }
-        public Int32 read(Int32 _board, byte[] _data, int _timeout = 200)
-        {
-            if (!checkHandle()) return 0;
-            Int32 NumberOfRead = 0;
-            Int32 ScansBacklog = 0;
-            error = PCXUS_ACQ_READ(hPCXUS, _board, 0, _timeout, ref NumberOfRead, ref ScansBacklog, _data);
-            if (error != 0)
-            {
-                log.add(LogRecord.LogReason.error, "{0}: {1}: 0x{2:X8}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, error);
-                return 0;
-            }
-            else
-            {
-                log.add(LogRecord.LogReason.info, "{0}: {1}: {2} = {3}, {4} = {5}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, "NumberOfRead", NumberOfRead, "ScansBacklog", ScansBacklog);
-                return NumberOfRead;
-            }
-        }
-        public Int32 read(Int32 _board, AcqAscan[] _data, int _timeout = 200)
+
+        public Int32 read(Int32 _board, ref AcqAscan[] _data, int _timeout = 200)
         {
             if (!checkHandle()) return 0;
             Int32 NumberOfRead = 0;

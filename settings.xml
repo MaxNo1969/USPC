@@ -1,0 +1,172 @@
+<?xml version="1.0"?>
+<Settings xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <tubeLength>6000</tubeLength>
+  <zoneSize>100</zoneSize>
+  <pcie1730Settings>
+    <name>PCI-1730</name>
+    <devNum>15</devNum>
+    <timeout>100</timeout>
+    <sl>
+      <SignalSettings>
+        <name>ЦИКЛ</name>
+        <board>0</board>
+        <input>true</input>
+        <digital>true</digital>
+        <position>10</position>
+        <hint>Сигнал установлен при нахождении оборудования ЛУЗК в автоматическом режиме</hint>
+        <eOff>Пропал сигнал ЦИКЛ</eOff>
+        <timeout />
+        <no_reset>true</no_reset>
+        <verbal>true</verbal>
+      </SignalSettings>
+      <SignalSettings>
+        <name>РЕЗЕРВ1</name>
+        <board>0</board>
+        <input>true</input>
+        <digital>true</digital>
+        <position>11</position>
+        <hint>Резервный сигнал.</hint>
+        <timeout />
+        <no_reset>false</no_reset>
+        <verbal>false</verbal>
+      </SignalSettings>
+      <SignalSettings>
+        <name>БАЗА</name>
+        <board>0</board>
+        <input>true</input>
+        <digital>true</digital>
+        <position>12</position>
+        <hint>Сигнал устанавливается при достижении кареткой определенного положения. Используется для контроля скорости перемещения каретки</hint>
+        <timeout />
+        <no_reset>false</no_reset>
+        <verbal>true</verbal>
+      </SignalSettings>
+      <SignalSettings>
+        <name>КОНТРОЛЬ</name>
+        <board>0</board>
+        <input>true</input>
+        <digital>true</digital>
+        <position>13</position>
+        <hint>Сигнал устанавливается при поступлении первого датчика каретки на поверхность трубы, снимается по сходу последнего датчика каретки с трубы.</hint>
+        <timeout />
+        <no_reset>false</no_reset>
+        <verbal>true</verbal>
+      </SignalSettings>
+      <SignalSettings>
+        <name>СТРОБ</name>
+        <board>0</board>
+        <input>true</input>
+        <digital>true</digital>
+        <position>14</position>
+        <hint>Сигнал устанавливается при начале новой зоны</hint>
+        <timeout />
+        <no_reset>false</no_reset>
+        <verbal>true</verbal>
+      </SignalSettings>
+      <SignalSettings>
+        <name>РАБОТА</name>
+        <board>0</board>
+        <input>false</input>
+        <digital>true</digital>
+        <position>10</position>
+        <hint>Сигнал устанавливается при готовности системы к контролю трубы</hint>
+        <timeout />
+        <no_reset>false</no_reset>
+        <verbal>true</verbal>
+      </SignalSettings>
+      <SignalSettings>
+        <name>РЕЗЕРВ2</name>
+        <board>0</board>
+        <input>false</input>
+        <digital>true</digital>
+        <position>11</position>
+        <hint>Резервный сигнал.</hint>
+        <timeout />
+        <no_reset>false</no_reset>
+        <verbal>false</verbal>
+      </SignalSettings>
+      <SignalSettings>
+        <name>РЕЗУЛЬТАТ</name>
+        <board>0</board>
+        <input>false</input>
+        <digital>true</digital>
+        <position>12</position>
+        <hint>Результат годно</hint>
+        <timeout />
+        <no_reset>false</no_reset>
+        <verbal>true</verbal>
+      </SignalSettings>
+      <SignalSettings>
+        <name>СТРБРЕЗ</name>
+        <board>0</board>
+        <input>false</input>
+        <digital>true</digital>
+        <position>13</position>
+        <hint>Результат контроля трубы</hint>
+        <timeout />
+        <no_reset>false</no_reset>
+        <verbal>false</verbal>
+      </SignalSettings>
+      <SignalSettings>
+        <name>РЕЗЕРВ1</name>
+        <board>0</board>
+        <input>false</input>
+        <digital>true</digital>
+        <position>14</position>
+        <hint>Резервный сигнал</hint>
+        <timeout />
+        <no_reset>false</no_reset>
+        <verbal>false</verbal>
+      </SignalSettings>
+    </sl>
+  </pcie1730Settings>
+  <distanceToBase>500</distanceToBase>
+  <speed>1</speed>
+  <currenTypeSizeName>Диаметр 16,0</currenTypeSizeName>
+  <tss>
+    <_TypeSize>
+      <name>Диаметр 16,0</name>
+      <diameter>16</diameter>
+      <minGoodLength>0</minGoodLength>
+      <defectTreshold>90</defectTreshold>
+      <class2Treshold>95</class2Treshold>
+      <minDetected>12</minDetected>
+      <maxDetected>20</maxDetected>
+      <deadZoneStart>200</deadZoneStart>
+      <deadZoneEnd>200</deadZoneEnd>
+    </_TypeSize>
+    <_TypeSize>
+      <name>Диаметр 19,2</name>
+      <diameter>19.2</diameter>
+      <minGoodLength>0</minGoodLength>
+      <defectTreshold>90</defectTreshold>
+      <class2Treshold>95</class2Treshold>
+      <minDetected>18</minDetected>
+      <maxDetected>22</maxDetected>
+      <deadZoneStart>200</deadZoneStart>
+      <deadZoneEnd>200</deadZoneEnd>
+    </_TypeSize>
+    <_TypeSize>
+      <name>Диаметр 22,4</name>
+      <diameter>22.4</diameter>
+      <minGoodLength>0</minGoodLength>
+      <defectTreshold>20</defectTreshold>
+      <class2Treshold>21</class2Treshold>
+      <minDetected>15</minDetected>
+      <maxDetected>30</maxDetected>
+      <deadZoneStart>200</deadZoneStart>
+      <deadZoneEnd>200</deadZoneEnd>
+    </_TypeSize>
+    <_TypeSize>
+      <name>Диаметр 28,7</name>
+      <diameter>28.7</diameter>
+      <minGoodLength>0</minGoodLength>
+      <defectTreshold>25</defectTreshold>
+      <class2Treshold>26.5</class2Treshold>
+      <minDetected>22</minDetected>
+      <maxDetected>32</maxDetected>
+      <deadZoneStart>200</deadZoneStart>
+      <deadZoneEnd>200</deadZoneEnd>
+    </_TypeSize>
+  </tss>
+</Settings>

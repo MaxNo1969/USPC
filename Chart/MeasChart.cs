@@ -123,8 +123,8 @@ namespace CHART
 
         public void putDataOnChart()
         {
-            this.putDataOnChart(data.evalZone(zone, sensor));
-            this.putColorDecision(data, zone, sensor);
+            //this.putDataOnChart(data.evalZone(zone, sensor));
+            //this.putColorDecision(data, zone, sensor);
         }
     }
 }

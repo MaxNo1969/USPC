@@ -29,6 +29,10 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            System.Windows.Forms.ToolStripStatusLabel boardStateLabel;
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FRMain));
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
             this.menu = new System.Windows.Forms.MenuStrip();
             this.miMainWork = new System.Windows.Forms.ToolStripMenuItem();
             this.miStart = new System.Windows.Forms.ToolStripMenuItem();
@@ -68,10 +72,31 @@
             this.toolStripLabel1 = new System.Windows.Forms.ToolStripLabel();
             this.lblTubesCount = new System.Windows.Forms.ToolStripLabel();
             this.cbTypeSize = new System.Windows.Forms.ToolStripComboBox();
+            this.btnStart = new System.Windows.Forms.ToolStripButton();
+            this.lay = new System.Windows.Forms.TableLayoutPanel();
+            this.ThickView = new USPC.UC4SensorView();
+            this.LinearView = new USPC.UC4SensorView();
+            this.CrossView = new USPC.UC4SensorView();
+            this.ResultChart = new System.Windows.Forms.DataVisualization.Charting.Chart();
+            boardStateLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.menu.SuspendLayout();
             this.sb.SuspendLayout();
             this.tb.SuspendLayout();
+            this.lay.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.ResultChart)).BeginInit();
             this.SuspendLayout();
+            // 
+            // boardStateLabel
+            // 
+            boardStateLabel.AutoSize = false;
+            boardStateLabel.BackColor = System.Drawing.Color.Red;
+            boardStateLabel.BorderSides = ((System.Windows.Forms.ToolStripStatusLabelBorderSides)((((System.Windows.Forms.ToolStripStatusLabelBorderSides.Left | System.Windows.Forms.ToolStripStatusLabelBorderSides.Top) 
+            | System.Windows.Forms.ToolStripStatusLabelBorderSides.Right) 
+            | System.Windows.Forms.ToolStripStatusLabelBorderSides.Bottom)));
+            boardStateLabel.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            boardStateLabel.Name = "boardStateLabel";
+            boardStateLabel.Size = new System.Drawing.Size(20, 19);
+            boardStateLabel.Text = "   ";
             // 
             // menu
             // 
@@ -85,7 +110,7 @@
             this.miEmul});
             this.menu.Location = new System.Drawing.Point(0, 0);
             this.menu.Name = "menu";
-            this.menu.Size = new System.Drawing.Size(1020, 24);
+            this.menu.Size = new System.Drawing.Size(1218, 24);
             this.menu.TabIndex = 1;
             this.menu.Text = "menuStrip1";
             // 
@@ -103,20 +128,20 @@
             // 
             this.miStart.Name = "miStart";
             this.miStart.ShortcutKeys = System.Windows.Forms.Keys.F5;
-            this.miStart.Size = new System.Drawing.Size(152, 22);
+            this.miStart.Size = new System.Drawing.Size(146, 22);
             this.miStart.Text = "Старт";
             this.miStart.Click += new System.EventHandler(this.miStart_Click);
             // 
             // toolStripMenuItem1
             // 
             this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-            this.toolStripMenuItem1.Size = new System.Drawing.Size(149, 6);
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(143, 6);
             // 
             // miExit
             // 
             this.miExit.Name = "miExit";
             this.miExit.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.X)));
-            this.miExit.Size = new System.Drawing.Size(152, 22);
+            this.miExit.Size = new System.Drawing.Size(146, 22);
             this.miExit.Text = "Выход";
             this.miExit.Click += new System.EventHandler(this.miExit_Click);
             // 
@@ -131,7 +156,7 @@
             // miSettings
             // 
             this.miSettings.Name = "miSettings";
-            this.miSettings.Size = new System.Drawing.Size(152, 22);
+            this.miSettings.Size = new System.Drawing.Size(134, 22);
             this.miSettings.Text = "Настройки";
             this.miSettings.Click += new System.EventHandler(this.miSettings_Click);
             // 
@@ -291,10 +316,11 @@
             this.tubePos,
             this.speed,
             this.duration,
-            this.heap});
-            this.sb.Location = new System.Drawing.Point(0, 517);
+            this.heap,
+            boardStateLabel});
+            this.sb.Location = new System.Drawing.Point(0, 564);
             this.sb.Name = "sb";
-            this.sb.Size = new System.Drawing.Size(1020, 22);
+            this.sb.Size = new System.Drawing.Size(1218, 24);
             this.sb.TabIndex = 2;
             this.sb.Text = "sb";
             // 
@@ -303,7 +329,7 @@
             this.info.AutoSize = false;
             this.info.BorderSides = System.Windows.Forms.ToolStripStatusLabelBorderSides.Right;
             this.info.Name = "info";
-            this.info.Size = new System.Drawing.Size(495, 17);
+            this.info.Size = new System.Drawing.Size(813, 19);
             this.info.Spring = true;
             this.info.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
@@ -311,7 +337,7 @@
             // 
             this.pb.AutoSize = false;
             this.pb.Name = "pb";
-            this.pb.Size = new System.Drawing.Size(200, 16);
+            this.pb.Size = new System.Drawing.Size(100, 18);
             this.pb.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
             // 
             // dataSize
@@ -319,35 +345,35 @@
             this.dataSize.AutoSize = false;
             this.dataSize.BorderSides = System.Windows.Forms.ToolStripStatusLabelBorderSides.Right;
             this.dataSize.Name = "dataSize";
-            this.dataSize.Size = new System.Drawing.Size(80, 17);
+            this.dataSize.Size = new System.Drawing.Size(80, 19);
             // 
             // tubePos
             // 
             this.tubePos.AutoSize = false;
             this.tubePos.BorderSides = System.Windows.Forms.ToolStripStatusLabelBorderSides.Right;
             this.tubePos.Name = "tubePos";
-            this.tubePos.Size = new System.Drawing.Size(48, 17);
+            this.tubePos.Size = new System.Drawing.Size(48, 19);
             // 
             // speed
             // 
             this.speed.AutoSize = false;
             this.speed.BorderSides = System.Windows.Forms.ToolStripStatusLabelBorderSides.Right;
             this.speed.Name = "speed";
-            this.speed.Size = new System.Drawing.Size(50, 17);
+            this.speed.Size = new System.Drawing.Size(50, 19);
             // 
             // duration
             // 
             this.duration.AutoSize = false;
             this.duration.BorderSides = System.Windows.Forms.ToolStripStatusLabelBorderSides.Right;
             this.duration.Name = "duration";
-            this.duration.Size = new System.Drawing.Size(50, 17);
+            this.duration.Size = new System.Drawing.Size(50, 19);
             // 
             // heap
             // 
             this.heap.AutoSize = false;
             this.heap.BorderSides = System.Windows.Forms.ToolStripStatusLabelBorderSides.Right;
             this.heap.Name = "heap";
-            this.heap.Size = new System.Drawing.Size(80, 17);
+            this.heap.Size = new System.Drawing.Size(40, 19);
             this.heap.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // timerUpdUI
@@ -359,10 +385,11 @@
             this.tb.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripLabel1,
             this.lblTubesCount,
-            this.cbTypeSize});
+            this.cbTypeSize,
+            this.btnStart});
             this.tb.Location = new System.Drawing.Point(0, 24);
             this.tb.Name = "tb";
-            this.tb.Size = new System.Drawing.Size(1020, 33);
+            this.tb.Size = new System.Drawing.Size(1218, 33);
             this.tb.TabIndex = 4;
             // 
             // toolStripLabel1
@@ -388,15 +415,84 @@
             this.cbTypeSize.Size = new System.Drawing.Size(121, 33);
             this.cbTypeSize.SelectedIndexChanged += new System.EventHandler(this.cbTypeSize_SelectedIndexChanged);
             // 
+            // btnStart
+            // 
+            this.btnStart.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.btnStart.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.btnStart.Image = ((System.Drawing.Image)(resources.GetObject("btnStart.Image")));
+            this.btnStart.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.btnStart.Name = "btnStart";
+            this.btnStart.Size = new System.Drawing.Size(46, 30);
+            this.btnStart.Text = "СТАРТ";
+            this.btnStart.Click += new System.EventHandler(this.btnStart_Click);
+            // 
+            // lay
+            // 
+            this.lay.CellBorderStyle = System.Windows.Forms.TableLayoutPanelCellBorderStyle.InsetDouble;
+            this.lay.ColumnCount = 1;
+            this.lay.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.lay.Controls.Add(this.ThickView, 0, 2);
+            this.lay.Controls.Add(this.LinearView, 0, 1);
+            this.lay.Controls.Add(this.CrossView, 0, 0);
+            this.lay.Controls.Add(this.ResultChart, 0, 3);
+            this.lay.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lay.Location = new System.Drawing.Point(0, 57);
+            this.lay.Name = "lay";
+            this.lay.RowCount = 4;
+            this.lay.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 30F));
+            this.lay.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 30F));
+            this.lay.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 30F));
+            this.lay.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 10F));
+            this.lay.Size = new System.Drawing.Size(1218, 507);
+            this.lay.TabIndex = 5;
+            // 
+            // ThickView
+            // 
+            this.ThickView.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.ThickView.Location = new System.Drawing.Point(6, 306);
+            this.ThickView.Name = "ThickView";
+            this.ThickView.Size = new System.Drawing.Size(1206, 141);
+            this.ThickView.TabIndex = 2;
+            // 
+            // LinearView
+            // 
+            this.LinearView.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.LinearView.Location = new System.Drawing.Point(6, 156);
+            this.LinearView.Name = "LinearView";
+            this.LinearView.Size = new System.Drawing.Size(1206, 141);
+            this.LinearView.TabIndex = 1;
+            // 
+            // CrossView
+            // 
+            this.CrossView.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.CrossView.Location = new System.Drawing.Point(6, 6);
+            this.CrossView.Name = "CrossView";
+            this.CrossView.Size = new System.Drawing.Size(1206, 141);
+            this.CrossView.TabIndex = 0;
+            // 
+            // ResultChart
+            // 
+            chartArea1.AxisY.LabelStyle.Enabled = false;
+            chartArea1.Name = "Default";
+            this.ResultChart.ChartAreas.Add(chartArea1);
+            this.ResultChart.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.ResultChart.Location = new System.Drawing.Point(6, 456);
+            this.ResultChart.Name = "ResultChart";
+            series1.ChartArea = "Default";
+            series1.Name = "Series1";
+            this.ResultChart.Series.Add(series1);
+            this.ResultChart.Size = new System.Drawing.Size(1206, 45);
+            this.ResultChart.TabIndex = 3;
+            // 
             // FRMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1020, 539);
+            this.ClientSize = new System.Drawing.Size(1218, 588);
+            this.Controls.Add(this.lay);
             this.Controls.Add(this.tb);
             this.Controls.Add(this.sb);
             this.Controls.Add(this.menu);
-            this.IsMdiContainer = true;
             this.MainMenuStrip = this.menu;
             this.Name = "FRMain";
             this.Text = "USPC";
@@ -408,6 +504,8 @@
             this.sb.PerformLayout();
             this.tb.ResumeLayout(false);
             this.tb.PerformLayout();
+            this.lay.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.ResultChart)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -454,6 +552,12 @@
         private System.Windows.Forms.ToolStripMenuItem genToolStripMenuItem;
         private System.Windows.Forms.ToolStripLabel toolStripLabel1;
         private System.Windows.Forms.ToolStripComboBox cbTypeSize;
+        private System.Windows.Forms.TableLayoutPanel lay;
+        public UC4SensorView ThickView;
+        public UC4SensorView LinearView;
+        public UC4SensorView CrossView;
+        private System.Windows.Forms.DataVisualization.Charting.Chart ResultChart;
+        private System.Windows.Forms.ToolStripButton btnStart;
 
     }
 }

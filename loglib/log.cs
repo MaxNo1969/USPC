@@ -31,13 +31,31 @@ namespace PROTOCOL
             string s = _s;
             if(_args != null)
                 s = string.Format(_s, _args);
+#if !DEBUG
+            if(_reason != LogRecord.LogReason.debug)
+            {
+#endif
             Debug.WriteLine(s);
             p.Enqueue(new LogRecord(s, _reason));
             if (onLogChanged != null) onLogChanged();
+#if !DEBUG
+            }
+#endif
+
         }
         public static LogRecord get() 
         {
-            return p.Dequeue();
+            if (p.Count() > 0)
+                return p.Dequeue();
+            else
+                return null;
+        }
+        public static LogRecord peek()
+        {
+            if (p.Count() > 0)
+                return p.Peek();
+            else
+                return null;
         }
         public static int size() { return p.Count; }
     }

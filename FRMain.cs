@@ -10,20 +10,19 @@ using PROTOCOL;
 using System.Threading;
 using FPS;
 using System.Diagnostics;
-using PCIE1730;
+using PCI1730;
 using EMUL;
 using Settings;
 using Data;
 using CHART;
-
+using System.Threading.Tasks;
+using System.IO;
 
 namespace USPC
 {
     public partial class FRMain : Form
     {
-        //public PCXUS pcxus = null;
-        public BoardState boardState = BoardState.NotOpened;
-        public string strNetServer = null;
+        //public BoardState boardState = BoardState.NotOpened;
 
         ///Подчиненные формы
         /// <summary>
@@ -38,8 +37,14 @@ namespace USPC
         /// <summary>
         ///рабочий воркер
         /// </summary>
-        MainWorker worker=null;
+        TubeWorker worker=null;
 
+        /// <summary>
+        ///Добавление новых зон
+        /// </summary>
+        //ZoneBackGroundWorker zoneAdder = null;
+
+        
         /// <summary>
         ///Время начала работы
         /// </summary>
@@ -54,61 +59,65 @@ namespace USPC
         {
             Thread.CurrentThread.Name = "MainWindow";
             InitializeComponent();
-            IsMdiContainer = true;
             WindowState = FormWindowState.Normal;
-            try
-            {
-                strNetServer = Program.cmdLineArgs["Server"];
-            }
-
-            catch (Exception ex)
-            {
-                log.add(LogRecord.LogReason.error, "{0}: {1}: {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message);
-                string str = string.Format("{0}: {1}: {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, "command line param \"Server\" not specified");
-                log.add(LogRecord.LogReason.info, str);
-                throw new Exception(str);
-            }
-
-
-            menu.MdiWindowListItem = miWindows;
 
             bStopForView = false;
 
             // Рабочий поток
-            worker = new MainWorker(this);
+            //worker = new MainWorker(this);
+
             timerUpdUI.Start();
         }
 
-        private void FRMain_Load(object sender, EventArgs e)
+        #region Протокол и сигнвлы
+        /// <summary>
+        /// Настраиваем протокол
+        /// Окно протокола создаем сразу оно будет существовать 
+        /// всё время работы программы
+        /// </summary>
+        /// <param name="_fr">Окно - владелец</param>
+        private void InitProtocolWindow(Form _fr)
         {
-            //восстановление размеров главного окна        
-            FormPosSaver.load(this);
-            //Настраиваем протокол
-            // Окно протокола создаем сразу оно будет существовать 
-            // всё время работы программы
             pr = new FRProt(this)
             {
-                MdiParent = Program.frMain,
-                Dock = DockStyle.Bottom,
                 saveMethod = FRProt.SaveMethod._tofile,
+                Owner=_fr,
+                ShowInTaskbar=false,
             };
             //Тут можно вставить обработчик закрытия формы
             pr.onHide += new FRProt.OnHideForm(() => { miWindowsProt.Checked = false; });
             pr.Visible = FormPosSaver.visible(pr);
             miWindowsProt.Checked = pr.Visible;
             FormPosSaver.load(pr);
-
-            //Настраиваем окно сигналов
-            // Окно создаем сразу оно будет существовать 
-            // всё время работы программы
-            fSignals = new FRSignals(SL.getInst())
+        }
+        /// <summary>
+        /// Настраиваем окно сигналов
+        /// Окно создаем сразу оно будет существовать 
+        /// всё время работы программы
+        /// </summary>
+        /// <param name="_fr">Окно - владелец</param>
+        private void InitSignalsWindow(Form _fr)
+        {
+            fSignals = new FRSignals(Program.sl)
             {
-                MdiParent = Program.frMain,
+                Owner = _fr,
+                ShowInTaskbar = false,
             };
             fSignals.onHide += new FRSignals.OnHideForm(() => { miWindowsSignals.Checked = false; });
             fSignals.Visible = FormPosSaver.visible(fSignals);
             miWindowsSignals.Checked = fSignals.Visible;
+        }
+        #endregion Протокол и сигналы
 
+        private void FRMain_Load(object sender, EventArgs e)
+        {
+            //восстановление размеров главного окна        
+            FormPosSaver.load(this);
+            //Настраиваем протокол
+            InitProtocolWindow(this);
+            //Настраиваем окно сигналов
+            InitSignalsWindow(this);
+            //Типоразмеры
             string[] typeSizeNames = Program.typeSize.allTypesizes();
             foreach (string s in typeSizeNames)
             {
@@ -116,38 +125,142 @@ namespace USPC
                 if (s == Program.typeSize.name) cbTypeSize.SelectedIndex = ind;
             }
 
+            CrossView.lblName.Text = "Поперечный контроль";
+            LinearView.lblName.Text = "Продольный контроль";
+            ThickView.lblName.Text = "Котроль толщины";
+            ThickView.ch1.ChartAreas["Default"].AxisY.Maximum = 12.0;
+            ThickView.ch2.ChartAreas["Default"].AxisY.Maximum = 12.0;
+            ThickView.ch3.ChartAreas["Default"].AxisY.Maximum = 12.0;
+            ThickView.ch4.ChartAreas["Default"].AxisY.Maximum = 12.0;
+            
             setSb("Info", "Для начала работы нажмите F5");
         }
 
+        public void ClearCharts()
+        {
+            UC4SensorView.ClearChart(CrossView.ch1);
+            UC4SensorView.ClearChart(CrossView.ch2);
+            UC4SensorView.ClearChart(CrossView.ch3);
+            UC4SensorView.ClearChart(CrossView.ch4);
+
+            UC4SensorView.ClearChart(LinearView.ch1);
+            UC4SensorView.ClearChart(LinearView.ch2);
+            UC4SensorView.ClearChart(LinearView.ch3);
+            UC4SensorView.ClearChart(LinearView.ch4);
+
+            UC4SensorView.ClearChart(ThickView.ch1);
+            UC4SensorView.ClearChart(ThickView.ch2);
+            UC4SensorView.ClearChart(ThickView.ch3);
+            UC4SensorView.ClearChart(ThickView.ch4);
+        }
 
         public void setStartStopMenu(bool _start)
         {
             miStart.Text = (_start) ? "Старт" : "Стоп";
+            menu.Refresh();
+            btnStart.Text = (_start) ? "СТАРТ" : "СТОП";
+            tb.Refresh();
         }
 
+        //BackgroundWorker testWorker = null;
         /// <summary>
         /// Запуск/остановка рабочего потока
         /// (В workThread вызывается из другого потока)
-        /// </summary>
+        /// </summary> 
         public void startStop()
         {
-            log.add(LogRecord.LogReason.info, "{0}: {1}: {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, miStart.Text);
+            log.add(LogRecord.LogReason.debug, "{0}: {1}: {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, miStart.Text);
             if (miStart.Text == "Старт")
             {
                 startWorkTime = DateTime.UtcNow;
-                SL.getInst().oPEREKL.Val = true;
-                Thread.Sleep(100);
-                worker.RunWorkerAsync();               
+                //Thread.Sleep(200);
+                if (worker == null)
+                {
+                    worker = new TubeWorker();
+                    worker.zbWorker.ProgressChanged += new ProgressChangedEventHandler(zbWorker_ProgressChanged);
+                    //worker.zoneThread.zoneAdded += new OnZoneAdded(zoneAdded);
+                }
+                for (int board = 0; board < Program.numBoards; board++)
+                    Program.data[board].Start();
+                Program.result.Clear();
+                ClearCharts();
+                worker.RunWorkerAsync();
                 setSb("Info", "Работа");
                 setStartStopMenu(false);
             }
             else
             {
-                worker.CancelAsync();
-                //while (worker.IsBusy) Thread.Sleep(100);
+                //Приостановке снимаем сигнал "РАБОТА"
+                Program.sl["РАБОТА"].Val = false;
+                if (worker != null && worker.IsBusy)
+                {
+                    worker.CancelAsync();
+                    worker = null;
+                }
                 setSb("Info", "Нажмите F5 для начала работы");
                 setStartStopMenu(true);
             }
+        }
+
+        void zbWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)
+        {
+            //log.add(LogRecord.LogReason.debug, "{0}: {1}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name);
+            Action action = () => { Program.frMain.PutDataOnCharts(); Program.frMain.setPb(Program.result.zones * AppSettings.s.zoneSize * 100 / AppSettings.s.tubeLength); };
+            Program.frMain.Invoke(action);
+        }
+
+        private void PutDataOnCharts()
+        {
+            double[] values01 = new double[USPCData.countZones];
+            double[] values02 = new double[USPCData.countZones];
+            double[] values03 = new double[USPCData.countZones];
+            double[] values04 = new double[USPCData.countZones];
+            double[] values05 = new double[USPCData.countZones];
+            double[] values06 = new double[USPCData.countZones];
+            double[] values07 = new double[USPCData.countZones];
+            double[] values08 = new double[USPCData.countZones];
+            double[] values09 = new double[USPCData.countZones];
+            double[] values10 = new double[USPCData.countZones];
+            double[] values11 = new double[USPCData.countZones];
+            double[] values12 = new double[USPCData.countZones];
+            for (int i = 0; i < USPCData.countZones; i++)
+            {
+                values01[i] = Program.result.zoneSensorResults[i][0];
+                values02[i] = Program.result.zoneSensorResults[i][1];
+                values03[i] = Program.result.zoneSensorResults[i][2];
+                values04[i] = Program.result.zoneSensorResults[i][3];
+                values05[i] = Program.result.zoneSensorResults[i][4];
+                values06[i] = Program.result.zoneSensorResults[i][5];
+                values07[i] = Program.result.zoneSensorResults[i][6];
+                values08[i] = Program.result.zoneSensorResults[i][7];
+                values09[i] = Program.result.zoneSensorResults[i][8];
+                values10[i] = Program.result.zoneSensorResults[i][9];
+                values11[i] = Program.result.zoneSensorResults[i][10];
+                values12[i] = Program.result.zoneSensorResults[i][11];
+            }
+            UC4SensorView.PutDefDataOnChart(CrossView.ch1, values09);
+            UC4SensorView.PutDefDataOnChart(CrossView.ch2, values10);
+            UC4SensorView.PutDefDataOnChart(CrossView.ch3, values11);
+            UC4SensorView.PutDefDataOnChart(CrossView.ch4, values12);
+            UC4SensorView.PutDefDataOnChart(LinearView.ch1, values05);
+            UC4SensorView.PutDefDataOnChart(LinearView.ch2, values06);
+            UC4SensorView.PutDefDataOnChart(LinearView.ch3, values07);
+            UC4SensorView.PutDefDataOnChart(LinearView.ch4, values08);
+            UC4SensorView.PutThickDataOnChart(ThickView.ch1, values01);
+            UC4SensorView.PutThickDataOnChart(ThickView.ch2, values02);
+            UC4SensorView.PutThickDataOnChart(ThickView.ch3, values03);
+            UC4SensorView.PutThickDataOnChart(ThickView.ch4, values04);
+        }
+
+        void testWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            log.add(LogRecord.LogReason.info, "{0}: {1}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name);
+        }
+
+        void testWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)
+        {
+            //log.add(LogRecord.LogReason.info, "{0}: {1}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name);
+            PutDataOnCharts();
         }
 
 
@@ -171,83 +284,65 @@ namespace USPC
 
         private void miOpenUSPC_Click(object sender, EventArgs e)
         {
-            //pcxus.open(2);
-            try
+            if (Program.boardState == BoardState.Opened)
             {
-                PCXUSNetworkClient client = new PCXUSNetworkClient(strNetServer);
-                Object obj = new object();
-                int res = client.callNetworkFunction("open,2", out obj);
-                if (res != 0)
+                if (MessageBox.Show("Плата уже открыта!Переоткрыть?\nВсе настройки будут сброшены.", "Внимание!", MessageBoxButtons.YesNo, MessageBoxIcon.Error, MessageBoxDefaultButton.Button2) == DialogResult.Yes)
                 {
-                    boardState = BoardState.error;
-                    throw new Exception(string.Format("callNetworkFunction(open) return {0:X8}", res));
+                    Program.pcxus.close();
+                    Program.boardState = BoardState.NotOpened;
+                    Program.pcxus.open(2);
+                    Program.boardState = BoardState.Opened;
                 }
-                else
-                {
-                    boardState = BoardState.Opened;
-                    return;
-                }
-            }
-            catch (Exception Ex)
-            {
-                log.add(LogRecord.LogReason.error, "{0}: {1}: Error: {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, Ex.Message);
                 return;
             }
-
+            else
+            {
+                if (!Program.pcxus.open(2))
+                {
+                    log.add(LogRecord.LogReason.error, "{0}: {1}: Error: {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, (ErrorCode)Program.pcxus.Err);
+                }
+            }
         }
 
         private void miLoadUSPC_Click(object sender, EventArgs e)
         {
-            if (boardState != BoardState.Opened)
+            if (Program.boardState != BoardState.Opened)
             {
-                MessageBox.Show("Плата USPC-3100 не открыта!", "Ошибка");
+                MessageBox.Show("Плата не открыта", "Внимание!", MessageBoxButtons.OK);
                 return;
             }
-            try
+            if (!Program.pcxus.load("default.us"))
             {
-                PCXUSNetworkClient client = new PCXUSNetworkClient(strNetServer);
-                Object obj = new object();
-                int res = client.callNetworkFunction("load,default.us", out obj);
-                if (res != 0)
-                {
-                    throw new Exception(string.Format("callNetworkFunction(load) return {0:X8}", res));
-                }
-            }
-            catch (Exception Ex)
-            {
-                log.add(LogRecord.LogReason.error, "{0}: {1}: Error: {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, Ex.Message);
+                log.add(LogRecord.LogReason.error, "{0}: {1}: Error: {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, (ErrorCode)Program.pcxus.Err);
+                Program.boardState = BoardState.Error;
             }
         }
         private void miCloseUSPC_Click(object sender, EventArgs e)
         {
-            if (boardState != BoardState.Opened)
+
+            if (Program.boardState != BoardState.Opened)
             {
-                MessageBox.Show("Плата USPC-3100 не открыта!", "Ошибка");
+                MessageBox.Show("Плата не открыта", "Внимание!", MessageBoxButtons.OK);
                 return;
             }
-            try
+            if (!Program.pcxus.close())
             {
-                PCXUSNetworkClient client = new PCXUSNetworkClient(strNetServer);
-                Object obj = new object();
-                int res = client.callNetworkFunction("close", out obj);
-                if (res != 0)
-                {
-                    throw new Exception(string.Format("callNetworkFunction(close) return {0:X8}", res));
-                }
-                else
-                {
-                    boardState = BoardState.NotOpened;
-                    return;
-                }
+                log.add(LogRecord.LogReason.error, "{0}: {1}: Error: {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, (ErrorCode)Program.pcxus.Err);
+                Program.boardState = BoardState.Error;
             }
-            catch (Exception Ex)
+            else
             {
-                log.add(LogRecord.LogReason.error, "{0}: {1}: Error: {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, Ex.Message);
+                Program.boardState = BoardState.NotOpened;
             }
         }
 
         private void miBoardInfo_Click(object sender, EventArgs e)
         {
+            if (Program.boardState != BoardState.Opened)
+            {
+                MessageBox.Show("Плата не открыта", "Внимание!", MessageBoxButtons.OK);
+                return;
+            }
             FRUspcInfo frm = new FRUspcInfo(this);
             frm.Show();
         }
@@ -256,7 +351,35 @@ namespace USPC
         {
             long usedMem = GC.GetTotalMemory(false);
             sb.Items["heap"].Text = string.Format("{0,6}M", usedMem / (1024 * 1024));
-            sb.Items["speed"].Text = string.Format("{0} м/с", AppSettings.s.speed);
+            sb.Items["speed"].Text = string.Format("{0,7:F5}", AppSettings.s.speed);
+            sb.Items["dataSize"].Text = Program.data[0].currentOffsetFrames.ToString();
+            //NotOpened, Opened, loaded, error
+            Color color;
+            switch(Program.boardState)
+            {
+                case BoardState.NotOpened:
+                    color = SystemColors.Control;
+                    break;
+                case BoardState.Opened:
+                    color = Color.Green;
+                    break;
+                case BoardState.Error:
+                    color = Color.Red;
+                    break;
+                default:
+                    color = SystemColors.Control;
+                    break;
+
+            }
+            if (Program.boardState == BoardState.NotOpened)
+                color = SystemColors.Control;
+            else
+            {
+                if (Program.pcxus.Err != (int)ErrorCode.PCXUS_NO_ERROR) color = Color.Red;
+                else
+                    color = Color.Green;
+            }
+            sb.Items["boardStateLabel"].BackColor = color;
 
         }
 
@@ -268,7 +391,7 @@ namespace USPC
 
         private void miTestAscanFromNet_Click(object sender, EventArgs e)
         {
-            TestGetAscanFromNet frm = new TestGetAscanFromNet(this);
+            FRTestAscaNet frm = new FRTestAscaNet(this);
             frm.Show();
         }
 
@@ -278,13 +401,17 @@ namespace USPC
             fSignals.Visible = miWindowsSignals.Checked;
         }
 
+        public void openSettings()
+        {
+            FRSettings frm = new FRSettings(this);
+            frm.FormClosed += new FormClosedEventHandler((object _o, FormClosedEventArgs _e) => { /*btnSettings.Enabled = true;*/ miSettings.Enabled = true; });
+            frm.Show();
+        }
+
         private void miSettings_Click(object sender, EventArgs e)
         {
-            //btnSettings.Enabled = false;
-            miSettings.Enabled = false;
-            FRSettings frm = new FRSettings();
+            FRSettings frm = new FRSettings(this);
             frm.FormClosed += new FormClosedEventHandler((object _o, FormClosedEventArgs _e) => { /*btnSettings.Enabled = true;*/ miSettings.Enabled = true; });
-            frm.MdiParent = this;
             frm.Show();
         }
 
@@ -304,7 +431,7 @@ namespace USPC
         /// <param name="_percent">Просент</param>
         public void setPb(int _percent)
         {
-            pb.Value = _percent;
+            if(_percent<100)pb.Value = _percent;
         }
 
         private void miStart_Click(object sender, EventArgs e)
@@ -315,9 +442,8 @@ namespace USPC
         private void эмуляцияToolStripMenuItem_Click(object sender, EventArgs e)
         {
             miEmul.Enabled = false;
-            FREmul frm = new FREmul();
+            FREmul frm = new FREmul(this);
             frm.FormClosed += new FormClosedEventHandler((object ob, FormClosedEventArgs ea) => { miEmul.Enabled = true; });
-            frm.MdiParent = this;
             frm.Show();
         }
 
@@ -394,23 +520,56 @@ namespace USPC
         private void saveToolStripMenuItem_Click(object sender, EventArgs e)
         {
             SaveFileDialog sfd = new SaveFileDialog();
-            sfd.Filter = "Файлы данных (*.bintube)|*.bintube|Все файлы (*.*)|*.*";
+            //sfd.Filter = "Файлы данных (*.bintube)|*.bintube|Все файлы (*.*)|*.*";
+            sfd.Filter = "Файлы CSV (*.csv)|*.scv|Все файлы (*.*)|*.*";
             if (sfd.ShowDialog() == DialogResult.OK)
             {
+                //try
+                //{
+                //    BackgroundWorker w = new BackgroundWorker();
+                //    w.WorkerReportsProgress = true;
+                //    w.WorkerSupportsCancellation = true;
+                //    w.DoWork += new DoWorkEventHandler(w_DoWork);
+                //    w.RunWorkerCompleted += new RunWorkerCompletedEventHandler(w_RunWorkerCompleted);
+                //    w.ProgressChanged += new ProgressChangedEventHandler(w_ProgressChanged);
+                //    pb.Visible = true;
+                //    w.RunWorkerAsync(new WorkerArgs("Сохранение", sfd.FileName));
+                //}
+                //catch (Exception ex)
+                //{
+                //    MessageBox.Show(ex.Message);
+                //}
                 try
                 {
-                    BackgroundWorker w = new BackgroundWorker();
-                    w.WorkerReportsProgress = true;
-                    w.WorkerSupportsCancellation = true;
-                    w.DoWork += new DoWorkEventHandler(w_DoWork);
-                    w.RunWorkerCompleted += new RunWorkerCompletedEventHandler(w_RunWorkerCompleted);
-                    w.ProgressChanged += new ProgressChangedEventHandler(w_ProgressChanged);
-                    pb.Visible = true;
-                    w.RunWorkerAsync(new WorkerArgs("Сохранение", sfd.FileName));
+                    sfd.FileName = "1.csv";
+                    using (StreamWriter writer = new StreamWriter(sfd.FileName))
+                    {
+                        string s;
+                        
+                        for(int i = 0;i<Program.data[0].currentOffsetFrames;i++)
+                        {
+                            AcqAscan scan = Program.data[0].ascanBuffer[i];
+                            s = string.Format("{0};{1};{2}",scan.Channel,scan.G1Amp,scan.G1Tof);
+                            writer.WriteLine(s);
+                        }
+                    }
+                    sfd.FileName = "2.csv";
+                    using (StreamWriter writer = new StreamWriter(sfd.FileName))
+                    {
+                        string s;
+
+                        for (int i = 0; i < Program.data[1].currentOffsetFrames; i++)
+                        {
+                            AcqAscan scan = Program.data[1].ascanBuffer[i];
+                            s = string.Format("{0};{1};{2}", scan.Channel, scan.G1Amp, USPCData.TofToMm((int)scan.G1Tof));
+                            writer.WriteLine(s);
+                        }
+                    }
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show(ex.Message);
+                    log.add(LogRecord.LogReason.error, "{0}: {1}: Error: {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message);
+                    return;
                 }
             }
         }
@@ -436,13 +595,13 @@ namespace USPC
             switch (args.action)
             {
                 case "Загрузка":
-                    USPCData.load(args.fileName);
+                    //USPCData.load(args.fileName);
                     break;
                 case "Сохранение":
-                    Program.data.save((Object)args.fileName);
+                    //Program.data.save((Object)args.fileName);
                     break;
                 case "Генерация":
-                    DataGenerator.GenerateThicknessData(16, 900000);
+                    DataGenerator.GenerateThicknessData(16,0,USPCData.countFrames,w);
                     break;
                 case "Пересчет":
                     //stick.recalc(w, e);
@@ -455,6 +614,11 @@ namespace USPC
         {
             ToolStripComboBox cb = (ToolStripComboBox)sender;
             Program.typeSize.select((string)cb.Items[cb.SelectedIndex]);
+        }
+
+        private void btnStart_Click(object sender, EventArgs e)
+        {
+            startStop();
         }
     }
 }

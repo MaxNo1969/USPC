@@ -1,4 +1,4 @@
-﻿using System;
+﻿ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
@@ -6,22 +6,29 @@ using PROTOCOL;
 using System.Diagnostics;
 using System.Threading;
 using FPS;
-using PCIE1730;
+using PCI1730;
 using Data;
+using USPC.PCI_1730;
+using Settings;
 
 namespace USPC
 {
-    public enum BoardState { NotOpened, Opened, loaded, error };
+    public enum BoardState { NotOpened=0, Opened, Error };
     static class Program
     {
         public static Dictionary<string, string> cmdLineArgs = null;
 
-        public static string serverAddr;        
-        public static USPCData data = new USPCData();
+        public static BoardState boardState = BoardState.NotOpened;
+        public static int numBoards = 2;
+        public static PCXUSNET pcxus = null;
+        public static USPCData[] data = new USPCData[numBoards];
         public static TypeSize typeSize = new TypeSize();
+        public static Result result = new Result();
         public static FRMain frMain = null;
         public static int medianFilterWidth = 5;
 
+        public static DefSignals sl = null;
+        public static double scopeVelocity = 6400.0;
 
         /// <summary>
         /// The main entry point for the application.
@@ -41,34 +48,47 @@ namespace USPC
             int ret = 0;
             //В первую очередь запускаем логирование
             log.add(LogRecord.LogReason.info,@"Program: Начало выполнения программы.");
-            try
-            {
-                cmdLineArgs = getCmdStr(args);
-                if (cmdLineArgs != null)
-                {
-                    #region Логирование
-                    {
-                        string msg = string.Empty;
-                        foreach (KeyValuePair<string, string> kv in cmdLineArgs)
-                        {
-                            msg += string.Format(@"{0}={1}; ", kv.Key, kv.Value);
-                            msg = msg.Trim();
-                        }
-                        log.add(LogRecord.LogReason.info, "{0}: {1}: {2}", "Program", System.Reflection.MethodBase.GetCurrentMethod().Name, msg);
-                    }
-                    #endregion
-                    serverAddr = Program.cmdLineArgs["Server"];
-                }
-            }
-            catch (ArgumentException ex)
-            {
-                log.add(LogRecord.LogReason.error, "{0}: {1}: {2}", "Program", System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message);
-                return -1;
-            }
+            //try
+            //{
+            //    cmdLineArgs = getCmdStr(args);
+            //    if (cmdLineArgs != null)
+            //    {
+            //        #region Логирование
+            //        {
+            //            string msg = string.Empty;
+            //            foreach (KeyValuePair<string, string> kv in cmdLineArgs)
+            //            {
+            //                msg += string.Format(@"{0}={1}; ", kv.Key, kv.Value);
+            //                msg = msg.Trim();
+            //            }
+            //            log.add(LogRecord.LogReason.info, "{0}: {1}: {2}", "Program", System.Reflection.MethodBase.GetCurrentMethod().Name, msg);
+            //        }
+            //        #endregion
+            //    }
+            //    pcxus = new PCXUSNET(AppSettings.s.serverAddr);
+            //}
+            //catch (ArgumentException ex)
+            //{
+            //    log.add(LogRecord.LogReason.error, "{0}: {1}: {2}", "Program", System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message);
+            //    ShowExceptionDetails(ex);
+            //    return -1;
+            //}
+            //catch (KeyNotFoundException ex)
+            //{
+            //    log.add(LogRecord.LogReason.error, "{0}: {1}: {2}", "Program", System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message);
+            //    ShowExceptionDetails(ex);
+            //    return -1;
+            //}
 
             try
             {
                 FormPosSaver.deser();
+                pcxus = new PCXUSNET(AppSettings.s.serverAddr);
+                sl = new DefSignals();
+                for (int i = 0; i < numBoards;i++ )
+                {
+                    data[i] = new USPCData();
+                }
                 frMain = new FRMain();
                 Application.Run(frMain);
             }
@@ -79,9 +99,11 @@ namespace USPC
             }
             finally
             {
-                Debug.WriteLine("Вошли в program/finally");
+                log.add(LogRecord.LogReason.debug, "{0}: {1}: {2}", "Program", System.Reflection.MethodBase.GetCurrentMethod().Name, "Зашли в finally");
+                if (boardState == BoardState.Opened || boardState == BoardState.Error)pcxus.close();
                 //Снимаем все выходные сигналы и останавливаем PCIE1730
-                SL.Destroy();
+                sl.ClearAllOutputSignals();
+                sl.Dispose();
                 FormPosSaver.ser();
             }
             return ret;
@@ -110,12 +132,11 @@ namespace USPC
 
         static Dictionary<string, string> getCmdStr(string[] args)
         {
-            Dictionary<string, string> cmdStr = new Dictionary<string, string>();
             if ((args == null) || args.Length < 1)
             {
-                cmdStr.Add("NONE", "true");
-                return cmdStr;
+                return null;                
             }
+            Dictionary<string, string> cmdStr = new Dictionary<string, string>();
             foreach (string s in args)
             {
                 string[] ss = s.Split(new char[] { ':' });

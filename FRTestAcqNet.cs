@@ -13,46 +13,56 @@ namespace USPC
 {
     public partial class FRTestAcqNet : Form
     {
-        public FRMain frMain;
-        //public PCXUS pcxus;
-        public string serverAddr;
-        public AcqAscan[] data = new AcqAscan[1024*100];
-        UspcNetDataReaderForTest dataReader = null;
+        UspcNetDataReader[] dataReader = new UspcNetDataReader[Program.numBoards];
         void StartStopToggle(bool _start)
         {
             btnStart.Enabled = _start;
             btnStop.Enabled = !_start;
         }
-        public FRTestAcqNet(FRMain _frMain)
+        public FRTestAcqNet(Form _fr)
         {
             InitializeComponent();
-            frMain = _frMain;
-            Owner = _frMain;
-            MdiParent = _frMain;
-            //dataReader.dataAcquired += updateGraph;
-            try
+            Owner = _fr;
+            FRWaitLongProcess waitWindow = new FRWaitLongProcess(this);
+            waitWindow.Show();
+            waitWindow.setMes("Открываем платы USPC...");
+            Program.pcxus.open(2);
+            waitWindow.setMes("Загружаем файл конфигурации...");
+            Program.pcxus.load("default.us");
+            waitWindow.Close();
+            for (int i = 0; i < Program.numBoards; i++)
             {
-                serverAddr = Program.cmdLineArgs["Server"];
+                dataReader[i] = new UspcNetDataReader(i);
+                dataReader[i].ProgressChanged += new ProgressChangedEventHandler(dataReader_ProgressChanged);
             }
-            catch (Exception ex)
-            {
-                log.add(LogRecord.LogReason.warning, "FRTestTcp: btnTest_Click: Error: {0}", ex.Message);
-                log.add(LogRecord.LogReason.warning, "Parameter \"Server\" not assigned. Use \"127.0.0.1\"");
-                serverAddr = "127.0.0.1";
-            }
-            dataReader = new UspcNetDataReaderForTest(this);
             StartStopToggle(true);
 
         }
 
-        public void updateGraph(int _numberOfScans,AcqAscan[] _data)
+        void dataReader_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
             try
             {
-                AcqChart.Series["Gate1TOF"].Points.Clear();
-                AcqChart.Series["Gate2TOF"].Points.Clear();
-                AcqChart.Series["GateIFTOF"].Points.Clear();
-                //AcqChart.Series["Gate2TOF"].Points.Clear();
+                int countFrames = e.ProgressPercentage;
+                AcqAscan[] buffer = (AcqAscan[])e.UserState;
+                updateGraph(countFrames, buffer);
+            }
+            catch (Exception ex)
+            {
+                log.add(LogRecord.LogReason.error, "{0}: {1}: Error: {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message);
+                return;
+            }
+
+        }
+        
+
+        public void updateGraph(int _numberOfScans,AcqAscan[] _data)
+        {
+            if (_numberOfScans == 0 || _data == null) return;
+            try
+            {
+                AcqChart.Series["Gate1Amp"].Points.Clear();
+                AcqChart.Series["Gate2Amp"].Points.Clear();
                 
                 //AcqChart.ChartAreas["Default"].AxisY.Minimum = 0.0;
                 //AcqChart.ChartAreas["Default"].AxisY.Maximum = 200.0;
@@ -61,36 +71,28 @@ namespace USPC
                 AcqChart.ChartAreas["Default"].AxisX.Minimum = 0;
                 AcqChart.ChartAreas["Default"].AxisX.Maximum = _numberOfScans;
 
-                //double gate1max = Program.typeSize.minDetected;
-                //double gate2max = Program.typeSize.minDetected;
                 for (int iPoint = 0; iPoint < _numberOfScans; iPoint++)
                 {
                     {
-                        uint tof = _data[iPoint].G1Tof & AcqAscan.TOF_MASK;
+                        //uint tof = _data[iPoint].G1Tof & AcqAscan.TOF_MASK;
                         //double val = 2.5e-6 * tof * USPCData.scopeVelocity;
-                        double val = tof;
-                        AcqChart.Series["Gate1TOF"].Points.AddXY(iPoint, val);
+                        double val = _data[iPoint].G1Amp;
+                        AcqChart.Series["Gate1Amp"].Points.AddXY(iPoint, val);
                         lblGate1MaxTof.Text = val.ToString();
                     }
                     {
-                        uint tof = _data[iPoint].G2Tof & AcqAscan.TOF_MASK;
+                        //uint tof = _data[iPoint].G2Tof & AcqAscan.TOF_MASK;
                         //double val = 2.5e-6 * tof * USPCData.scopeVelocity;
-                        double val = tof;
-                        AcqChart.Series["Gate2TOF"].Points.AddXY(iPoint, val);
+                        double val = _data[iPoint].G2Amp;
+                        AcqChart.Series["Gate2Amp"].Points.AddXY(iPoint, val);
                         lblGate2MaxTof.Text = val.ToString();
-                    }
-                    {
-                        uint tof = _data[iPoint].GIFTof & AcqAscan.TOF_MASK;
-                        //double val = 2.5e-6 * tof * USPCData.scopeVelocity;
-                        double val = tof;
-                        AcqChart.Series["GateIFTOF"].Points.AddXY(iPoint, val);
-                        lblGateIFMaxTof.Text = val.ToString();
                     }
                 }
             }
             catch (Exception ex)
             {
                 log.add(LogRecord.LogReason.error, "{0}: {1}: Error: {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message);
+                return;
             }
 
         }
@@ -98,19 +100,22 @@ namespace USPC
         private void btnStart_Click(object sender, EventArgs e)
         {
             StartStopToggle(false);
-            if (dataReader != null) dataReader.RunWorkerAsync();
+            for (int i = 0; i < Program.numBoards; i++)
+                if (dataReader[i] != null && !dataReader[i].IsBusy) dataReader[i].RunWorkerAsync();
         }
 
         private void btnStop_Click(object sender, EventArgs e)
         {
             StartStopToggle(true);
-            if (dataReader != null)dataReader.CancelAsync();
+            for (int i = 0; i < Program.numBoards; i++)
+                if (dataReader[i] != null && dataReader[i].IsBusy) dataReader[i].CancelAsync();
             //Program.data.saveAsync("data.bin");
         }
 
         private void FRTestAcq_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if (dataReader != null) dataReader.CancelAsync();
+            for (int i = 0; i < Program.numBoards;i++ )
+                if (dataReader[i] != null && dataReader[i].IsBusy) dataReader[i].CancelAsync();
         }
 
         private void FRTestAcq_Resize(object sender, EventArgs e)

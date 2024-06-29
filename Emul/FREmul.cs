@@ -1,11 +1,14 @@
 ﻿using PROTOCOL;
-using PCIE1730;
+using PCI1730;
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Threading;
 using System.Windows.Forms;
 using FPS;
+using USPC;
+using USPC.PCI_1730;
+using Settings;
 
 namespace EMUL
 {
@@ -15,68 +18,69 @@ namespace EMUL
     public partial class FREmul : Form
     {
         /// <summary>
-        /// Модель трубы  
-        /// </summary>
-
-        /// <summary>
-        /// Поток для эмуляции движения трубы
-        /// </summary>
-
-        ///// <summary>
-        ///// Поток для записи данных из виртуальной трубы в буфер эмулятора АЦП
-        ///// </summary>
-        //WriteDataThread wdt; 
-        /// <summary>
         /// Сигналы для эмуляции PCIE1730
         /// </summary>
-        SLLUZK sl;
+        DefSignals sl;
         /// <summary>
         /// Worker - эмуляция движения трубы через установку
         /// </summary>
         BackgroundWorker worker;
 
-        DateTime tubeStartTime;
+        System.Threading.Timer timerStrob;
+
         /// <summary>
         /// Конструктор
         /// </summary>
         /// <param name="_lcard">Карта АЦП(для эмулятора виртуальная)</param>
         /// <param name="_tube">Модель трубы</param>
-        public FREmul()
+        public FREmul(Form _fr)
         {
             InitializeComponent();
+            Owner=_fr;
+            ShowInTaskbar = false;
+
             // Настройка ProgressBar-а
             pbTube.Minimum = 0;
             pbTube.Maximum = 100;
-            sl = SL.getInst();
+            sl = Program.sl;
             btnStart.Enabled = true;
             btnStop.Enabled = false;
-            for (int i = 0; i < sl.CountIn; i++)
+            for (int i = 0; i < sl.Count; i++)
             {
-                SignalIn s = sl.GetSignalIn(i);
-                inputSignals.Items.Add(string.Format("{0} {1}", s.Position, s.Name), s.Val);
+                Signal s = sl[i];
+                if(s.input)
+                    inputSignals.Items.Add(s, s.Val);
+                else
+                    outputSignals.Items.Add(s, s.Val);
             }
-            for (int i = 0; i < sl.CountOut; i++)
-            {
-                SignalOut s = sl.GetSignalOut(i);
-                outputSignals.Items.Add(string.Format("{0} {1}", s.Position, s.Name), s.Val);
-            }
-            timer.Start();
             //Подготавливаем BackgroundWorker
             worker = new BackgroundWorker()
             {
                 WorkerReportsProgress = true,
                 WorkerSupportsCancellation = true,
             };
-            worker.DoWork += new DoWorkEventHandler(worker_DoWork);
+            //worker.DoWork += new DoWorkEventHandler(worker_DoWork);
+            worker.DoWork += new DoWorkEventHandler(TubeEmulWorker);
             worker.ProgressChanged += new ProgressChangedEventHandler(worker_ProgressChanged);
             worker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(worker_RunWorkerCompleted);
+            timer.Start();
+        }
+
+        void timerZoneCallback(object _state)
+        {
+            if (worker == null || !worker.IsBusy) return;
+            sl.set(sl["СТРОБ"], true);
+            while(!sl.get(sl["СТРБРЕЗ"]))Application.DoEvents();
+            worker.ReportProgress(101, string.Format("СТРОБ!"));
+            sl.set(sl["СТРОБ"], false);
         }
 
         void worker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             log.add(LogRecord.LogReason.info, "{0}: {1}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name);
             //Снимаем все сигналы 
-            SL.getInst().ClearAllInputSignals();
+            //sl.ClearAllOutputSignals();
+            //sl.ClearAllInputSignals();
             pbTube.Value = 0;
             btnStart.Enabled = true;
             btnStop.Enabled = false;
@@ -91,19 +95,14 @@ namespace EMUL
             else if (e.ProgressPercentage <= 100)
             {
                 pbTube.Value=e.ProgressPercentage;
-                //lblPos.Text=string.Format("{0,5:f2} м",tm.l2px(tm.Position)/1000.0);
-                //Проверяем открыта ли модель трубы
-                if (btnTubeModel.Enabled == false)
-                {
-                    //frtubemodel.ucTube.winStart = tm.curPosX;
-                    //frtubemodel.ucTube.Invalidate();
-                }
             }
             //Добавляем в лист-бокс и обновляем метку
             else if(e.ProgressPercentage==101)
             {
                 lblInfo.Text = e.UserState as string;
-                lb.Items.Add(e.UserState as string);
+                int currentItemNumber = lb.Items.Add(e.UserState as string);
+                lb.SelectedIndex = currentItemNumber;
+                
             }
             //Просто обновляем метку
             else if (e.ProgressPercentage == 102)
@@ -112,125 +111,37 @@ namespace EMUL
             }
         }
 
-        static long startWait;
         /// <summary>
         /// Задержка в цикле ожидания сигнала
         /// </summary>
         const int signalWaitCycleTime = 100;
         const int updateCountersPeriod = 1000;
-        const int tubeMoveTime = 1000*15;
-        void worker_DoWork(object sender, DoWorkEventArgs e)
-        {
-            log.add(LogRecord.LogReason.info, "{0}: {1}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name);
-            Stopwatch sw = new Stopwatch();
-            sw.Start();
-            worker.ReportProgress(101, "Включаем сигнал \"Цепи управления\"");
-            SL.getInst().set(SL.getInst().iCC, true);
-            worker.ReportProgress(101, "Включаем сигнал \"Цикл\"");
-            SL.getInst().set(SL.getInst().iCYC, true);
-            //Тут сделаем цикл по трубам
-            while (true)
-            {
-                if (worker.CancellationPending)
-                {
-                    e.Cancel = true;
-                    return;
-                }
-                //Ждем выставления сигнала "Перекладка"
-                worker.ReportProgress(101, "Ждем выставления сигнала \"ПЕРЕКЛАДКА\"...");
-                while (SL.getInst().oPEREKL.Val == false)
-                {
-                    //Проверяем кнопку СТОП
-                    if (worker.CancellationPending)
-                    {
-                        e.Cancel = true;
-                        return;
-                    }
-                    Thread.Sleep(signalWaitCycleTime);
-                }
-                worker.ReportProgress(101, "Выставляем сигнал \"ГОТОВНОСТЬ\"...");
-                SL.getInst().set(SL.getInst().iREADY, true);
-                if (worker.CancellationPending)
-                {
-                    e.Cancel = true;
-                    return;
-                }
-                //Ожидаем сигнал "Работа"
-                worker.ReportProgress(101, "Ожидаем сигнал \"РАБОТА\"(модуль готов к работе)...");
-                while (SL.getInst().oWRK.Val == false)
-                {
-                    //Проверяем кнопку СТОП
-                    if (worker.CancellationPending)
-                    {
-                        e.Cancel = true;
-                        return;
-                    }
-                    Thread.Sleep(signalWaitCycleTime);
-                }
-                //Начинаем  движение трубы
-                worker.ReportProgress(101, "Начинаем движение трубы...");
-                //Снимаем сигнал "Готовность" (начинается движение трубы)
-                worker.ReportProgress(101, "Снимаем сигнал \"ГОТОВНОСТЬ\"...");
-                SL.getInst().set(SL.getInst().iREADY, false);
-                tubeStartTime = DateTime.Now;
-                //Ждем пока труба доедет до входа в модуль (~30 сек.)
-                startWait = sw.ElapsedMilliseconds;
-                while (sw.ElapsedMilliseconds - startWait < 1000)
-                {
-                    //Проверяем кнопку СТОП
-                    if (worker.CancellationPending)
-                    {
-                        e.Cancel = true;
-                        return;
-                    }
-                    Thread.Sleep(signalWaitCycleTime);
-                }
-                //Труба на входе в модуль мнк3
-                worker.ReportProgress(101, "Труба на входе в модуль...");
-                worker.ReportProgress(101, "Выставляем сигнал \"КОНТРОЛЬ\"(труба на входе)...");
-                SL.getInst().set(SL.getInst().iCNTR, true);
-                //Ждем пока труба проедет до конца
-                startWait = sw.ElapsedMilliseconds;
-                bool iBaseSet = false;
-                while (sw.ElapsedMilliseconds -startWait < 20000)
-                {
-                    //Проверяем кнопку СТОП
-                    if (worker.CancellationPending)
-                    {
-                        e.Cancel = true;
-                        return;
-                    }
-                    if (sw.ElapsedMilliseconds - startWait >= 3000 && !iBaseSet)
-                    {
-                        worker.ReportProgress(101, "Доехали до базы...");
-                        SL.getInst().set(SL.getInst().iBASE, true);
-                        iBaseSet = true;
-                    }
-                    Thread.Sleep(signalWaitCycleTime);
-                }
-                //worker.ReportProgress(tm.Position * 100 / tm.Width, 0);
-                worker.ReportProgress(101, "Труба вышла из ЛУЗК...");
-                worker.ReportProgress(101, "Снимаем сигнал \"КОНТРОЛЬ3\"...");
-                SL.getInst().set(SL.getInst().iCNTR, false);
-            }
-        }
+        const int WaitReadyTime = 2000;
+        const int WaitWorkTime = 2000;
+        int MoveTubeTime = 30000;
+
+        DateTime TubeStartTime;
+        DateTime dtStartWait;
 
         private void timer_Tick(object sender, EventArgs e)
         {
             if (Visible)
             {
-                for (int i = 0; i < outputSignals.Items.Count; i++)
+                for(int i = 0;i<inputSignals.Items.Count;i++)
                 {
-                    SignalOut s = sl.GetSignalOut(i);
-                    outputSignals.SetItemChecked(i, s.Val);
-                }
-                for (int i = 0; i < inputSignals.Items.Count; i++)
-                {
-                    SignalIn s = sl.GetSignalIn(i);
+                    Signal s = (Signal)inputSignals.Items[i];
                     inputSignals.SetItemChecked(i, s.Val);
                 }
+                for (int i = 0; i < outputSignals.Items.Count; i++)
+                {
+                    Signal s = (Signal)outputSignals.Items[i];
+                    outputSignals.SetItemChecked(i, s.Val);
+                }
             }
-            lblTimer.Text= string.Format(@"{0:hh\:mm\:ss}", DateTime.Now - tubeStartTime);
+            if (worker.IsBusy)
+                lblTimer.Text = string.Format(@"{0:hh\:mm\:ss}", DateTime.Now - TubeStartTime);
+            else
+                lblTimer.Text = "";
         }
 
         private void signals_ItemCheck(object sender, ItemCheckEventArgs e)
@@ -238,7 +149,9 @@ namespace EMUL
             CheckedListBox clb = (CheckedListBox)sender;
             if (clb.Name == "inputSignals")
             {
-                SL.getInst().set(sl.GetSignalIn(e.Index), e.NewValue == CheckState.Checked);
+                Signal s = (Signal)clb.Items[e.Index];
+                //s.Val = (e.NewValue == CheckState.Checked);
+                Program.sl.set(s, (e.NewValue == CheckState.Checked));
             }
         }
 
@@ -275,6 +188,80 @@ namespace EMUL
         //FRTubeModel frtubemodel;
         private void btnTubeModel_Click(object sender, EventArgs e)
         {
+        }
+
+        void TubeEmulWorker(object sender, DoWorkEventArgs e)
+        {
+            log.add(LogRecord.LogReason.debug, "{0}: {1}: {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, "started");
+            int percent = 0;
+            int timeToBase = (int)((double)AppSettings.s.distanceToBase / (double)AppSettings.s.speed);
+            worker.ReportProgress(101, string.Format("distanceToBase = {0}, speed = {1}, timeToBase = {2}", AppSettings.s.distanceToBase, AppSettings.s.speed, timeToBase));
+            MoveTubeTime = (int)((double)AppSettings.s.tubeLength / (double)AppSettings.s.speed);
+            worker.ReportProgress(101, string.Format("MoveTubeTime = {0}", MoveTubeTime));
+            int strobTime = (int)((double)AppSettings.s.zoneSize / (double)AppSettings.s.speed);
+            worker.ReportProgress(101, string.Format("strobTime = {0}", strobTime));
+
+            while (!worker.CancellationPending)
+            {
+                worker.ReportProgress(101, "Снимаем сигнал \"РЕЗУЛЬТАТ\"");
+                sl["РЕЗУЛЬТАТ"].Val = false;
+                worker.ReportProgress(101, "Включаем сигнал \"ЦИКЛ\"");
+                dtStartWait = DateTime.Now;
+                sl.set(sl["ЦИКЛ"], true);
+                //Ожидаем сигнал "РАБОТА"
+                worker.ReportProgress(101, "Ожидаем сигнал \"РАБОТА\"(модуль готов к работе)...");
+                while (!sl.get("РАБОТА"))
+                {
+                    //Проверяем кнопку СТОП
+                    if (worker.CancellationPending)
+                    {
+                        e.Cancel = true;
+                        return;
+                    }
+                    if ((DateTime.Now - dtStartWait).Milliseconds > WaitWorkTime)
+                    {
+                        worker.ReportProgress(101, "Не дождались сигнала \"РАБОТА\"...");
+                        e.Cancel = true;
+                        return;
+                    }
+                    Thread.Sleep(signalWaitCycleTime);
+                }
+                worker.ReportProgress(101, "Выставляем сигнал \"КОНТРОЛЬ\"...");
+                sl.set(sl["КОНТРОЛЬ"], true);
+                bool iBaseSet = false;
+                TubeStartTime = DateTime.Now;
+                timerStrob = new System.Threading.Timer(timerZoneCallback, null, 0, strobTime);
+                while (!worker.CancellationPending)
+                {
+                    double msEplaced = (DateTime.Now - TubeStartTime).TotalMilliseconds;
+                    percent = (int)(msEplaced * 100.0 / (double)MoveTubeTime);
+                    if (percent > 100)
+                    {
+                        timerStrob.Dispose();
+                        worker.ReportProgress(101, "Снимаем сигнал \"КОНТРОЛЬ\"");
+                        sl.set(sl["КОНТРОЛЬ"], false);
+                        while (!sl.get("РЕЗУЛЬТАТ")) Application.DoEvents();
+                        worker.ReportProgress(101, "Получили результат...");
+                        sl.set(sl["БАЗА"], false);
+                        worker.ReportProgress(101, "Снимаем сигнал \"БАЗА\"...");
+                        worker.ReportProgress(101, "Закончено...");
+                        break;
+                    }
+                    else
+                    {
+                        worker.ReportProgress(percent);
+                    }
+                    if ((DateTime.Now - TubeStartTime).TotalMilliseconds >= timeToBase && !iBaseSet)
+                    {
+                        worker.ReportProgress(101, "Доехали до базы...");
+                        sl.set(sl["БАЗА"], true);
+                        iBaseSet = true;
+                    }
+                    Thread.Sleep(500);
+                }
+                worker.ReportProgress(101, "Снимаем сигнал \"ЦИКЛ\"");
+                sl.set(sl["ЦИКЛ"], false);
+            }
         }
     }
 }

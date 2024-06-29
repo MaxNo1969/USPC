@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Drawing;
 using Settings;
+using Data;
 
 namespace USPC
 {
@@ -25,7 +26,9 @@ namespace USPC
         //! Цвет годной, хорошей трубы
         private static Color Good = Color.Green;
         //! Цвет неопределенного измерения
-        private static Color NotMeasured = Color.Gray;
+        //private static Color NotMeasured = Color.Gray;
+
+        private static Color NotMeasured = Color.White;
 
         //! Все пороги берем из текущего типоразмера
         //! Порог брака
@@ -45,6 +48,24 @@ namespace USPC
             }
         }
 
+        //! Минимальная толщина трубы для функции GetColor - берем из настроек
+        public static double minThickness
+        {
+            get
+            {
+                return Program.typeSize.currentTypeSize.minDetected;
+            }
+        }
+
+        //! Максимальная толщина трубы для функции GetColor - берем из настроек
+        public static double maxThickness
+        {
+            get
+            {
+                return Program.typeSize.currentTypeSize.maxDetected;
+            }
+        }
+
         //! Минимальный годный участок
         //public static int minGoodLength = 1;
         //! Решение по трубе (Брак, Годно, Класс 2)
@@ -56,24 +77,26 @@ namespace USPC
         //! Зона с минимальной толщиной
         public static int min_thickness_zone = -1;
 
-        //! Максимальная толщина трубы для функции GetColor - берем из настроек
-        public static double maxThickness
-        {
-            get
-            {
-                return Program.typeSize.currentTypeSize.maxDetected;
-            }
-        }
-
         //! Конструктор
         public DrawResults()
         {
         }
         //! Возвращает цвет измерения (зоны, датчика, смещения - чего угодно)
-        public static Color GetColor(double measure)
+        public static Color GetThicknessColor(double measure)
         {
             // возвращает цвет зоны в зависимости от толщины в этой зоне
-            if (measure >= maxThickness)
+            if (measure == Result.notMeasured)
+                return NotMeasured;
+            else if (measure > minThickness)
+                return Good;
+            else 
+                return Brack;
+        }
+        //! Возвращает цвет измерения (зоны, датчика, смещения - чего угодно)
+        public static Color GetDefectColor(double measure)
+        {
+            // возвращает цвет зоны в зависимости от толщины в этой зоне
+            if (measure == Result.notMeasured)
                 return NotMeasured;
             else if (measure > class2Treshold)
                 return Good;
@@ -81,42 +104,33 @@ namespace USPC
                 return Brack;
             else
                 return Class2;
-        }
-        //! Возвращает цвет измерения
-        //! Добавление нового метода для коррктного отображения в ViewTubeDetails
-        public static Color GetColor(double measure, th_status thCode)
-        {
-            // возвращает цвет зоны в зависимости от толщины в этой зоне
-            if (thCode != th_status.TH_OK)
-                return NotMeasured;
-            else if (measure > class2Treshold)
-                return Good;
-            else if (measure <= defectTreshold)
-                return Brack;
-            else
-                return Class2;
-        }
-        //! Принимает решение по всей трубе и вычисляет зоны отреза
-        public static void MakeDecision(List<double> thickness)
-        {
-            decision = "Годно";			// решение не принято
-            // ищем зону с минимальной значение толщины
-            double min = 10e7;
-            for (int i = 0; i < (int)thickness.Count; i++)
-            {
-                if (thickness[i] < min)
-                {
-                    min = thickness[i];
-                    min_thickness = thickness[i];
-                    min_thickness_zone = i + 1;
-                }
-            }
-            min_thickness = (double)System.Math.Round(min_thickness, -2);
         }
 
-        public static bool IsBrak(double measure)
+        //! Принимает решение по всей трубе и вычисляет зоны отреза
+        //public static void MakeDecision(List<double> thickness)
+        //{
+        //    decision = "Годно";			// решение не принято
+        //    // ищем зону с минимальной значение толщины
+        //    double min = 10e7;
+        //    for (int i = 0; i < (int)thickness.Count; i++)
+        //    {
+        //        if (thickness[i] < min)
+        //        {
+        //            min = thickness[i];
+        //            min_thickness = thickness[i];
+        //            min_thickness_zone = i + 1;
+        //        }
+        //    }
+        //    min_thickness = (double)System.Math.Round(min_thickness, -2);
+        //}
+
+        public static bool IsBrakDef(double measure)
         {
             return (measure <= defectTreshold);
+        }
+        public static bool IsBrakThick(double measure)
+        {
+            return (measure <= minThickness);
         }
     }
 }

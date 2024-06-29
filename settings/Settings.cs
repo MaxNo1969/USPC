@@ -1,5 +1,5 @@
 ﻿using PROTOCOL;
-using PCIE1730;
+using PCI1730;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -35,15 +35,41 @@ namespace Settings
         /// </summary>
         [Category("3.Оборудование")]
         public PCIE1730Settings pcie1730Settings { get; set; }
+        [DisplayName("InterruptFluidity"), Browsable(true), Description("InterruptFluidity"), Category("3.Оборудование")]
+        public int InterruptFluidity { get; set; }
+        [DisplayName("Размер буфера"), Browsable(true), Description("Размер буфера платы USPC"), Category("3.Оборудование")]
+        public int BufferSize { get; set; }
+        [DisplayName("Задержка чтения данных"), Browsable(true), Description("Задержка чтения данных с платы"), Category("3.Оборудование")]
+        public int BoardReadTimeout { get; set; }
+        [DisplayName("Задержка снятия строба"), Browsable(true), Description("Задержка снятия строба"), Category("3.Оборудование")]
+        public int StrobResetTimeout { get; set; }
+        /// <summary>
+        /// Настройки установки. Расстояние до базы. Для вычисления скорости
+        /// </summary>
+        [DisplayName("Расстояние до базы(мм):"), Browsable(true), Description("Расстояние до базы (мм)"), Category("4.Установка")]
+        public int distanceToBase { get; set; }
+        /// <summary>
+        /// Настройки установки. Скорость движения каретки
+        /// </summary>
+        [DisplayName("Скорость(м/с)"), Browsable(true), Description("Скорость движения каретки (м/с)"), Category("4.Установка")]
+        public double speed { get; set; }
 
         /// <summary>
-        /// Настройки установки. Скорость движения трубы
+        /// Настройки установки. Смещение блока датчиков (мм)
         /// </summary>
-        [Category("4.Установка")]
-        [DisplayName("Расстояние до базы(мм):"), Browsable(true), Description("Расстояние до базы (мм)")]
-        public int distanceToBase { get; set; }
-        [DisplayName("Скорость(м/с)"), Browsable(true), Description("Скорость движения трубы (м/с)")]
-        public double speed { get; set; }
+        [DisplayName("Смещение блока датчиков (мм)"), Browsable(true), Description("Смещение блока датчиков (мм)"), Category("4.Установка")]
+        public int offsetSensorsBlock { get; set; }
+
+        /// <summary>
+        /// Настройки установки. Смещение датчиков в блоке(мм)
+        /// </summary>
+        [DisplayName("Смещение датчиков в блоке(мм)"), Browsable(true), Description("Смещение датчиков в блоке(мм)"), Category("4.Установка")]
+        public int offsetSensors { get; set; }
+
+
+        [Category("5.Сервер")]
+        [DisplayName("Сервер:"), Browsable(true), Description("Адрес сервера USPC")]
+        public string serverAddr { get; set; }
 
         /// <summary>
         /// Текущий выбранный типоразмер
@@ -57,6 +83,9 @@ namespace Settings
         [DisplayName("Типоразмеры"), Browsable(true),Description("Настройка типоразмеров"), Category("2.Типоразмеры")]
         [TypeConverter(typeof(CollectionTypeConverter))]
         public List<_TypeSize> tss { get; private set; }
+        
+        
+        
         /// <summary>
         /// Признак изменения настроек
         /// </summary>
@@ -102,6 +131,7 @@ namespace Settings
                 //Обработка первого запуска - файл настроек ещё не записан
                 log.add(LogRecord.LogReason.info, "{0}: {1}: {2}", "Settings", System.Reflection.MethodBase.GetCurrentMethod().Name, "Первый запуск - файл настроек ещё не записан");
                 s = new Settings();
+                s.changed = true;
                 Settings.save(s);
                 return s;
             }

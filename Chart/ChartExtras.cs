@@ -59,14 +59,15 @@ namespace CHART
     static class ChartExtrasChart
     {
         
-        public static void putDataOnChart(this Chart chart, System.Array data)
+        public static void putDataOnChart(this Chart chart, System.Array data,bool _isThickness)
         {
             if (data == null) return;
             chart.Series[0].Points.Clear();
             for (int i = 0; i < data.Length; i++)
             {
-                var val = data.GetValue(i);
-                chart.Series[0].Points.AddXY(i, val);
+                double val = (double)data.GetValue(i);
+                int ind = chart.Series[0].Points.AddXY(i, val);
+                chart.Series[0].Points[ind].Color = (_isThickness) ? DrawResults.GetThicknessColor(val) : DrawResults.GetDefectColor(val);
             }
         }
 
@@ -111,15 +112,15 @@ namespace CHART
         //Для раскраски
     static class ChartExtrasColor
     {
-        public static void putColorDecision(this Chart chart, USPCData uspcData, int zone, int sensor)
-        {
-            if (chart.Series[0].Points == null || chart.Series[0].Points.Count == 0) return;
-            double[] res = uspcData.evalZone(zone, sensor);
-            for (int i = 0; i < chart.Series[0].Points.Count; i++)
-            {
-                chart.Series[0].Points[i].Color = DrawResults.GetColor(res[i]);
-            }
-        }
+        //public static void putColorDecision(this Chart chart, USPCData uspcData, int zone, int sensor)
+        //{
+        //    if (chart.Series[0].Points == null || chart.Series[0].Points.Count == 0) return;
+        //    double[] res = uspcData.evalZone(zone, sensor);
+        //    for (int i = 0; i < chart.Series[0].Points.Count; i++)
+        //    {
+        //        chart.Series[0].Points[i].Color = DrawResults.GetColor(res[i]);
+        //    }
+        //}
         /*
         public static void putColorDecision(this Chart chart, USPCData uspcData, int sensor)
         {
@@ -132,13 +133,13 @@ namespace CHART
         {
             if (chart.Series[0].Points == null || chart.Series[0].Points.Count == 0) return;
             for (int i = 0; i < chart.Series[0].Points.Count; i++)
-                chart.Series[0].Points[i].Color = DrawResults.GetColor(minTh[i]);
+                chart.Series[0].Points[i].Color = DrawResults.GetDefectColor(minTh[i]);
         }
         public static void putColorDecision(this Chart chart, USPCData uspcData)
         {
             if (chart.Series[0].Points == null || chart.Series[0].Points.Count == 0) return;
             for (int i = 0; i < chart.Series[0].Points.Count; i++)
-                chart.Series[0].Points[i].Color = DrawResults.GetColor(uspcData.minZoneThickness[i]);
+                chart.Series[0].Points[i].Color = DrawResults.GetDefectColor(uspcData.minZoneThickness[i]);
         }
     }
 }

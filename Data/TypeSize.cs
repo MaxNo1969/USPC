@@ -22,7 +22,7 @@ namespace Data
         [DisplayName(" 1.Наименование"), Description("Наименование типоразмера"), Category("1.Типоразмер")]
         public string name { get; set; }
         /// <summary>
-        /// Признак типа трубы НКТ или СБТ
+        /// Диаметр
         /// </summary>
         [DisplayName(" 2.Диаметр"), Description("Диаметр"), Category("1.Типоразмер")]
         public double diameter {get;set;}
@@ -42,12 +42,12 @@ namespace Data
         [DisplayName(" 5.Порог класса 2"), Description("Порог класса 2"), Category("2.Пороги")]
         public double class2Treshold { get; set; }
         /// <summary>
-        /// Порог класса 1 внутрений
+        /// Минимальная толщина
         /// </summary>
         [DisplayName(" 6.Минимальная толщина"), Description("Минимальная толщина"), Category("2.Пороги")]
         public double minDetected { get; set; }
         /// <summary>
-        /// Порог класса 2 внутрений
+        /// Максимальная толщина
         /// </summary>
         [DisplayName(" 7.Максимальная толщина"), Description("Максимальная толщина"), Category("2.Пороги")]
         public double maxDetected { get; set; }
@@ -61,6 +61,11 @@ namespace Data
         /// </summary>
         [DisplayName("10.Мервая зона в конце трубы"), Description("Мервая зона в конце трубы"), Category("3.Мертвые зоны")]
         public int deadZoneEnd { get; set; }
+        /// <summary>
+        /// Имя файла настроек
+        /// </summary>
+        [DisplayName("Имя файла настроек"), Description("Имя файла настроек"), Category("4.Настройки")]
+        public string configName { get; set; }
         /// <summary>
         /// Преобразование в строку для вывода в PropertyGrid
         /// </summary>
