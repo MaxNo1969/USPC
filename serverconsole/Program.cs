@@ -4,11 +4,14 @@ using System.Linq;
 using System.Text;
 using PROTOCOL;
 using System.IO;
+using serverconsole.Properties;
 
 namespace USPC
 {
     class Program
     {
+        public static string uspcDir = Settings.Default.UspcDir;
+        public static string configName = Settings.Default.ConfigName;
         public static Dictionary<string, string> cmdLineArgs = null;
         public static StreamWriter fileStream = null;
         private static void WriteLog()
@@ -44,6 +47,8 @@ namespace USPC
                 pcxus = new PCXUSEMUL();
             else
                 pcxus = new PCXUS();
+            log.add(LogRecord.LogReason.info, "{0}: {1}: Директория с файлами настроек: {2}", "Program", System.Reflection.MethodBase.GetCurrentMethod().Name, uspcDir);
+            log.add(LogRecord.LogReason.info, "{0}: {1}: Файл настроек: {2}", "Program", System.Reflection.MethodBase.GetCurrentMethod().Name, configName);
             log.add(LogRecord.LogReason.info, "Program started...");
             try
             {

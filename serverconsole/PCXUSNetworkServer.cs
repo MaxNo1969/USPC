@@ -8,6 +8,7 @@ using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Xml.Serialization;
+using serverconsole.Properties;
 
 namespace USPC
 {
@@ -105,9 +106,9 @@ namespace USPC
                         }
                     case "load":
                         {
-                            string configPath = @"c:\uspc.3\UT_files";
-                            string fName = (cmdAndParams.Count() > 1)?cmdAndParams[1]:"default.us";
-                            fName = configPath + "\\" + fName;
+                            
+                            string fName = (cmdAndParams.Count() > 1)?cmdAndParams[1]:Program.configName;
+                            fName = Program.uspcDir + "\\" + fName;
                             int board = (cmdAndParams.Count() > 2) ? ConvertToInt(cmdAndParams[2], -1) : -1;
                             int test = (cmdAndParams.Count() > 3) ? ConvertToInt(cmdAndParams[3], -1) : -1;
                             ret = (pcxus.load(fName, board, test)) ? 0 : (UInt32)pcxus.Err;
@@ -118,9 +119,8 @@ namespace USPC
                         
                     case "save":
                         {
-                            string configPath = @"c:\uspc.3\UT_files";
-                            string fName = (cmdAndParams.Count() > 1) ? cmdAndParams[1] : "default.us";
-                            fName = configPath + "\\" + fName;
+                            string fName = (cmdAndParams.Count() > 1) ? cmdAndParams[1] : Program.configName;
+                            fName = Program.uspcDir + "\\" + fName;
                             int board = (cmdAndParams.Count() > 2) ? ConvertToInt(cmdAndParams[2], -1) : -1;
                             int test = (cmdAndParams.Count() > 3) ? ConvertToInt(cmdAndParams[3], -1) : -1;
                             ret = (pcxus.save(fName, board, test)) ? 0 : (UInt32)pcxus.Err;
@@ -243,6 +243,32 @@ namespace USPC
                             ret = (pcxus.clear(board)) ? 0 : (UInt32)pcxus.Err;
                             _stream.Write(BitConverter.GetBytes(ret), 0, sizeof(UInt32));
                             _stream.Close();
+                            return;
+                        }
+                    case "uspcdir":
+                        {
+                            if (cmdAndParams.Length > 1)
+                            {
+                                Settings.Default.UspcDir = cmdAndParams[1];
+                                Settings.Default.Save();
+                                Program.uspcDir = cmdAndParams[1];
+                                ret = 0;
+                                _stream.Write(BitConverter.GetBytes(ret), 0, sizeof(UInt32));
+                                _stream.Close();
+                            }
+                            return;
+                        }
+                    case "configname":
+                        {
+                            if (cmdAndParams.Length > 1)
+                            {
+                                Settings.Default.ConfigName = cmdAndParams[1];
+                                Settings.Default.Save();
+                                Program.configName = cmdAndParams[1];
+                                ret = 0;
+                                _stream.Write(BitConverter.GetBytes(ret), 0, sizeof(UInt32));
+                                _stream.Close();
+                            }
                             return;
                         }
                     default:

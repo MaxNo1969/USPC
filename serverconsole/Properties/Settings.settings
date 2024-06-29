@@ -1,0 +1,12 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="serverconsole.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="UspcDir" Type="System.String" Scope="User">
+      <Value Profile="(Default)">c:\USPC.3\ut_files</Value>
+    </Setting>
+    <Setting Name="ConfigName" Type="System.String" Scope="User">
+      <Value Profile="(Default)">default.us</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>
