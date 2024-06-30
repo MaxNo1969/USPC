@@ -79,7 +79,7 @@ namespace USPC
             _c.Series[0].Points.Clear();
             for (int i = 0; i < _data.Length; i++)
             {
-                double val = (double)_data.GetValue(i);
+                double val = 100;// (double)_data.GetValue(i);
                 int ind = _c.Series[0].Points.AddXY(i, val);
                 _c.Series[0].Points[ind].Color = DrawResults.GetDefectColor(val);
             }

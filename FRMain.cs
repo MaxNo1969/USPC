@@ -549,7 +549,9 @@ namespace USPC
                         for(int i = 0;i<Program.data[0].currentOffsetFrames;i++)
                         {
                             AcqAscan scan = Program.data[0].ascanBuffer[i];
-                            s = string.Format("{0};{1};{2}",scan.Channel,scan.G1Amp,scan.G1Tof);
+                            uint tof = (scan.G1Tof & AcqAscan.TOF_MASK) * 5;
+                            double thick = USPCData.TofToMm(tof);
+                            s = string.Format("{0};{1};{2};{3}", scan.ScanCounter, scan.Channel, tof, thick);
                             writer.WriteLine(s);
                         }
                     }
@@ -561,7 +563,7 @@ namespace USPC
                         for (int i = 0; i < Program.data[1].currentOffsetFrames; i++)
                         {
                             AcqAscan scan = Program.data[1].ascanBuffer[i];
-                            s = string.Format("{0};{1};{2}", scan.Channel, scan.G1Amp, USPCData.TofToMm((int)scan.G1Tof));
+                            s = string.Format("{0};{1};{2}", scan.Channel, scan.ScanCounter, scan.G1Amp);
                             writer.WriteLine(s);
                         }
                     }

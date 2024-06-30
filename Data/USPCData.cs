@@ -53,19 +53,21 @@ namespace Data
             labels.Add(new BufferStamp(DateTime.Now,currentOffsetFrames));
         }
 
-        public static double TofToMm(int _tof)
+        public static double TofToMm(UInt32 _tof)
         {
-            return 2.5e-6 * _tof * Program.scopeVelocity;
+            //return 2.5e-6 * _tof * Program.scopeVelocity;
+            //нс * м/с
+            return _tof * Program.scopeVelocity *100*5 / 1000000000;
         }
 
         public static double TofToMm(AcqAscan _scan)
         {
-            return TofToMm((int)_scan.G1Tof);
+            return TofToMm(_scan.G1Tof*5);
         }
 
         public static uint MmToTof(double _mm)
         {
-            return (uint)(_mm / (2.5e-6 * Program.scopeVelocity));
+            return (uint)(_mm * 1000000000 / Program.scopeVelocity/100);
         }
 
         public double[] sensorThickness(int _sensor)

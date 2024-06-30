@@ -152,7 +152,7 @@ namespace Data
                     AcqAscan scan = data.ascanBuffer[data.offsets[data.currentOffsetZones - 1]+frameOffset];
                     int channel = scan.Channel;
                     double def = scan.G1Amp;
-                    double thick = 2.5e-6 * scan.G1Tof * Program.scopeVelocity;
+                    double thick = USPCData.TofToMm(scan.G1Tof*5);
                     //С первой платы получаем данные по толщинометрии
                     if (numBoard == 0)
                     {
@@ -173,13 +173,13 @@ namespace Data
                         if (channel < 4)
                         {
                             listSensors[channel + 4].Add(def);
-                            if (def < zoneSensorResults[zones][channel + 4]) zoneSensorResults[zones][channel + 4] = def;
+                            if (def > zoneSensorResults[zones][channel + 4]) zoneSensorResults[zones][channel + 4] = def;
                         }
                         //Поперечная дефектоскопия
                         else if (channel < 8)
                         {
                             listSensors[channel + 4].Add(def);
-                            if (def < zoneSensorResults[zones][channel + 4]) zoneSensorResults[zones][channel + 4] = def;
+                            if (def > zoneSensorResults[zones][channel + 4]) zoneSensorResults[zones][channel + 4] = def;
                         }
                         else
                         {
@@ -212,9 +212,9 @@ namespace Data
             {
                 zoneSensorResults[z] = new double[sensors];
                 for (int s = 0; s < 4; s++)
-                    zoneSensorResults[z][s] = notMeasured;
+                    zoneSensorResults[z][s] = 15;
                 for (int s = 4; s < 12; s++)
-                    zoneSensorResults[z][s] = notMeasured;
+                    zoneSensorResults[z][s] = 0;
                 zoneResults[z] = false;
             }
         }

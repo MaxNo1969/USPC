@@ -94,7 +94,7 @@ namespace USPC
                             {
                                 IFormatter formatter = new BinaryFormatter();
                                 AcqSatus status = (AcqSatus)formatter.Deserialize(stream);
-                                log.add(LogRecord.LogReason.debug, "{0}: {1}: command = \"{2}\", {3}, ", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, _func, ((ACQ_STATUS)status.status).ToString());
+                                //log.add(LogRecord.LogReason.debug, "{0}: {1}: command = \"{2}\", {3}, ", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, _func, ((ACQ_STATUS)status.status).ToString());
                                 ret = (Object)status;
                                 return result;
                             }

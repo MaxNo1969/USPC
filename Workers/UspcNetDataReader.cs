@@ -46,6 +46,7 @@ namespace USPC
 
         void worker_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
+            log.add(LogRecord.LogReason.debug,"{0}: {1}: {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, e.ProgressPercentage);
         }
 
         void worker_DoWork(object sender, DoWorkEventArgs e)
@@ -72,7 +73,7 @@ namespace USPC
             Program.pcxus.start(board);
             //Смещаем указатель буфера в начало
             Program.data[board].Start();
-
+            AcqAscan[] buffer = new AcqAscan[AppSettings.s.BufferSize];
             while (true)
             {
                 if (CancellationPending)
@@ -80,22 +81,13 @@ namespace USPC
                     e.Cancel = true;
                     return;
                 }
-                //Получим информацию о статусе
-                //int err = client.callNetworkFunction(string.Format("status,{0}", board), out retval);
-                //if (err != 0)
-                //{
-                //    log.add(LogRecord.LogReason.error, "PCXUS_ACQ_GET_STATUS return {0:8X}", err);
-                //    e.Cancel = true;
-                //    return;
-                //}
                 try
                 {
                     if (Program.pcxus.status(board, ref acqStatus.status, ref acqStatus.NumberOfScansAcquired, ref acqStatus.NumberOfScansRead, ref acqStatus.bufferSize, ref acqStatus.scanSize))
                     {
-                        Int32 NumberOfScans = client.callNetworkFunction(string.Format("read,{0}", board), out retval);
-                        if (retval != null)
-                        {
-                            AcqAscan[] buffer = (AcqAscan[])retval;
+                        if (acqStatus.status == (int)ACQ_STATUS.ACQ_RUNNING)
+                        {                            
+                            Int32 NumberOfScans = Program.pcxus.read(board, ref buffer);
                             if (dataAcquired != null) dataAcquired(NumberOfScans, buffer);
                             Array.Copy(buffer, 0, data.ascanBuffer, data.currentOffsetFrames, NumberOfScans);
                             data.labels.Add(new BufferStamp(DateTime.Now, data.currentOffsetFrames));
@@ -103,9 +95,7 @@ namespace USPC
                             ReportProgress(NumberOfScans, (object)buffer);
                         }
                         else
-                        {
-                            log.add(LogRecord.LogReason.error, "{0}: {1}: Error:{2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, "read не вернула пакет");
-                        }
+                            log.add(LogRecord.LogReason.info, "{0}: {1}: {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ((ACQ_STATUS)acqStatus.status).ToString());
                     }
                 }
                 catch (Exception ex)

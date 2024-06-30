@@ -96,14 +96,12 @@ namespace USPC
         public static Color GetDefectColor(double measure)
         {
             // возвращает цвет зоны в зависимости от толщины в этой зоне
-            if (measure == Result.notMeasured)
-                return NotMeasured;
-            else if (measure > class2Treshold)
-                return Good;
-            else if (measure <= defectTreshold)
+            if (measure > defectTreshold)
                 return Brack;
-            else
+            else if (measure > class2Treshold)
                 return Class2;
+            else
+                return Good;
         }
 
         //! Принимает решение по всей трубе и вычисляет зоны отреза
@@ -126,7 +124,7 @@ namespace USPC
 
         public static bool IsBrakDef(double measure)
         {
-            return (measure <= defectTreshold);
+            return (measure > defectTreshold);
         }
         public static bool IsBrakThick(double measure)
         {
