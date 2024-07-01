@@ -67,7 +67,7 @@ namespace CHART
             {
                 double val = (double)data.GetValue(i);
                 int ind = chart.Series[0].Points.AddXY(i, val);
-                chart.Series[0].Points[ind].Color = (_isThickness) ? DrawResults.GetThicknessColor(val) : DrawResults.GetThicknessColor(val);
+                chart.Series[0].Points[ind].Color = (_isThickness) ? DrawResults.GetThicknessColor(val) : DrawResults.GetDefectColor((int)val);
             }
         }
 
@@ -79,7 +79,7 @@ namespace CHART
             {
                 int val = (int)data.GetValue(i);
                 int ind = chart.Series[0].Points.AddXY(i, val);
-                chart.Series[0].Points[ind].Color = (_isThickness) ? DrawResults.GetThicknessColor(val) : DrawResults.GetDefectColor(val);
+                chart.Series[0].Points[ind].Color = (_isThickness) ? DrawResults.GetThicknessColor(val) : DrawResults.GetDefectColor((int)val);
             }
         }
 

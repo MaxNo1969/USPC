@@ -109,5 +109,26 @@ namespace USPC
             //Поскольку перекрываем всю поверхность то ничего не делаем        
         }
 
+        private void ch_Click(object sender, EventArgs e)
+        {
+            Chart c = sender as Chart;
+            int sensor = (int)c.Tag;
+            MouseEventArgs mea = e as MouseEventArgs;
+            HitTestResult htRes = c.HitTest(mea.X, mea.Y, ChartElementType.DataPoint);
+            int zone = htRes.PointIndex;
+            ListZones values = Program.result.values;
+            int count = values[zone][sensor].Count;
+            double[] data = new double[count];
+            for (int i = 0; i < count; i++)
+            {
+                data[i] = values[zone][sensor][i];
+            }
+            FRResultView frm = new FRResultView(Program.frMain);
+            if (sensor < 4)
+                frm.UpdateChart(data, true);
+            else
+                frm.UpdateChart(data, false);
+            frm.Show();
+        }
     }
 }

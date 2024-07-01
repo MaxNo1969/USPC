@@ -258,10 +258,7 @@ namespace USPC
                     _data[i].ScanCounter = scanCounter;
                     _data[i].PulserCounter = scanCounter;
                     scanCounter++;
-                    if (scanCounter == 6000)
-                        _data[i].G1Amp = 80;
-                    else
-                        _data[i].G1Amp = 0;
+                    _data[i].G1Amp = (byte)(50 + r.Next(20));
                     double val = 8 + (r.NextDouble() - 0.5) * 2;
                     uint G1Tof = (uint)(val / (2.5e-6 * scopeVelocity));
                     _data[i].G1Tof = G1Tof;

@@ -20,14 +20,20 @@ namespace USPC
             InitializeComponent();
             Owner = _form;
             setupResultChart();
-            UpdateChart();
         }
 
-        private void UpdateChart()
+        public void UpdateChart(double[] _data,bool _isThick)
         {
-            //double[] data = Program.data[0].minZoneThickness;
-            //chartResult.putDataOnChart(Program.data[0].minZoneThickness);
-            //chartResult.putColorDecision();
+            //chartResult.putDoubleDataOnChart(_data,_isThick);
+            chartResult.Series[0].Points.Clear();
+            double step = 200 / _data.Length;
+            for (int i = 0; i < _data.Length; i++)
+            {
+                double val = (double)_data.GetValue(i);
+                int ind = chartResult.Series[0].Points.AddXY(i*step, val);
+                chartResult.Series[0].Points[ind].Color = (_isThick) ? DrawResults.GetThicknessColor(val) : DrawResults.GetDefectColor((int)val);
+            }
+
         }
 
         /// <summary>
@@ -43,7 +49,7 @@ namespace USPC
             //chartResult.ChartAreas[0].InnerPlotPosition.Height = 100;
 
             chartResult.ChartAreas[0].AxisX.Minimum = 0;
-            chartResult.ChartAreas[0].AxisX.Maximum = USPCData.countZones;
+            chartResult.ChartAreas[0].AxisX.Maximum = 200;
             chartResult.ChartAreas[0].AxisX.Interval = 10;
             //chartResult.ChartAreas[0].AxisY.Minimum = 0;
             //chartResult.ChartAreas[0].AxisY.Maximum = Program.typeSize.maxDetected;

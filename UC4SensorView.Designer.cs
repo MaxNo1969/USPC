@@ -94,6 +94,7 @@
             this.ch4.Series.Add(series1);
             this.ch4.Size = new System.Drawing.Size(1012, 22);
             this.ch4.TabIndex = 4;
+            this.ch4.Click += new System.EventHandler(this.ch_Click);
             // 
             // ch3
             // 
@@ -115,6 +116,7 @@
             this.ch3.Series.Add(series2);
             this.ch3.Size = new System.Drawing.Size(1012, 20);
             this.ch3.TabIndex = 3;
+            this.ch3.Click += new System.EventHandler(this.ch_Click);
             // 
             // ch2
             // 
@@ -136,6 +138,7 @@
             this.ch2.Series.Add(series3);
             this.ch2.Size = new System.Drawing.Size(1012, 20);
             this.ch2.TabIndex = 2;
+            this.ch2.Click += new System.EventHandler(this.ch_Click);
             // 
             // ch1
             // 
@@ -166,6 +169,7 @@
             this.ch1.Series.Add(series4);
             this.ch1.Size = new System.Drawing.Size(1018, 26);
             this.ch1.TabIndex = 0;
+            this.ch1.Click += new System.EventHandler(this.ch_Click);
             // 
             // pInfo
             // 

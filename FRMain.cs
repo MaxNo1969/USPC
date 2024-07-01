@@ -130,12 +130,24 @@ namespace USPC
             cbInterrupt.Checked = AppSettings.s.bInterrupt;
 
             CrossView.lblName.Text = "Поперечный контроль";
+            CrossView.ch1.Tag = 8;
+            CrossView.ch2.Tag = 9;
+            CrossView.ch3.Tag = 10;
+            CrossView.ch4.Tag = 11;
             LinearView.lblName.Text = "Продольный контроль";
+            LinearView.ch1.Tag = 4;
+            LinearView.ch2.Tag = 5;
+            LinearView.ch3.Tag = 6;
+            LinearView.ch4.Tag = 7;
             ThickView.lblName.Text = "Котроль толщины";
             ThickView.ch1.ChartAreas["Default"].AxisY.Maximum = 12.0;
             ThickView.ch2.ChartAreas["Default"].AxisY.Maximum = 12.0;
             ThickView.ch3.ChartAreas["Default"].AxisY.Maximum = 12.0;
             ThickView.ch4.ChartAreas["Default"].AxisY.Maximum = 12.0;
+            ThickView.ch1.Tag = 0;
+            ThickView.ch2.Tag = 1;
+            ThickView.ch3.Tag = 2;
+            ThickView.ch4.Tag = 3;
             
             setSb("Info", "Для начала работы нажмите F5");
         }
