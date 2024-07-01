@@ -15,6 +15,8 @@ namespace USPC
 {
     public partial class FRResultView : Form
     {
+        public int zone;
+        public int sensor;
         public FRResultView(Form _form)
         {
             InitializeComponent();
@@ -22,18 +24,44 @@ namespace USPC
             setupResultChart();
         }
 
-        public void UpdateChart(double[] _data,bool _isThick)
+        public void UpdateChart(double[] _data, bool _isThick)
         {
-            //chartResult.putDoubleDataOnChart(_data,_isThick);
             chartResult.Series[0].Points.Clear();
             double step = 200 / _data.Length;
             for (int i = 0; i < _data.Length; i++)
             {
                 double val = (double)_data.GetValue(i);
-                int ind = chartResult.Series[0].Points.AddXY(i*step, val);
+                int ind = chartResult.Series[0].Points.AddXY(i * step, val);
                 chartResult.Series[0].Points[ind].Color = (_isThick) ? DrawResults.GetThicknessColor(val) : DrawResults.GetDefectColor((int)val);
             }
 
+        }
+
+        public void UpdateChart(int _zone,int _sensor)
+        {
+            ListZones values = Program.result.values;
+            int count = values[zone][sensor].Count;
+            double[] data = new double[count];
+            for (int i = 0; i < count; i++)
+            {
+                data[i] = values[zone][sensor][i];
+            }
+
+            if (sensor < 4)
+            {
+                Text = string.Format("Толщинометрия: Зона:{0} Датчик: {1}", zone, sensor);
+                UpdateChart(data, true);
+            }
+            else if (sensor < 8)
+            {
+                Text = string.Format("Продольная дефектоскопия: Зона:{0} Датчик: {1}", zone, sensor - 4);
+                UpdateChart(data, false);
+            }
+            else
+            {
+                Text = string.Format("Поперечная дефектоскопия: Зона:{0} Датчик: {1}", zone, sensor - 8);
+                UpdateChart(data, false);
+            }
         }
 
         /// <summary>
@@ -87,6 +115,101 @@ namespace USPC
         private void FRResultView_FormClosing(object sender, FormClosingEventArgs e)
         {
             FormPosSaver.save(this);
+        }
+
+        private void FRResultView_KeyDown(object sender, KeyEventArgs e)
+        {
+            switch (e.KeyCode)
+            {
+                case Keys.Right:
+                    {
+                        if (zone < Program.result.zones-1)
+                            zone++;
+                        else
+                            zone = 0;
+                        UpdateChart(zone, sensor);
+                        e.Handled = true;
+                        return;
+                    }
+                case Keys.Left:
+                    {
+                        if (zone > 0)
+                            zone--;
+                        else
+                            zone = Program.result.zones-1;
+                        UpdateChart(zone, sensor);
+                        e.Handled = true;
+                        return;
+                    }
+                case Keys.Up:
+                    {
+                        if (sensor > 0)
+                            sensor--;
+                        else
+                            sensor = Program.result.sensors - 1;
+                        UpdateChart(zone, sensor);
+                        e.Handled = true;
+                        return;
+                    }
+                case Keys.Down:
+                    {
+                        if (sensor < Program.result.sensors - 1)
+                            sensor++;
+                        else
+                            sensor = 0;
+                        UpdateChart(zone, sensor);
+                        e.Handled = true;
+                        return;
+                    }
+                default:
+                    break;
+            }
+        }
+
+        private void FRResultView_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
+        {
+            switch (e.KeyCode)
+            {
+                case Keys.Right:
+                    {
+                        if (zone < Program.result.zones - 1)
+                            zone++;
+                        else
+                            zone = 0;
+                        UpdateChart(zone, sensor);
+                        return;
+                    }
+                case Keys.Left:
+                    {
+                        if (zone > 0)
+                            zone--;
+                        else
+                            zone = Program.result.zones - 1;
+                        UpdateChart(zone, sensor);
+                        return;
+                    }
+                case Keys.Up:
+                    {
+                        if (sensor > 0)
+                            sensor--;
+                        else
+                            sensor = Program.result.sensors - 1;
+                        UpdateChart(zone, sensor);
+                        return;
+                    }
+                case Keys.Down:
+                    {
+                        if (sensor < Program.result.sensors - 1)
+                            sensor++;
+                        else
+                            sensor = 0;
+                        UpdateChart(zone, sensor);
+                        return;
+                    }
+                default:
+                    return;
+            }
+
         }
     }
 }

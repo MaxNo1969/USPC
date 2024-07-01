@@ -29,11 +29,11 @@ namespace USPC
             _c.Dock = DockStyle.Fill;
             //_c.Tag = i;
             var a = new ChartArea("Default");
-            a.InnerPlotPosition.Auto = false;
-            a.InnerPlotPosition.X = 0;
-            a.InnerPlotPosition.Y = 0;
-            a.InnerPlotPosition.Width = 100;
-            a.InnerPlotPosition.Height = 100;
+            //a.InnerPlotPosition.Auto = false;
+            //a.InnerPlotPosition.X = 0;
+            //a.InnerPlotPosition.Y = 0;
+            //a.InnerPlotPosition.Width = 100;
+            //a.InnerPlotPosition.Height = 100;
 
             //a.AxisY.Crossing = 0;
             a.AxisY.MajorTickMark.Enabled = false;
@@ -41,8 +41,8 @@ namespace USPC
             a.AxisX.Minimum = 0;
             a.AxisX.Maximum = USPCData.countZones;
             a.AxisX.Interval = 10;
-            a.AxisX.LabelStyle.Enabled = false;
-            a.AxisX.MajorGrid.Enabled = false;
+            a.AxisX.LabelStyle.Enabled = true;
+            a.AxisX.MajorGrid.Enabled = true;
             
             a.AxisY.Minimum = 0;
             //a.AxisY.Maximum = 100;
@@ -124,22 +124,9 @@ namespace USPC
                 data[i] = values[zone][sensor][i];
             }
             FRResultView frm = new FRResultView(Program.frMain);
-            if (sensor < 4)
-            {
-                frm.Text = string.Format("Толщинометрия: Зона:{0} Датчик: {1}", zone, sensor);
-                frm.UpdateChart(data, true);
-            }
-            else if(sensor<8)
-            {
-                frm.Text = string.Format("Продольная дефектоскопия: Зона:{0} Датчик: {1}", zone, sensor-4);
-                frm.UpdateChart(data, false);
-            }
-            else
-            {
-                frm.Text = string.Format("Поперечная дефектоскопия: Зона:{0} Датчик: {1}", zone, sensor-8);
-                frm.UpdateChart(data, false);
-            }
-
+            frm.sensor = sensor;
+            frm.zone = zone;
+            frm.UpdateChart(zone, sensor);
             frm.Show();
         }
     }
