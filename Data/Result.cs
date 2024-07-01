@@ -151,7 +151,8 @@ namespace Data
                     AcqAscan scan = data.ascanBuffer[data.offsets[data.currentOffsetZones - 1]+frameOffset];
                     int channel = scan.Channel;
                     double def = scan.G1Amp;
-                    double thick = USPCData.TofToMm(scan.G1Tof*5);
+                    uint tof = (scan.G1Tof & AcqAscan.TOF_MASK) * 5;
+                    double thick = USPCData.TofToMm(tof);
                     //С первой платы получаем данные по толщинометрии
                     if (numBoard == 0)
                     {
