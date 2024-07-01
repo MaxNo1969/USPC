@@ -21,6 +21,7 @@ namespace USPC
         {
             InitializeComponent();
             Owner = _form;
+            KeyPreview = true;
             setupResultChart();
         }
 
@@ -118,58 +119,9 @@ namespace USPC
             FormPosSaver.save(this);
         }
 
-        private void FRResultView_KeyDown(object sender, KeyEventArgs e)
+        protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
         {
-            switch (e.KeyCode)
-            {
-                case Keys.Right:
-                    {
-                        if (zone < Program.result.zones-1)
-                            zone++;
-                        else
-                            zone = 0;
-                        UpdateChart(zone, sensor);
-                        e.Handled = true;
-                        return;
-                    }
-                case Keys.Left:
-                    {
-                        if (zone > 0)
-                            zone--;
-                        else
-                            zone = Program.result.zones-1;
-                        UpdateChart(zone, sensor);
-                        e.Handled = true;
-                        return;
-                    }
-                case Keys.Up:
-                    {
-                        if (sensor > 0)
-                            sensor--;
-                        else
-                            sensor = Program.result.sensors - 1;
-                        UpdateChart(zone, sensor);
-                        e.Handled = true;
-                        return;
-                    }
-                case Keys.Down:
-                    {
-                        if (sensor < Program.result.sensors - 1)
-                            sensor++;
-                        else
-                            sensor = 0;
-                        UpdateChart(zone, sensor);
-                        e.Handled = true;
-                        return;
-                    }
-                default:
-                    break;
-            }
-        }
-
-        private void FRResultView_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
-        {
-            switch (e.KeyCode)
+            switch (keyData)
             {
                 case Keys.Right:
                     {
@@ -178,7 +130,7 @@ namespace USPC
                         else
                             zone = 0;
                         UpdateChart(zone, sensor);
-                        return;
+                        return true;
                     }
                 case Keys.Left:
                     {
@@ -187,7 +139,7 @@ namespace USPC
                         else
                             zone = Program.result.zones - 1;
                         UpdateChart(zone, sensor);
-                        return;
+                        return true;
                     }
                 case Keys.Up:
                     {
@@ -196,7 +148,7 @@ namespace USPC
                         else
                             sensor = Program.result.sensors - 1;
                         UpdateChart(zone, sensor);
-                        return;
+                        return true;
                     }
                 case Keys.Down:
                     {
@@ -205,12 +157,17 @@ namespace USPC
                         else
                             sensor = 0;
                         UpdateChart(zone, sensor);
-                        return;
+                        return true;
+                    }
+                case Keys.Escape:
+                    {
+                        Close();
+                        return true;
                     }
                 default:
-                    return;
+                    return base.ProcessCmdKey(ref msg, keyData);
             }
-
         }
+
     }
 }

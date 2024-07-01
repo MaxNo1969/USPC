@@ -16,7 +16,7 @@ namespace Data
     [Serializable]
     class USPCData
     {
-        public const int countZones = 300;
+        public const int countZones = 70;
         public const int countSensors = 12;
         public const int countFrames = 900000;
 

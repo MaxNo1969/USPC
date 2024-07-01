@@ -68,8 +68,6 @@
             this.Text = "Результат контроля";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FRResultView_FormClosing);
             this.Load += new System.EventHandler(this.FRResultView_Load);
-            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.FRResultView_KeyDown);
-            this.PreviewKeyDown += new System.Windows.Forms.PreviewKeyDownEventHandler(this.FRResultView_PreviewKeyDown);
             ((System.ComponentModel.ISupportInitialize)(this.chartResult)).EndInit();
             this.ResumeLayout(false);
 
