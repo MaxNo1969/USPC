@@ -26,6 +26,7 @@ namespace USPC
 
         public void UpdateChart(double[] _data, bool _isThick)
         {
+            if (_data == null || _data.Length == 0) return;
             chartResult.Series[0].Points.Clear();
             double step = 200 / _data.Length;
             for (int i = 0; i < _data.Length; i++)
