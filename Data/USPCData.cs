@@ -11,13 +11,6 @@ using System.Threading;
 namespace Data
 {
     /// <summary>
-    /// Срез по всем датчикам
-    /// </summary>
-    class Slice : List<double>
-    {
-        public Slice() : base() { }
-    }
-    /// <summary>
     /// Данные для сохранения трубы
     /// </summary>
     [Serializable]
@@ -191,18 +184,18 @@ namespace Data
 
         public bool saveAsync(string _fileName)
         {
-            System.Threading.WaitCallback callback = save;
-            ThreadPool.QueueUserWorkItem(save, (object)_fileName);
+            //System.Threading.WaitCallback callback = save;
+            //ThreadPool.QueueUserWorkItem(save, (object)_fileName);
             return true;
         }
 
-        public void save(Object obj)
+        public void save(Object obj, bool _bAppend)
         {
             string fileName = (string)obj;
             if (fileName == null) return;
             try
             {
-                using (FileStream stream = new FileStream(fileName, FileMode.Create))
+                using (FileStream stream = new FileStream(fileName, _bAppend ? FileMode.Append:FileMode.Create))
                 {
                     IFormatter formatter = new BinaryFormatter();
                     formatter.Serialize(stream, this);

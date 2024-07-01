@@ -70,8 +70,7 @@ namespace EMUL
         {
             if (worker == null || !worker.IsBusy) return;
             sl.set(sl["СТРОБ"], true);
-            while(!sl.get(sl["СТРБРЕЗ"]))Application.DoEvents();
-            worker.ReportProgress(101, string.Format("СТРОБ!"));
+            Thread.Sleep(200);
             sl.set(sl["СТРОБ"], false);
         }
 

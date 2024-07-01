@@ -31,6 +31,19 @@ namespace Settings
         [DisplayName("Размер зоны"), Browsable(true), Description("Размер зоны (мм)"), Category("1.Труба")]
         public int zoneSize { get; set; }
         /// <summary>
+        /// Текущий выбранный типоразмер
+        /// </summary>
+        [DisplayName("Выбранный типоразмер"), Browsable(true), Description("Текущий выбраный типоразмер"), Category("2.Типоразмеры")]
+        [TypeConverter(typeof(TypesizeTypeConverter))]
+        public string currenTypeSizeName { get; set; }
+        /// <summary>
+        /// Настройки типоразмеров
+        /// </summary>
+        [DisplayName("Типоразмеры"), Browsable(true), Description("Настройка типоразмеров"), Category("2.Типоразмеры")]
+        [TypeConverter(typeof(CollectionTypeConverter))]
+        public List<_TypeSize> tss { get; private set; }
+
+        /// <summary>
         /// Настройки для PCIE1730
         /// </summary>
         [Category("3.Оборудование")]
@@ -43,6 +56,12 @@ namespace Settings
         public int BoardReadTimeout { get; set; }
         [DisplayName("Задержка снятия строба"), Browsable(true), Description("Задержка снятия строба"), Category("3.Оборудование")]
         public int StrobResetTimeout { get; set; }
+        /// <summary>
+        /// Настройки установки. Расстояние до базы. Для вычисления скорости
+        /// </summary>
+        [DisplayName("Прерывание на просмотр"), Browsable(true), Description("Прерывание на просмотр"), Category("4.Установка")]
+        [TypeConverter(typeof(BooleanTypeConverter))]
+        public bool bInterrupt { get; set; }
         /// <summary>
         /// Настройки установки. Расстояние до базы. Для вычисления скорости
         /// </summary>
@@ -67,23 +86,9 @@ namespace Settings
         public int offsetSensors { get; set; }
 
 
-        [Category("5.Сервер")]
-        [DisplayName("Сервер:"), Browsable(true), Description("Адрес сервера USPC")]
+        [DisplayName("Сервер:"), Browsable(true), Description("Адрес сервера USPC"),Category("5.Сервер")]
         public string serverAddr { get; set; }
 
-        /// <summary>
-        /// Текущий выбранный типоразмер
-        /// </summary>
-        [DisplayName("Выбранный типоразмер"), Browsable(true), Description("Текущий выбраный типоразмер"), Category("2.Типоразмеры")]
-        [TypeConverter(typeof(TypesizeTypeConverter))]
-        public string currenTypeSizeName { get; set; }
-        /// <summary>
-        /// Настройки типоразмеров
-        /// </summary>
-        [DisplayName("Типоразмеры"), Browsable(true),Description("Настройка типоразмеров"), Category("2.Типоразмеры")]
-        [TypeConverter(typeof(CollectionTypeConverter))]
-        public List<_TypeSize> tss { get; private set; }
-        
         
         
         /// <summary>

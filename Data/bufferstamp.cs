@@ -5,6 +5,7 @@ using System.Text;
 
 namespace Data
 {
+    [Serializable]
     class BufferStamp
     {
         public DateTime timestamp { get; private set; }
@@ -15,6 +16,7 @@ namespace Data
             packet = _packet;
         }
     }
+    [Serializable]
     class TimeLabels : List<BufferStamp>
     {
     }

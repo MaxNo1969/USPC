@@ -51,9 +51,6 @@ namespace USPC
                     Program.result.addZone(currentOffsets);
                     log.add(LogRecord.LogReason.info, "{0}: {1}: CurrentOffsets = {2} {3}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, currentOffsets[0],currentOffsets[1]);
                     ReportProgress(Program.data[0].currentOffsetFrames * 100 / USPCData.countFrames);
-                    //Program.sl.set(Program.sl["СТРБРЕЗ"], true);
-                    //Thread.Sleep(100);
-                    //Program.sl.set(Program.sl["СТРБРЕЗ"], false);
                     Thread.Sleep(AppSettings.s.StrobResetTimeout);
                 }
             }

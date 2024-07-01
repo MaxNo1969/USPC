@@ -142,7 +142,6 @@ namespace Data
             for (int numBoard = 0; numBoard < Program.numBoards; numBoard++)
             {
                 USPCData data = Program.data[numBoard];
-                //int currentOffsetFrames = data.currentOffsetFrames;
                 int currentOffsetFrames = _offsets[numBoard];
                 data.currentOffsetZones++;                
                 data.offsets[data.currentOffsetZones] = currentOffsetFrames;

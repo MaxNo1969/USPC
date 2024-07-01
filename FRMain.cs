@@ -39,21 +39,7 @@ namespace USPC
         /// </summary>
         TubeWorker worker=null;
 
-        /// <summary>
-        ///Добавление новых зон
-        /// </summary>
-        //ZoneBackGroundWorker zoneAdder = null;
-
-        
-        /// <summary>
-        ///Время начала работы
-        /// </summary>
-        static DateTime startWorkTime;
-
-        /// <summary>
-        /// Признак прерывания на просмотр
-        /// </summary>
-        public bool bStopForView { get; private set; }
+        BackgroundWorker MainWorkWorker = new BackgroundWorker();
 
         public FRMain()
         {
@@ -61,12 +47,28 @@ namespace USPC
             InitializeComponent();
             WindowState = FormWindowState.Normal;
 
-            bStopForView = false;
-
-            // Рабочий поток
-            //worker = new MainWorker(this);
+            MainWorkWorker.WorkerReportsProgress = true;
+            MainWorkWorker.WorkerSupportsCancellation = true;
+            MainWorkWorker.DoWork += new DoWorkEventHandler(MainWorkWorker_DoWork);
+            MainWorkWorker.ProgressChanged += new ProgressChangedEventHandler(MainWorkWorker_ProgressChanged);
+            MainWorkWorker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(MainWorkWorker_RunWorkerCompleted);
 
             timerUpdUI.Start();
+        }
+
+        void MainWorkWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            throw new NotImplementedException();
+        }
+
+        void MainWorkWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)
+        {
+            throw new NotImplementedException();
+        }
+
+        void MainWorkWorker_DoWork(object sender, DoWorkEventArgs e)
+        {
+            throw new NotImplementedException();
         }
 
         #region Протокол и сигнвлы
@@ -125,6 +127,8 @@ namespace USPC
                 if (s == Program.typeSize.name) cbTypeSize.SelectedIndex = ind;
             }
 
+            cbInterrupt.Checked = AppSettings.s.bInterrupt;
+
             CrossView.lblName.Text = "Поперечный контроль";
             LinearView.lblName.Text = "Продольный контроль";
             ThickView.lblName.Text = "Котроль толщины";
@@ -162,7 +166,23 @@ namespace USPC
             tb.Refresh();
         }
 
-        //BackgroundWorker testWorker = null;
+        public void StartTubeWorker()
+        {
+            if (worker == null)
+            {
+                worker = new TubeWorker();
+                worker.zbWorker.ProgressChanged += new ProgressChangedEventHandler(zbWorker_ProgressChanged);
+            }
+            for (int board = 0; board < Program.numBoards; board++)
+                Program.data[board].Start();
+            Program.result.Clear();
+            ClearCharts();
+            worker.RunWorkerAsync();
+            setSb("Info", "Работа");
+            setStartStopMenu(false);
+
+        }
+        
         /// <summary>
         /// Запуск/остановка рабочего потока
         /// (В workThread вызывается из другого потока)
@@ -172,25 +192,11 @@ namespace USPC
             log.add(LogRecord.LogReason.debug, "{0}: {1}: {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, miStart.Text);
             if (miStart.Text == "Старт")
             {
-                startWorkTime = DateTime.UtcNow;
-                //Thread.Sleep(200);
-                if (worker == null)
-                {
-                    worker = new TubeWorker();
-                    worker.zbWorker.ProgressChanged += new ProgressChangedEventHandler(zbWorker_ProgressChanged);
-                    //worker.zoneThread.zoneAdded += new OnZoneAdded(zoneAdded);
-                }
-                for (int board = 0; board < Program.numBoards; board++)
-                    Program.data[board].Start();
-                Program.result.Clear();
-                ClearCharts();
-                worker.RunWorkerAsync();
-                setSb("Info", "Работа");
-                setStartStopMenu(false);
+                StartTubeWorker();
             }
             else
             {
-                //Приостановке снимаем сигнал "РАБОТА"
+                //При остановке снимаем сигнал "РАБОТА"
                 Program.sl["РАБОТА"].Val = false;
                 if (worker != null && worker.IsBusy)
                 {
@@ -354,32 +360,17 @@ namespace USPC
             sb.Items["speed"].Text = string.Format("{0,7:F5}", AppSettings.s.speed);
             sb.Items["dataSize"].Text = Program.data[0].currentOffsetFrames.ToString();
             //NotOpened, Opened, loaded, error
-            Color color;
-            switch(Program.boardState)
-            {
-                case BoardState.NotOpened:
-                    color = SystemColors.Control;
-                    break;
-                case BoardState.Opened:
-                    color = Color.Green;
-                    break;
-                case BoardState.Error:
-                    color = Color.Red;
-                    break;
-                default:
-                    color = SystemColors.Control;
-                    break;
-
-            }
-            if (Program.boardState == BoardState.NotOpened)
-                color = SystemColors.Control;
-            else
-            {
-                if (Program.pcxus.Err != (int)ErrorCode.PCXUS_NO_ERROR) color = Color.Red;
-                else
-                    color = Color.Green;
-            }
-            sb.Items["boardStateLabel"].BackColor = color;
+            /*
+            int status = (int)ACQ_STATUS.ACQ_NO_CONFIGURED;
+            int NumberOfScansAcquired = 0;
+            int NumberOfScansRead = 0;
+            int BufferSize = 0;
+            int ScanSize =0;
+            Program.pcxus.status(0, ref status, ref NumberOfScansAcquired, ref NumberOfScansRead, ref BufferSize, ref ScanSize);
+            string s = ((ACQ_STATUS)status).ToString();
+            sb.Items["boardStateLabel"].Text = s;
+            //sb.Items["boardStateLabel"].BackColor = color;
+            */ 
 
         }
 
@@ -452,12 +443,6 @@ namespace USPC
             FRTestAcqNet frm = new FRTestAcqNet(this);
             frm.Show();
         }
-
-        private void testChartToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            FRResultView frm = new FRResultView(this);
-            frm.Show();
-        }
         #region Обработчики меню
         public struct WorkerArgs
         {
@@ -520,58 +505,23 @@ namespace USPC
         private void saveToolStripMenuItem_Click(object sender, EventArgs e)
         {
             SaveFileDialog sfd = new SaveFileDialog();
-            //sfd.Filter = "Файлы данных (*.bintube)|*.bintube|Все файлы (*.*)|*.*";
-            sfd.Filter = "Файлы CSV (*.csv)|*.scv|Все файлы (*.*)|*.*";
+            sfd.Filter = "Файлы данных (*.bintube)|*.bintube|Все файлы (*.*)|*.*";
             if (sfd.ShowDialog() == DialogResult.OK)
             {
-                //try
-                //{
-                //    BackgroundWorker w = new BackgroundWorker();
-                //    w.WorkerReportsProgress = true;
-                //    w.WorkerSupportsCancellation = true;
-                //    w.DoWork += new DoWorkEventHandler(w_DoWork);
-                //    w.RunWorkerCompleted += new RunWorkerCompletedEventHandler(w_RunWorkerCompleted);
-                //    w.ProgressChanged += new ProgressChangedEventHandler(w_ProgressChanged);
-                //    pb.Visible = true;
-                //    w.RunWorkerAsync(new WorkerArgs("Сохранение", sfd.FileName));
-                //}
-                //catch (Exception ex)
-                //{
-                //    MessageBox.Show(ex.Message);
-                //}
                 try
                 {
-                    sfd.FileName = "1.csv";
-                    using (StreamWriter writer = new StreamWriter(sfd.FileName))
-                    {
-                        string s;
-                        
-                        for(int i = 0;i<Program.data[0].currentOffsetFrames;i++)
-                        {
-                            AcqAscan scan = Program.data[0].ascanBuffer[i];
-                            uint tof = (scan.G1Tof & AcqAscan.TOF_MASK) * 5;
-                            double thick = USPCData.TofToMm(tof);
-                            s = string.Format("{0};{1};{2};{3}", scan.ScanCounter, scan.Channel, tof, thick);
-                            writer.WriteLine(s);
-                        }
-                    }
-                    sfd.FileName = "2.csv";
-                    using (StreamWriter writer = new StreamWriter(sfd.FileName))
-                    {
-                        string s;
-
-                        for (int i = 0; i < Program.data[1].currentOffsetFrames; i++)
-                        {
-                            AcqAscan scan = Program.data[1].ascanBuffer[i];
-                            s = string.Format("{0};{1};{2}", scan.Channel, scan.ScanCounter, scan.G1Amp);
-                            writer.WriteLine(s);
-                        }
-                    }
+                    BackgroundWorker w = new BackgroundWorker();
+                    w.WorkerReportsProgress = true;
+                    w.WorkerSupportsCancellation = true;
+                    w.DoWork += new DoWorkEventHandler(w_DoWork);
+                    w.RunWorkerCompleted += new RunWorkerCompletedEventHandler(w_RunWorkerCompleted);
+                    w.ProgressChanged += new ProgressChangedEventHandler(w_ProgressChanged);
+                    pb.Visible = true;
+                    w.RunWorkerAsync(new WorkerArgs("Сохранение", sfd.FileName));
                 }
                 catch (Exception ex)
                 {
-                    log.add(LogRecord.LogReason.error, "{0}: {1}: Error: {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message);
-                    return;
+                    MessageBox.Show(ex.Message);
                 }
             }
         }
@@ -587,7 +537,7 @@ namespace USPC
         void w_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             BackgroundWorker w = (BackgroundWorker)sender;
-            pb.Visible = false;
+            //pb.Visible = false;
         }
 
         void w_DoWork(object sender, DoWorkEventArgs e)
@@ -600,7 +550,8 @@ namespace USPC
                     //USPCData.load(args.fileName);
                     break;
                 case "Сохранение":
-                    //Program.data.save((Object)args.fileName);
+                    Program.data[0].save((Object)args.fileName,false);
+                    Program.data[1].save((Object)args.fileName, true);
                     break;
                 case "Генерация":
                     DataGenerator.GenerateThicknessData(16,0,USPCData.countFrames,w);
@@ -621,6 +572,53 @@ namespace USPC
         private void btnStart_Click(object sender, EventArgs e)
         {
             startStop();
+        }
+
+        private void cbInterrupt_CheckedChanged(object sender, EventArgs e)
+        {
+            CheckBox cb = (CheckBox)sender;
+            AppSettings.s.bInterrupt = cb.Checked;
+            AppSettings.s.changed = true;
+            Settings.Settings.save(AppSettings.s);
+        }
+
+        private void menuSaveScanData_ItemClick(object sender, EventArgs e)
+        {
+            try
+            {
+                string FileName;
+                FileName = "1.csv";
+                using (StreamWriter writer = new StreamWriter(FileName))
+                {
+                    string s;
+
+                    for (int i = 0; i < Program.data[0].currentOffsetFrames; i++)
+                    {
+                        AcqAscan scan = Program.data[0].ascanBuffer[i];
+                        uint tof = (scan.G1Tof & AcqAscan.TOF_MASK) * 5;
+                        double thick = USPCData.TofToMm(tof);
+                        s = string.Format("{0};{1};{2};{3}", scan.ScanCounter, scan.Channel, tof, thick);
+                        writer.WriteLine(s);
+                    }
+                }
+                FileName = "2.csv";
+                using (StreamWriter writer = new StreamWriter(FileName))
+                {
+                    string s;
+
+                    for (int i = 0; i < Program.data[1].currentOffsetFrames; i++)
+                    {
+                        AcqAscan scan = Program.data[1].ascanBuffer[i];
+                        s = string.Format("{0};{1};{2}", scan.Channel, scan.ScanCounter, scan.G1Amp);
+                        writer.WriteLine(s);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                log.add(LogRecord.LogReason.error, "{0}: {1}: Error: {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message);
+                return;
+            }
         }
     }
 }

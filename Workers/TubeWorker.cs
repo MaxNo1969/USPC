@@ -289,8 +289,9 @@ namespace USPC
                             //Перестаём контролировать цикл
                             controlCycle = false;
                             //По окончании сбора, обработки и передачи результата. 
-                            Program.sl["РЕЗУЛЬТАТ"].Val = Program.result.GetTubeResult();
                             Program.sl["РАБОТА"].Val = false;
+                            Program.sl["РЕЗУЛЬТАТ"].Val = Program.result.GetTubeResult();
+                            Thread.Sleep(500);
                             Program.sl["СТРБРЕЗ"].Val = true;
 
                             Program.sl["РЕЗУЛЬТАТ"].Val = true;
