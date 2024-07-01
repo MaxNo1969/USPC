@@ -73,24 +73,24 @@ namespace USPC
             };
             _c.Series.Add(ser);
         }
-        public static void PutDefDataOnChart(Chart _c,Array _data)
+        public static void PutDefDataOnChart(Chart _c,double[] _data)
         {
             if (_data == null) return;
             _c.Series[0].Points.Clear();
             for (int i = 0; i < _data.Length; i++)
             {
-                double val = 100;// (double)_data.GetValue(i);
-                int ind = _c.Series[0].Points.AddXY(i, val);
+                int ind = _c.Series[0].Points.AddXY(i, 100);
+                int val = (int)_data[i];
                 _c.Series[0].Points[ind].Color = DrawResults.GetDefectColor(val);
             }
         }
-        public static void PutThickDataOnChart(Chart _c, Array _data)
+        public static void PutThickDataOnChart(Chart _c, double[] _data)
         {
             if (_data == null) return;
             _c.Series[0].Points.Clear();
             for (int i = 0; i < _data.Length; i++)
             {
-                double val = (double)_data.GetValue(i);
+                double val = _data[i];
                 int ind = _c.Series[0].Points.AddXY(i, val);
                 _c.Series[0].Points[ind].Color = DrawResults.GetThicknessColor(val);
             }

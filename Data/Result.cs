@@ -173,13 +173,13 @@ namespace Data
                         if (channel < 4)
                         {
                             listSensors[channel + 4].Add(def);
-                            if (def > zoneSensorResults[zones][channel + 4]) zoneSensorResults[zones][channel + 4] = def;
+                            if (zoneSensorResults[zones][channel + 4]==notMeasured || def > zoneSensorResults[zones][channel + 4]) zoneSensorResults[zones][channel + 4] = def;
                         }
                         //Поперечная дефектоскопия
                         else if (channel < 8)
                         {
                             listSensors[channel + 4].Add(def);
-                            if (def > zoneSensorResults[zones][channel + 4]) zoneSensorResults[zones][channel + 4] = def;
+                            if (zoneSensorResults[zones][channel + 4] == notMeasured || def > zoneSensorResults[zones][channel + 4]) zoneSensorResults[zones][channel + 4] = def;
                         }
                         else
                         {
@@ -212,9 +212,9 @@ namespace Data
             {
                 zoneSensorResults[z] = new double[sensors];
                 for (int s = 0; s < 4; s++)
-                    zoneSensorResults[z][s] = 15;
+                    zoneSensorResults[z][s] = notMeasured;
                 for (int s = 4; s < 12; s++)
-                    zoneSensorResults[z][s] = 0;
+                    zoneSensorResults[z][s] = notMeasured;
                 zoneResults[z] = false;
             }
         }
@@ -232,6 +232,11 @@ namespace Data
             ClearZoneSensorResult();
         }
 
+
+        internal bool GetTubeResult()
+        {
+            return true;
+        }
     }
 
 }

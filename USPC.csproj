@@ -198,6 +198,7 @@
     <Compile Include="Workers\ZoneBackGroundWorker.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="ZoneThread.cs" />
     <EmbeddedResource Include="Emul\FREmul.resx">
       <DependentUpon>FREmul.cs</DependentUpon>
     </EmbeddedResource>

@@ -93,10 +93,12 @@ namespace USPC
                 return Brack;
         }
         //! Возвращает цвет измерения (зоны, датчика, смещения - чего угодно)
-        public static Color GetDefectColor(double measure)
+        public static Color GetDefectColor(int measure)
         {
             // возвращает цвет зоны в зависимости от толщины в этой зоне
-            if (measure > defectTreshold)
+            if (measure == Result.notMeasured)
+                return NotMeasured;
+            else if (measure > defectTreshold)
                 return Brack;
             else if (measure > class2Treshold)
                 return Class2;
