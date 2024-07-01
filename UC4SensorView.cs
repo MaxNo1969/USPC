@@ -125,9 +125,21 @@ namespace USPC
             }
             FRResultView frm = new FRResultView(Program.frMain);
             if (sensor < 4)
+            {
+                frm.Text = string.Format("Толщинометрия: Зона:{0} Датчик: {1}", zone, sensor);
                 frm.UpdateChart(data, true);
-            else
+            }
+            else if(sensor<8)
+            {
+                frm.Text = string.Format("Продольная дефектоскопия: Зона:{0} Датчик: {1}", zone, sensor-4);
                 frm.UpdateChart(data, false);
+            }
+            else
+            {
+                frm.Text = string.Format("Поперечная дефектоскопия: Зона:{0} Датчик: {1}", zone, sensor-8);
+                frm.UpdateChart(data, false);
+            }
+
             frm.Show();
         }
     }
