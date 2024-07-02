@@ -132,6 +132,7 @@
             this.ch2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.ch2.Location = new System.Drawing.Point(6, 64);
             this.ch2.Name = "ch2";
+            series3.BorderColor = System.Drawing.Color.Black;
             series3.ChartArea = "Default";
             series3.IsVisibleInLegend = false;
             series3.Name = "ser";
@@ -162,6 +163,7 @@
             this.ch1.Location = new System.Drawing.Point(3, 32);
             this.ch1.Margin = new System.Windows.Forms.Padding(0);
             this.ch1.Name = "ch1";
+            series4.BorderColor = System.Drawing.Color.Black;
             series4.ChartArea = "Default";
             series4.IsVisibleInLegend = false;
             series4.Name = "ser";

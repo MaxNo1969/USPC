@@ -9,29 +9,21 @@ using Data;
 namespace USPC
 {
     //------------------------------------------------------------------------------
-    //! Перечисление всех возможных признаков достоврености измерения
-    public enum th_status
-    {
-        TH_OK = 0,	// толщина стенки определена
-        TH_NOT_CALCED = 10     //Не расчитано
-    };
-
-    
     class DrawResults
     {
-        //! Цвет барака
+        // Цвет барака
         private static Color Brack = Color.Red;
-        //! Цвет второго класса
+        // Цвет второго класса
         private static Color Class2 = Color.Yellow;
-        //! Цвет годной, хорошей трубы
+        // Цвет годной, хорошей трубы
         private static Color Good = Color.Green;
-        //! Цвет неопределенного измерения
-        //private static Color NotMeasured = Color.Gray;
-
+        // Мертвая зона
+        private static Color Dead = Color.DarkGray;
+        // Цвет неопределенного измерения
         private static Color NotMeasured = Color.White;
 
-        //! Все пороги берем из текущего типоразмера
-        //! Порог брака
+        // Все пороги берем из текущего типоразмера
+        // Порог брака
         public static double defectTreshold
         {
             get
@@ -85,7 +77,9 @@ namespace USPC
         public static Color GetThicknessColor(double measure)
         {
             // возвращает цвет зоны в зависимости от толщины в этой зоне
-            if (measure == Result.notMeasured)
+            if (measure == Result.deadZone)
+                return Dead;
+            else if (measure == Result.notMeasured)
                 return NotMeasured;
             else if (measure > minThickness)
                 return Good;
@@ -96,7 +90,9 @@ namespace USPC
         public static Color GetDefectColor(int measure)
         {
             // возвращает цвет зоны в зависимости от толщины в этой зоне
-            if (measure == Result.notMeasured)
+            if (measure == Result.deadZone)
+                return Dead;
+            else if (measure == Result.notMeasured)
                 return NotMeasured;
             else if (measure > defectTreshold)
                 return Brack;
@@ -105,24 +101,6 @@ namespace USPC
             else
                 return Good;
         }
-
-        //! Принимает решение по всей трубе и вычисляет зоны отреза
-        //public static void MakeDecision(List<double> thickness)
-        //{
-        //    decision = "Годно";			// решение не принято
-        //    // ищем зону с минимальной значение толщины
-        //    double min = 10e7;
-        //    for (int i = 0; i < (int)thickness.Count; i++)
-        //    {
-        //        if (thickness[i] < min)
-        //        {
-        //            min = thickness[i];
-        //            min_thickness = thickness[i];
-        //            min_thickness_zone = i + 1;
-        //        }
-        //    }
-        //    min_thickness = (double)System.Math.Round(min_thickness, -2);
-        //}
 
         public static bool IsBrakDef(double measure)
         {

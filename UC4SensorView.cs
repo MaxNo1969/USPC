@@ -68,8 +68,11 @@ namespace USPC
                 Color = Color.ForestGreen,
                 IsVisibleInLegend = false,
                 IsXValueIndexed = false,
+                BorderColor = Color.Black,
+                BorderWidth = 1,
                 ChartType = SeriesChartType.Column,
-                CustomProperties = "DrawingStyle=Emboss, PointWidth=1"
+                //CustomProperties = "DrawingStyle=Emboss, PointWidth=1"                
+                CustomProperties = "PointWidth=1"                
             };
             _c.Series.Add(ser);
         }
@@ -127,7 +130,7 @@ namespace USPC
             FRZoneView frm = new FRZoneView(Program.frMain);
             frm.sensor = sensor;
             frm.zone = zone;
-            frm.UpdateChart(zone, sensor);
+            frm.UpdateChart(zone, sensor, Program.result.zonesLengths[zone]);
             frm.Show();
         }
     }

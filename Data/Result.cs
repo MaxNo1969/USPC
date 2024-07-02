@@ -130,8 +130,56 @@ namespace Data
         public ListZones values = new ListZones();
         //Итоги в разрезе зона/датчик
         public double[][] zoneSensorResults;
+        public List<int> zonesLengths = new List<int>();
         //Итоги по зоне
         public bool[] zoneResults;
+        public void addDeadZoneStart()
+        {
+            int numberOfScans = 100;
+            ListSensors listSensors = new ListSensors();
+            for (int sens = 0; sens < sensors; sens++)
+            {
+                listSensors.Add(new ListValues());
+            }
+            for (int numBoard = 0; numBoard < Program.numBoards; numBoard++)
+            {
+                for (int channel = 0; channel < sensors; channel++)
+                {
+                    
+                    for(int i =0;i<numberOfScans;i++)
+                        listSensors[channel].Add(Result.deadZone);
+                    zoneSensorResults[zones][channel] = Result.deadZone;
+                }
+            }
+            zones++;
+            zonesLengths.Add(Program.typeSize.currentTypeSize.deadZoneStart);
+            values.Add(listSensors);
+            Program.frMain.zbWorker_ProgressChanged(null, null);
+        }
+        public void addDeadZoneEnd()
+        {
+            int numberOfScans = 100;
+            ListSensors listSensors = new ListSensors();
+            for (int sens = 0; sens < sensors; sens++)
+            {
+                listSensors.Add(new ListValues());
+            }
+            for (int numBoard = 0; numBoard < Program.numBoards; numBoard++)
+            {
+                for (int channel = 0; channel < sensors; channel++)
+                {
+
+                    for (int i = 0; i < numberOfScans; i++)
+                        listSensors[channel].Add(Result.deadZone);
+                    zoneSensorResults[zones][channel] = Result.deadZone;
+                }
+            }
+            zones++;
+            zonesLengths.Add(Program.typeSize.currentTypeSize.deadZoneEnd);
+            values.Add(listSensors);
+            Program.frMain.zbWorker_ProgressChanged(null, null);
+        }
+
         public void addZone(int[] _offsets)
         {
             ListSensors listSensors = new ListSensors();
@@ -201,11 +249,13 @@ namespace Data
                 }
             }
             zones++;
+            zonesLengths.Add(AppSettings.s.zoneSize);
             values.Add(listSensors);
             log.add(LogRecord.LogReason.debug, "{0}: {1}: {2} {3}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, "Добавлена зона", zones);
         }
 
         public const int notMeasured = 101;
+        public const int deadZone = 102;
         public void ClearZoneSensorResult()
         {
             for (int z = 0; z < USPCData.countZones; z++)

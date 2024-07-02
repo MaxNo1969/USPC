@@ -44,7 +44,6 @@
             this.openToolStreepMenuItemClick = new System.Windows.Forms.ToolStripMenuItem();
             this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuSaveScanData = new System.Windows.Forms.ToolStripMenuItem();
-            this.genToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.miTest = new System.Windows.Forms.ToolStripMenuItem();
             this.miTestUSPCAscan = new System.Windows.Forms.ToolStripMenuItem();
             this.tCPServerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -74,11 +73,15 @@
             this.cbTypeSize = new System.Windows.Forms.ToolStripComboBox();
             this.btnStart = new System.Windows.Forms.ToolStripButton();
             this.lay = new System.Windows.Forms.TableLayoutPanel();
-            this.ResultChart = new System.Windows.Forms.DataVisualization.Charting.Chart();
-            this.cbInterrupt = new System.Windows.Forms.CheckBox();
             this.ThickView = new USPC.UC4SensorView();
             this.LinearView = new USPC.UC4SensorView();
             this.CrossView = new USPC.UC4SensorView();
+            this.ResultChart = new System.Windows.Forms.DataVisualization.Charting.Chart();
+            this.cbInterrupt = new System.Windows.Forms.CheckBox();
+            this.toolStripMenuItem3 = new System.Windows.Forms.ToolStripSeparator();
+            this.loadResultToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.saveResultToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem4 = new System.Windows.Forms.ToolStripSeparator();
             boardStateLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.menu.SuspendLayout();
             this.sb.SuspendLayout();
@@ -166,39 +169,35 @@
             this.miView.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.openToolStreepMenuItemClick,
             this.saveToolStripMenuItem,
-            this.menuSaveScanData,
-            this.genToolStripMenuItem});
+            this.toolStripMenuItem3,
+            this.loadResultToolStripMenuItem,
+            this.saveResultToolStripMenuItem,
+            this.toolStripMenuItem4,
+            this.menuSaveScanData});
             this.miView.Name = "miView";
-            this.miView.Size = new System.Drawing.Size(76, 20);
-            this.miView.Text = "Просмотр";
+            this.miView.Size = new System.Drawing.Size(51, 20);
+            this.miView.Text = "Труба";
             // 
             // openToolStreepMenuItemClick
             // 
             this.openToolStreepMenuItemClick.Name = "openToolStreepMenuItemClick";
-            this.openToolStreepMenuItemClick.Size = new System.Drawing.Size(175, 22);
-            this.openToolStreepMenuItemClick.Text = "Загрузить файл";
+            this.openToolStreepMenuItemClick.Size = new System.Drawing.Size(230, 22);
+            this.openToolStreepMenuItemClick.Text = "Загрузить данные";
             this.openToolStreepMenuItemClick.Click += new System.EventHandler(this.openToolStripMenuItem_Click);
             // 
             // saveToolStripMenuItem
             // 
             this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
-            this.saveToolStripMenuItem.Size = new System.Drawing.Size(175, 22);
-            this.saveToolStripMenuItem.Text = "Выгрузить файл";
+            this.saveToolStripMenuItem.Size = new System.Drawing.Size(230, 22);
+            this.saveToolStripMenuItem.Text = "Выгрузить данные";
             this.saveToolStripMenuItem.Click += new System.EventHandler(this.saveToolStripMenuItem_Click);
             // 
             // menuSaveScanData
             // 
             this.menuSaveScanData.Name = "menuSaveScanData";
-            this.menuSaveScanData.Size = new System.Drawing.Size(175, 22);
-            this.menuSaveScanData.Text = "Выгрузить данные";
+            this.menuSaveScanData.Size = new System.Drawing.Size(230, 22);
+            this.menuSaveScanData.Text = "Выгрузить результат захвата";
             this.menuSaveScanData.Click += new System.EventHandler(this.menuSaveScanData_ItemClick);
-            // 
-            // genToolStripMenuItem
-            // 
-            this.genToolStripMenuItem.Name = "genToolStripMenuItem";
-            this.genToolStripMenuItem.Size = new System.Drawing.Size(175, 22);
-            this.genToolStripMenuItem.Text = "Генерировать";
-            this.genToolStripMenuItem.Click += new System.EventHandler(this.genToolStripMenuItem_Click);
             // 
             // miTest
             // 
@@ -415,7 +414,7 @@
             this.cbTypeSize.AutoSize = false;
             this.cbTypeSize.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbTypeSize.Name = "cbTypeSize";
-            this.cbTypeSize.Size = new System.Drawing.Size(120, 30);
+            this.cbTypeSize.Size = new System.Drawing.Size(120, 23);
             this.cbTypeSize.SelectedIndexChanged += new System.EventHandler(this.cbTypeSize_SelectedIndexChanged);
             // 
             // btnStart
@@ -450,6 +449,30 @@
             this.lay.Size = new System.Drawing.Size(1218, 507);
             this.lay.TabIndex = 5;
             // 
+            // ThickView
+            // 
+            this.ThickView.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.ThickView.Location = new System.Drawing.Point(6, 306);
+            this.ThickView.Name = "ThickView";
+            this.ThickView.Size = new System.Drawing.Size(1206, 141);
+            this.ThickView.TabIndex = 2;
+            // 
+            // LinearView
+            // 
+            this.LinearView.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.LinearView.Location = new System.Drawing.Point(6, 156);
+            this.LinearView.Name = "LinearView";
+            this.LinearView.Size = new System.Drawing.Size(1206, 141);
+            this.LinearView.TabIndex = 1;
+            // 
+            // CrossView
+            // 
+            this.CrossView.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.CrossView.Location = new System.Drawing.Point(6, 6);
+            this.CrossView.Name = "CrossView";
+            this.CrossView.Size = new System.Drawing.Size(1206, 141);
+            this.CrossView.TabIndex = 0;
+            // 
             // ResultChart
             // 
             chartArea1.AxisY.LabelStyle.Enabled = false;
@@ -475,29 +498,27 @@
             this.cbInterrupt.UseVisualStyleBackColor = true;
             this.cbInterrupt.CheckedChanged += new System.EventHandler(this.cbInterrupt_CheckedChanged);
             // 
-            // ThickView
+            // toolStripMenuItem3
             // 
-            this.ThickView.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.ThickView.Location = new System.Drawing.Point(6, 306);
-            this.ThickView.Name = "ThickView";
-            this.ThickView.Size = new System.Drawing.Size(1206, 141);
-            this.ThickView.TabIndex = 2;
+            this.toolStripMenuItem3.Name = "toolStripMenuItem3";
+            this.toolStripMenuItem3.Size = new System.Drawing.Size(227, 6);
             // 
-            // LinearView
+            // loadResultToolStripMenuItem
             // 
-            this.LinearView.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.LinearView.Location = new System.Drawing.Point(6, 156);
-            this.LinearView.Name = "LinearView";
-            this.LinearView.Size = new System.Drawing.Size(1206, 141);
-            this.LinearView.TabIndex = 1;
+            this.loadResultToolStripMenuItem.Name = "loadResultToolStripMenuItem";
+            this.loadResultToolStripMenuItem.Size = new System.Drawing.Size(230, 22);
+            this.loadResultToolStripMenuItem.Text = "Загрузить результат";
             // 
-            // CrossView
+            // saveResultToolStripMenuItem
             // 
-            this.CrossView.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.CrossView.Location = new System.Drawing.Point(6, 6);
-            this.CrossView.Name = "CrossView";
-            this.CrossView.Size = new System.Drawing.Size(1206, 141);
-            this.CrossView.TabIndex = 0;
+            this.saveResultToolStripMenuItem.Name = "saveResultToolStripMenuItem";
+            this.saveResultToolStripMenuItem.Size = new System.Drawing.Size(230, 22);
+            this.saveResultToolStripMenuItem.Text = "Выгрузить результат";
+            // 
+            // toolStripMenuItem4
+            // 
+            this.toolStripMenuItem4.Name = "toolStripMenuItem4";
+            this.toolStripMenuItem4.Size = new System.Drawing.Size(227, 6);
             // 
             // FRMain
             // 
@@ -565,7 +586,6 @@
         private System.Windows.Forms.ToolStripStatusLabel speed;
         private System.Windows.Forms.ToolStripMenuItem menuSaveScanData;
         private System.Windows.Forms.ToolStripProgressBar pb;
-        private System.Windows.Forms.ToolStripMenuItem genToolStripMenuItem;
         private System.Windows.Forms.ToolStripLabel toolStripLabel1;
         private System.Windows.Forms.ToolStripComboBox cbTypeSize;
         private System.Windows.Forms.TableLayoutPanel lay;
@@ -575,6 +595,10 @@
         private System.Windows.Forms.DataVisualization.Charting.Chart ResultChart;
         private System.Windows.Forms.ToolStripButton btnStart;
         private System.Windows.Forms.CheckBox cbInterrupt;
+        private System.Windows.Forms.ToolStripSeparator toolStripMenuItem3;
+        private System.Windows.Forms.ToolStripMenuItem loadResultToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem saveResultToolStripMenuItem;
+        private System.Windows.Forms.ToolStripSeparator toolStripMenuItem4;
 
     }
 }

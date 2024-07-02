@@ -25,11 +25,12 @@ namespace USPC
             setupResultChart();
         }
 
-        public void UpdateChart(double[] _data, bool _isThick)
+        public void UpdateChart(double[] _data, int length, bool _isThick)
         {
             if (_data == null || _data.Length == 0) return;
+            chartResult.ChartAreas[0].AxisX.Maximum = length;
             chartResult.Series[0].Points.Clear();
-            double step = 200 / _data.Length;
+            double step = (double)length / (double)_data.Length;
             for (int i = 0; i < _data.Length; i++)
             {
                 double val = (double)_data.GetValue(i);
@@ -39,7 +40,7 @@ namespace USPC
 
         }
 
-        public void UpdateChart(int _zone,int _sensor)
+        public void UpdateChart(int _zone,int _sensor,int length)
         {
             ListZones values = Program.result.values;
             int count = values[zone][sensor].Count;
@@ -52,17 +53,17 @@ namespace USPC
             if (sensor < 4)
             {
                 Text = string.Format("Толщинометрия: Зона:{0} Датчик: {1}", zone, sensor);
-                UpdateChart(data, true);
+                UpdateChart(data, length, true);
             }
             else if (sensor < 8)
             {
                 Text = string.Format("Продольная дефектоскопия: Зона:{0} Датчик: {1}", zone, sensor - 4);
-                UpdateChart(data, false);
+                UpdateChart(data, length, false);
             }
             else
             {
                 Text = string.Format("Поперечная дефектоскопия: Зона:{0} Датчик: {1}", zone, sensor - 8);
-                UpdateChart(data, false);
+                UpdateChart(data, length, false);
             }
         }
 
@@ -129,8 +130,7 @@ namespace USPC
                             zone++;
                         else
                             zone = 0;
-                        UpdateChart(zone, sensor);
-                        return true;
+                        break;
                     }
                 case Keys.Left:
                     {
@@ -138,8 +138,7 @@ namespace USPC
                             zone--;
                         else
                             zone = Program.result.zones - 1;
-                        UpdateChart(zone, sensor);
-                        return true;
+                        break;
                     }
                 case Keys.Up:
                     {
@@ -147,8 +146,7 @@ namespace USPC
                             sensor--;
                         else
                             sensor = Program.result.sensors - 1;
-                        UpdateChart(zone, sensor);
-                        return true;
+                        break;
                     }
                 case Keys.Down:
                     {
@@ -156,8 +154,7 @@ namespace USPC
                             sensor++;
                         else
                             sensor = 0;
-                        UpdateChart(zone, sensor);
-                        return true;
+                        break;
                     }
                 case Keys.Escape:
                     {
@@ -167,6 +164,8 @@ namespace USPC
                 default:
                     return base.ProcessCmdKey(ref msg, keyData);
             }
+            UpdateChart(zone, sensor, Program.result.zonesLengths[zone]);
+            return true;
         }
 
     }

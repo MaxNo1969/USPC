@@ -33,7 +33,7 @@ namespace Data
         public int[] offsSensor;            //смещение кадров по датчикам
 	    public double[] minZoneThickness;	//Минимальная толщина по зоне
         public double[][] minZoneSensorThickness;	//Минимальная толщина по зоне/датчику
-        public int samplesPerZone;
+        //public int samplesPerZone;
         public void Start()                     // Выполнить перед началом цикла сбора кадров с платы
         {
             currentOffsetFrames = 0;

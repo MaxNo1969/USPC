@@ -222,6 +222,7 @@ namespace USPC
                                         prepareBoardsForWork();
                                         boardsPrepared = true;
                                     }
+                                    //Program.result.addDeadZoneStart();
                                 }
                                 if (Program.sl["ЦИКЛ"].Val)
                                 {
@@ -231,6 +232,7 @@ namespace USPC
                                     controlCycle = true;
                                     waitControlStarted = DateTime.Now;
                                     curState = WrkStates.waitTube;
+                                    Program.result.addDeadZoneStart();
                                     break;
                                 }
                                 else
@@ -286,6 +288,7 @@ namespace USPC
                             }
                             break;
                         case WrkStates.endWork:
+                            Program.result.addDeadZoneEnd();
                             //Перестаём контролировать цикл
                             controlCycle = false;
                             //По окончании сбора, обработки и передачи результата. 
@@ -326,6 +329,17 @@ namespace USPC
             Program.pcxus.open(2);
             //Program.pcxus.load("tube147x11 (12 kanala 16,40).us");
             Program.pcxus.load("default.us");
+
+            for (int board = 0; board < Program.numBoards; board++)
+            {
+                Program.pcxus.config(board, AppSettings.s.BufferSize, AppSettings.s.InterruptFluidity);
+                AcqSatus acqStatus = new AcqSatus();
+                Program.pcxus.status(board, ref acqStatus.status, ref acqStatus.NumberOfScansAcquired, ref acqStatus.NumberOfScansRead, ref acqStatus.bufferSize, ref acqStatus.scanSize);
+                log.add(LogRecord.LogReason.info, "Board: {0}, ACQ_STATUS: {1}, BufferSize(in numbers od scans): {2}, ScanSize(in number of DWORD): {3}", board, ((ACQ_STATUS)acqStatus.status).ToString(), acqStatus.bufferSize, acqStatus.scanSize);
+                Program.pcxus.start(board);
+                //Смещаем указатель буфера в начало
+                Program.data[board].Start();
+            }
         }
 
     }

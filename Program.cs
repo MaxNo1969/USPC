@@ -10,6 +10,9 @@ using PCI1730;
 using Data;
 using USPC.PCI_1730;
 using Settings;
+using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.Runtime.Remoting.Messaging;
 
 namespace USPC
 {
@@ -22,8 +25,28 @@ namespace USPC
         public static int numBoards = 2;
         public static PCXUSNET pcxus = null;
         public static USPCData[] data = new USPCData[numBoards];
+        //ToDo: Переделать
+        public static void saveData(Stream _stream)
+        {
+            if (_stream.CanWrite)
+            {
+                BinaryFormatter formatter = new BinaryFormatter();
+                formatter.Serialize(_stream, data);
+            }
+        }
+        public static void loadData(Stream _stream)
+        {
+            if (_stream.CanRead)
+            {
+                BinaryFormatter formatter = new BinaryFormatter();
+                data = (USPCData[])formatter.Deserialize(_stream);
+            }
+        }
         public static TypeSize typeSize = new TypeSize();
         public static Result result = new Result();
+        public static void saveResult(string _fileName)
+        {
+        }
         public static FRMain frMain = null;
         public static int medianFilterWidth = 5;
 

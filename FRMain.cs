@@ -220,7 +220,7 @@ namespace USPC
             }
         }
 
-        void zbWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)
+        public void zbWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
             //log.add(LogRecord.LogReason.debug, "{0}: {1}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name);
             Action action = () => { Program.frMain.PutDataOnCharts(); Program.frMain.setPb(Program.result.zones * AppSettings.s.zoneSize * 100 / AppSettings.s.tubeLength); };
@@ -484,14 +484,14 @@ namespace USPC
             {
                 try
                 {
-                    BackgroundWorker w = new BackgroundWorker();
-                    w.WorkerReportsProgress = true;
-                    w.WorkerSupportsCancellation = true;
-                    w.DoWork += new DoWorkEventHandler(w_DoWork);
-                    w.RunWorkerCompleted += new RunWorkerCompletedEventHandler(w_RunWorkerCompleted);
-                    w.ProgressChanged += new ProgressChangedEventHandler(w_ProgressChanged);
-                    pb.Visible = true;
-                    w.RunWorkerAsync(new WorkerArgs("Загрузка", ofd.FileName));
+                    using (FileStream fs = new FileStream(ofd.FileName, FileMode.Open))
+                    {
+                        FRWaitLongProcess frm = new FRWaitLongProcess(this);
+                        frm.Show();
+                        frm.setMes(string.Format("Загрузка файла {0}", ofd.FileName));
+                        Program.loadData(fs);
+                        frm.Close();
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -499,19 +499,7 @@ namespace USPC
                 }
             }
         }
-        //! @brief Генерация данных
-        //! Труба->Генерировать
-        private void genToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            BackgroundWorker w = new BackgroundWorker();
-            w.WorkerReportsProgress = true;
-            w.WorkerSupportsCancellation = true;
-            w.DoWork += new DoWorkEventHandler(w_DoWork);
-            w.RunWorkerCompleted += new RunWorkerCompletedEventHandler(w_RunWorkerCompleted);
-            w.ProgressChanged += new ProgressChangedEventHandler(w_ProgressChanged);
-            pb.Visible = true;
-            w.RunWorkerAsync(new WorkerArgs("Генерация", null, 50, 8, 500, 484));
-        }
+
         //! @brief Сохранение трубы
         //! Данных->Сохранить  
         private void saveToolStripMenuItem_Click(object sender, EventArgs e)
@@ -522,14 +510,14 @@ namespace USPC
             {
                 try
                 {
-                    BackgroundWorker w = new BackgroundWorker();
-                    w.WorkerReportsProgress = true;
-                    w.WorkerSupportsCancellation = true;
-                    w.DoWork += new DoWorkEventHandler(w_DoWork);
-                    w.RunWorkerCompleted += new RunWorkerCompletedEventHandler(w_RunWorkerCompleted);
-                    w.ProgressChanged += new ProgressChangedEventHandler(w_ProgressChanged);
-                    pb.Visible = true;
-                    w.RunWorkerAsync(new WorkerArgs("Сохранение", sfd.FileName));
+                    using (FileStream fs = new FileStream(sfd.FileName, FileMode.Create))
+                    {
+                        FRWaitLongProcess frm = new FRWaitLongProcess(this);                        
+                        frm.Show();
+                        frm.setMes(string.Format("Сохранение файла {0}", sfd.FileName));
+                        Program.saveData(fs);
+                        frm.Close();
+                    }
                 }
                 catch (Exception ex)
                 {
