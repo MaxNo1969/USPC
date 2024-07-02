@@ -164,6 +164,7 @@ namespace USPC
                 if (dataReaders[i] != null && !dataReaders[i].IsBusy)
                 {
                     dataReaders[i].RunWorkerAsync();
+                    while (!dataReaders[i].IsBusy) ;
                 }
             }
             
@@ -301,7 +302,7 @@ namespace USPC
                             stopWorkers();
                             Action action = () => Program.frMain.setStartStopMenu(true);
                             Program.frMain.Invoke(action);
-                            Thread.Sleep(100);
+                            boardsPrepared = false;
                             speedCalced = false;
                             e.Cancel = true;
                             return;
@@ -322,12 +323,19 @@ namespace USPC
                 return;
             }
         }
-
         private void prepareBoardsForWork()
         {
             Program.pcxus.close();
             Program.pcxus.open(2);
             Program.pcxus.load(Program.typeSize.currentTypeSize.configName);
+            for (int board = 0; board < Program.numBoards; board++)
+            {
+                Program.pcxus.config(board, AppSettings.s.BufferSize, AppSettings.s.InterruptFluidity);
+                AcqSatus acqStatus = new AcqSatus();
+                Program.pcxus.status(board, ref acqStatus.status, ref acqStatus.NumberOfScansAcquired, ref acqStatus.NumberOfScansRead, ref acqStatus.bufferSize, ref acqStatus.scanSize);
+                log.add(LogRecord.LogReason.info, "Board: {0}, ACQ_STATUS: {1}, BufferSize(in numbers od scans): {2}, ScanSize(in number of DWORD): {3}", board, ((ACQ_STATUS)acqStatus.status).ToString(), acqStatus.bufferSize, acqStatus.scanSize);
+                Program.pcxus.start(board);
+            }
         }
 
     }

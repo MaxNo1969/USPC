@@ -48,13 +48,10 @@ namespace USPC
                     {
                         currentOffsets[board] = Program.data[board].currentOffsetFrames;
                     }
-                    //if (currentOffsets.Sum() != 0)
-                    {
-                        Program.result.addZone(currentOffsets);
-                        log.add(LogRecord.LogReason.info, "{0}: {1}: CurrentOffsets = {2} {3}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, currentOffsets[0], currentOffsets[1]);
-                        ReportProgress(Program.data[0].currentOffsetFrames * 100 / USPCData.countFrames);
-                        Thread.Sleep(AppSettings.s.StrobResetTimeout);
-                    }
+                    Program.result.addZone(currentOffsets);
+                    log.add(LogRecord.LogReason.info, "{0}: {1}: CurrentOffsets = {2} {3}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, currentOffsets[0], currentOffsets[1]);
+                    ReportProgress(Program.data[0].currentOffsetFrames * 100 / USPCData.countFrames);
+                    Thread.Sleep(AppSettings.s.StrobResetTimeout);
                 }
             }
         }
