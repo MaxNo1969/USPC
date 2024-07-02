@@ -559,17 +559,12 @@ namespace USPC
             switch (args.action)
             {
                 case "Загрузка":
-                    //USPCData.load(args.fileName);
                     break;
                 case "Сохранение":
-                    Program.data[0].save((Object)args.fileName,false);
-                    Program.data[1].save((Object)args.fileName, true);
                     break;
                 case "Генерация":
-                    DataGenerator.GenerateThicknessData(16,0,USPCData.countFrames,w);
                     break;
                 case "Пересчет":
-                    //stick.recalc(w, e);
                     break;
             }
         }

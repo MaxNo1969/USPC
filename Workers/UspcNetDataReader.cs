@@ -58,18 +58,9 @@ namespace USPC
             //    return;
             //}
             Program.pcxus.config(board, AppSettings.s.BufferSize, AppSettings.s.InterruptFluidity);
-            //Получим информацию о статусе
-            //if (client.callNetworkFunction(string.Format("status,{0}", board), out retval) != 0)
-            //{
-            //    return;
-            //}
             AcqSatus acqStatus = new AcqSatus();
             Program.pcxus.status(board, ref acqStatus.status, ref acqStatus.NumberOfScansAcquired, ref acqStatus.NumberOfScansRead, ref acqStatus.bufferSize, ref acqStatus.scanSize);
             log.add(LogRecord.LogReason.info, "Board: {0}, ACQ_STATUS: {1}, BufferSize(in numbers od scans): {2}, ScanSize(in number of DWORD): {3}", board, ((ACQ_STATUS)acqStatus.status).ToString(), acqStatus.bufferSize, acqStatus.scanSize);
-            //if (client.callNetworkFunction(string.Format("start,{0}", board), out retval) != 0)
-            //{
-            //    return;
-            //}
             Program.pcxus.start(board);
             //Смещаем указатель буфера в начало
             Program.data[board].Start();
@@ -86,7 +77,7 @@ namespace USPC
                     if (Program.pcxus.status(board, ref acqStatus.status, ref acqStatus.NumberOfScansAcquired, ref acqStatus.NumberOfScansRead, ref acqStatus.bufferSize, ref acqStatus.scanSize))
                     {
                         if (acqStatus.status == (int)ACQ_STATUS.ACQ_RUNNING)
-                        {                            
+                        {
                             Int32 NumberOfScans = Program.pcxus.read(board, ref buffer);
                             if (dataAcquired != null) dataAcquired(NumberOfScans, buffer);
                             Array.Copy(buffer, 0, data.ascanBuffer, data.currentOffsetFrames, NumberOfScans);
@@ -95,18 +86,14 @@ namespace USPC
                             ReportProgress(NumberOfScans, (object)buffer);
                         }
                         else
-                            log.add(LogRecord.LogReason.info, "{0}: {1}: {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ((ACQ_STATUS)acqStatus.status).ToString());
+                        {
+                            log.add(LogRecord.LogReason.info, "Board: {0}, ACQ_STATUS: {1}, BufferSize(in numbers od scans): {2}, ScanSize(in number of DWORD): {3}", board, ((ACQ_STATUS)acqStatus.status).ToString(), acqStatus.bufferSize, acqStatus.scanSize);
+                        }
                     }
                 }
                 catch (Exception ex)
                 {
                     log.add(LogRecord.LogReason.error, "{0}: {1}: Error:{2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message);
-                    log.add(LogRecord.LogReason.error, "{0}: {1}: Caller:{2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Source);
-                    log.add(LogRecord.LogReason.error, "{0}: {1}: Caller:{2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.TargetSite.Name);
-                    //Program.pcxus.stop(board);
-                    //Program.pcxus.clear(board);
-                    //e.Cancel = true;
-                    //return;
                 }
                 Thread.Sleep(AppSettings.s.BoardReadTimeout);
             }
