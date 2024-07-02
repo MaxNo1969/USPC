@@ -95,11 +95,11 @@
     <Compile Include="Emul\FREmul.designer.cs">
       <DependentUpon>FREmul.cs</DependentUpon>
     </Compile>
-    <Compile Include="FRResultView.cs">
+    <Compile Include="FRZoneView.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="FRResultView.Designer.cs">
-      <DependentUpon>FRResultView.cs</DependentUpon>
+    <Compile Include="FRZoneView.Designer.cs">
+      <DependentUpon>FRZoneView.cs</DependentUpon>
     </Compile>
     <Compile Include="FRSensorView.cs">
       <SubType>Form</SubType>
@@ -208,8 +208,8 @@
     <EmbeddedResource Include="FRResult.resx">
       <DependentUpon>FRResult.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="FRResultView.resx">
-      <DependentUpon>FRResultView.cs</DependentUpon>
+    <EmbeddedResource Include="FRZoneView.resx">
+      <DependentUpon>FRZoneView.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="FRSensorView.resx">
       <DependentUpon>FRSensorView.cs</DependentUpon>

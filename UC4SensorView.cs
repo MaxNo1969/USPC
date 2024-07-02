@@ -124,7 +124,7 @@ namespace USPC
             {
                 data[i] = values[zone][sensor][i];
             }
-            FRResultView frm = new FRResultView(Program.frMain);
+            FRZoneView frm = new FRZoneView(Program.frMain);
             frm.sensor = sensor;
             frm.zone = zone;
             frm.UpdateChart(zone, sensor);

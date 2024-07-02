@@ -13,11 +13,11 @@ using Data;
 
 namespace USPC
 {
-    public partial class FRResultView : Form
+    public partial class FRZoneView : Form
     {
         public int zone;
         public int sensor;
-        public FRResultView(Form _form)
+        public FRZoneView(Form _form)
         {
             InitializeComponent();
             Owner = _form;
