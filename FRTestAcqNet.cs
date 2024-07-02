@@ -28,7 +28,7 @@ namespace USPC
             waitWindow.setMes("Открываем платы USPC...");
             Program.pcxus.open(2);
             waitWindow.setMes("Загружаем файл конфигурации...");
-            Program.pcxus.load("default.us");
+            Program.pcxus.load(Program.typeSize.currentTypeSize.configName);
             waitWindow.Close();
             for (int i = 0; i < Program.numBoards; i++)
             {

@@ -327,8 +327,7 @@ namespace USPC
         {
             Program.pcxus.close();
             Program.pcxus.open(2);
-            //Program.pcxus.load("tube147x11 (12 kanala 16,40).us");
-            Program.pcxus.load("default.us");
+            Program.pcxus.load(Program.typeSize.currentTypeSize.configName);
 
             for (int board = 0; board < Program.numBoards; board++)
             {

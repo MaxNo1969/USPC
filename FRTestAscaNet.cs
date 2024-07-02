@@ -72,7 +72,7 @@ namespace USPC
             waitWindow.setMes("Открываем платы USPC...");
             Program.pcxus.open(2);
             waitWindow.setMes("Загружаем файл конфигурации...");
-            Program.pcxus.load("default.us");
+            Program.pcxus.load(Program.typeSize.currentTypeSize.configName);
             waitWindow.setMes("Читаем параметры..."); 
             info.Video = (AscanInfo.VideoMode)GetVal("scope_video", waitWindow);
             info.ZeroVideo = GetVal("scope_zero",waitWindow);
