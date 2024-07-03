@@ -113,6 +113,7 @@ namespace USPC
                     data[i] = new USPCData();
                 }
                 frMain = new FRMain();
+                ThreadPool.SetMinThreads(100, 100);
                 Application.Run(frMain);
             }
             catch (Exception e)

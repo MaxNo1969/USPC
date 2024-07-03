@@ -49,6 +49,9 @@ namespace USPC
             log.add(LogRecord.LogReason.debug,"{0}: {1}: {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, e.ProgressPercentage);
         }
 
+        AcqSatus acqStatus = new AcqSatus();
+        AcqAscan[] buffer = new AcqAscan[AppSettings.s.BufferSize];
+        
         void worker_DoWork(object sender, DoWorkEventArgs e)
         {
             log.add(LogRecord.LogReason.debug,"{0}: {1}: board={2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, board);
@@ -59,8 +62,6 @@ namespace USPC
             //Program.pcxus.start(board);
             ////Смещаем указатель буфера в начало
             //Program.data[board].Start();
-            AcqSatus acqStatus = new AcqSatus();
-            AcqAscan[] buffer = new AcqAscan[AppSettings.s.BufferSize];
             while (true)
             {
                 if (CancellationPending)

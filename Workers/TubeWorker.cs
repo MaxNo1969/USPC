@@ -162,6 +162,7 @@ namespace USPC
             zbWorker.RunWorkerAsync();
             for (int i = 0; i < 2; i++)
             {
+                log.add(LogRecord.LogReason.debug, "dataReaders[{0}].RunWorkerAsync()", i);
                 dataReaders[i].RunWorkerAsync();
             }
         }

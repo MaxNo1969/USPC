@@ -59,7 +59,7 @@ namespace USPC
         void MainWorkWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             log.add(LogRecord.LogReason.debug, "{0}: {1}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name);
-            worker.CancelAsync();
+            if(worker != null)worker.CancelAsync();
         }
 
         void MainWorkWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)
@@ -78,6 +78,11 @@ namespace USPC
                     {
                         Thread.Sleep(1000);
                         Application.DoEvents();
+                    }
+                    if (cbInterrupt.Checked)
+                    {
+                        e.Cancel = true;
+                        return;
                     }
                 }
                 e.Cancel = true;

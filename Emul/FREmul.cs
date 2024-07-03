@@ -72,7 +72,8 @@ namespace EMUL
             sl.set(sl["СТРОБ"], true);
             Thread.Sleep(200);
             sl.set(sl["СТРОБ"], false);
-            worker.ReportProgress(101, "СТРОБ!");
+            if(worker.IsBusy)
+                worker.ReportProgress(101, "СТРОБ!");
         }
 
         void worker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
