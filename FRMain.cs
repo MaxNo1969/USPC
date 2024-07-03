@@ -58,17 +58,33 @@ namespace USPC
 
         void MainWorkWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            throw new NotImplementedException();
+            log.add(LogRecord.LogReason.debug, "{0}: {1}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name);
+            if (worker != null && worker.IsBusy)
+            {
+                worker.CancelAsync();
+                while (worker.IsBusy) Thread.Sleep(100);
+                //worker = null;
+            }
         }
 
         void MainWorkWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
-            throw new NotImplementedException();
+            log.add(LogRecord.LogReason.debug, "{0}: {1}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name);
         }
 
         void MainWorkWorker_DoWork(object sender, DoWorkEventArgs e)
         {
-            throw new NotImplementedException();
+            while (!MainWorkWorker.CancellationPending)
+            {
+                StartTubeWorker();
+                while (worker.IsBusy)
+                {
+                    Thread.Sleep(1000);
+                    Application.DoEvents();
+                }
+            }
+            e.Cancel = true;
+            return;
         }
 
         #region Протокол и сигнвлы
@@ -172,10 +188,22 @@ namespace USPC
 
         public void setStartStopMenu(bool _start)
         {
-            miStart.Text = (_start) ? "Старт" : "Стоп";
-            menu.Refresh();
-            btnStart.Text = (_start) ? "СТАРТ" : "СТОП";
-            tb.Refresh();
+            if (InvokeRequired)
+            {
+                miStart.Text = (_start) ? "Старт" : "Стоп";
+                Action action = () => menu.Refresh();
+                Invoke(action);
+                btnStart.Text = (_start) ? "СТАРТ" : "СТОП";
+                action = () =>tb.Refresh();
+                Invoke(action);
+            }
+            else
+            {
+                miStart.Text = (_start) ? "Старт" : "Стоп";
+                menu.Refresh();
+                btnStart.Text = (_start) ? "СТАРТ" : "СТОП";
+                tb.Refresh();
+            }
         }
 
         public void StartTubeWorker()
@@ -188,7 +216,8 @@ namespace USPC
             for (int board = 0; board < Program.numBoards; board++)
                 Program.data[board].Start();
             Program.result.Clear();
-            ClearCharts();
+            Action action = () =>  ClearCharts();
+            Program.frMain.Invoke(action);
             worker.RunWorkerAsync();
             setSb("Info", "Работа");
             setStartStopMenu(false);
@@ -204,17 +233,16 @@ namespace USPC
             log.add(LogRecord.LogReason.debug, "{0}: {1}: {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, miStart.Text);
             if (miStart.Text == "Старт")
             {
-                StartTubeWorker();
+                //StartTubeWorker();
+                MainWorkWorker.RunWorkerAsync();
+                setStartStopMenu(false);
             }
             else
             {
                 //При остановке снимаем сигнал "РАБОТА"
                 Program.sl["РАБОТА"].Val = false;
-                if (worker != null && worker.IsBusy)
-                {
-                    worker.CancelAsync();
-                    worker = null;
-                }
+                MainWorkWorker.CancelAsync();
+                while (MainWorkWorker.IsBusy) Thread.Sleep(100);
                 setSb("Info", "Нажмите F5 для начала работы");
                 setStartStopMenu(true);
             }
@@ -426,7 +454,13 @@ namespace USPC
         /// Items: info,tubePos,dataSize,duration,heap
         public void setSb(string _sbItem, string _sbText)
         {
-           sb.Items[_sbItem].Text = _sbText;
+            if (InvokeRequired)
+            {
+                Action action = () => sb.Items[_sbItem].Text = _sbText;
+                Program.frMain.Invoke(action);
+            }
+            else
+                sb.Items[_sbItem].Text = _sbText;  
         }
         /// <summary>
         /// Обновление прогресбара
@@ -434,20 +468,23 @@ namespace USPC
         /// <param name="_percent">Просент</param>
         public void setPb(int _percent)
         {
-            if(_percent<100)pb.Value = _percent;
+            if (_percent < 100)
+            {
+                if (InvokeRequired)
+                {
+                    Action action = () => pb.Value = _percent;
+                    Program.frMain.Invoke(action);
+                }
+                else
+                {
+                    pb.Value = _percent;
+                }
+            }
         }
 
         private void miStart_Click(object sender, EventArgs e)
         {
             startStop();
-        }
-
-        private void эмуляцияToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            miEmul.Enabled = false;
-            FREmul frm = new FREmul(this);
-            frm.FormClosed += new FormClosedEventHandler((object ob, FormClosedEventArgs ea) => { miEmul.Enabled = true; });
-            frm.Show();
         }
 
         private void miTestUSPCAscan_Click(object sender, EventArgs e)
@@ -614,6 +651,12 @@ namespace USPC
                 log.add(LogRecord.LogReason.error, "{0}: {1}: Error: {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message);
                 return;
             }
+        }
+
+        private void miEmulToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            FREmul frEmul = new FREmul(this);
+            frEmul.Show();
         }
     }
 }

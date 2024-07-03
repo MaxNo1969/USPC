@@ -43,6 +43,10 @@
             this.miView = new System.Windows.Forms.ToolStripMenuItem();
             this.openToolStreepMenuItemClick = new System.Windows.Forms.ToolStripMenuItem();
             this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem3 = new System.Windows.Forms.ToolStripSeparator();
+            this.loadResultToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.saveResultToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem4 = new System.Windows.Forms.ToolStripSeparator();
             this.menuSaveScanData = new System.Windows.Forms.ToolStripMenuItem();
             this.miTest = new System.Windows.Forms.ToolStripMenuItem();
             this.miTestUSPCAscan = new System.Windows.Forms.ToolStripMenuItem();
@@ -78,10 +82,6 @@
             this.CrossView = new USPC.UC4SensorView();
             this.ResultChart = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.cbInterrupt = new System.Windows.Forms.CheckBox();
-            this.toolStripMenuItem3 = new System.Windows.Forms.ToolStripSeparator();
-            this.loadResultToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.saveResultToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripMenuItem4 = new System.Windows.Forms.ToolStripSeparator();
             boardStateLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.menu.SuspendLayout();
             this.sb.SuspendLayout();
@@ -191,6 +191,28 @@
             this.saveToolStripMenuItem.Size = new System.Drawing.Size(230, 22);
             this.saveToolStripMenuItem.Text = "Выгрузить данные";
             this.saveToolStripMenuItem.Click += new System.EventHandler(this.saveToolStripMenuItem_Click);
+            // 
+            // toolStripMenuItem3
+            // 
+            this.toolStripMenuItem3.Name = "toolStripMenuItem3";
+            this.toolStripMenuItem3.Size = new System.Drawing.Size(227, 6);
+            // 
+            // loadResultToolStripMenuItem
+            // 
+            this.loadResultToolStripMenuItem.Name = "loadResultToolStripMenuItem";
+            this.loadResultToolStripMenuItem.Size = new System.Drawing.Size(230, 22);
+            this.loadResultToolStripMenuItem.Text = "Загрузить результат";
+            // 
+            // saveResultToolStripMenuItem
+            // 
+            this.saveResultToolStripMenuItem.Name = "saveResultToolStripMenuItem";
+            this.saveResultToolStripMenuItem.Size = new System.Drawing.Size(230, 22);
+            this.saveResultToolStripMenuItem.Text = "Выгрузить результат";
+            // 
+            // toolStripMenuItem4
+            // 
+            this.toolStripMenuItem4.Name = "toolStripMenuItem4";
+            this.toolStripMenuItem4.Size = new System.Drawing.Size(227, 6);
             // 
             // menuSaveScanData
             // 
@@ -305,7 +327,7 @@
             this.miEmul.Name = "miEmul";
             this.miEmul.Size = new System.Drawing.Size(74, 20);
             this.miEmul.Text = "Эмуляция";
-            this.miEmul.Click += new System.EventHandler(this.эмуляцияToolStripMenuItem_Click);
+            this.miEmul.Click += new System.EventHandler(this.miEmulToolStripMenuItem_Click);
             // 
             // sb
             // 
@@ -497,28 +519,6 @@
             this.cbInterrupt.Text = "Прерывание на просмотр";
             this.cbInterrupt.UseVisualStyleBackColor = true;
             this.cbInterrupt.CheckedChanged += new System.EventHandler(this.cbInterrupt_CheckedChanged);
-            // 
-            // toolStripMenuItem3
-            // 
-            this.toolStripMenuItem3.Name = "toolStripMenuItem3";
-            this.toolStripMenuItem3.Size = new System.Drawing.Size(227, 6);
-            // 
-            // loadResultToolStripMenuItem
-            // 
-            this.loadResultToolStripMenuItem.Name = "loadResultToolStripMenuItem";
-            this.loadResultToolStripMenuItem.Size = new System.Drawing.Size(230, 22);
-            this.loadResultToolStripMenuItem.Text = "Загрузить результат";
-            // 
-            // saveResultToolStripMenuItem
-            // 
-            this.saveResultToolStripMenuItem.Name = "saveResultToolStripMenuItem";
-            this.saveResultToolStripMenuItem.Size = new System.Drawing.Size(230, 22);
-            this.saveResultToolStripMenuItem.Text = "Выгрузить результат";
-            // 
-            // toolStripMenuItem4
-            // 
-            this.toolStripMenuItem4.Name = "toolStripMenuItem4";
-            this.toolStripMenuItem4.Size = new System.Drawing.Size(227, 6);
             // 
             // FRMain
             // 
