@@ -265,7 +265,7 @@ namespace USPC
         public void zbWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
             //log.add(LogRecord.LogReason.debug, "{0}: {1}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name);
-            Action action = () => { Program.frMain.PutDataOnCharts(); Program.frMain.setPb(Program.result.zones * AppSettings.s.zoneSize * 100 / AppSettings.s.tubeLength); };
+            Action action = () => { Program.frMain.PutDataOnCharts(); Program.frMain.setPb(Program.result.zone * AppSettings.s.zoneSize * 100 / AppSettings.s.tubeLength); };
             Program.frMain.Invoke(action);
         }
 

@@ -81,9 +81,6 @@
     <Compile Include="Chart\ChartCursorColumn.cs" />
     <Compile Include="Chart\ChartCursorLine.cs" />
     <Compile Include="Chart\ChartExtras.cs" />
-    <Compile Include="Chart\MeasChart.cs">
-      <SubType>Component</SubType>
-    </Compile>
     <Compile Include="Csv\CSVHelper.cs" />
     <Compile Include="Data\bufferstamp.cs" />
     <Compile Include="Data\USPCData.cs" />
@@ -99,18 +96,6 @@
     </Compile>
     <Compile Include="FRZoneView.Designer.cs">
       <DependentUpon>FRZoneView.cs</DependentUpon>
-    </Compile>
-    <Compile Include="FRSensorView.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="FRSensorView.designer.cs">
-      <DependentUpon>FRSensorView.cs</DependentUpon>
-    </Compile>
-    <Compile Include="FRDetails.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="FRDetails.designer.cs">
-      <DependentUpon>FRDetails.cs</DependentUpon>
     </Compile>
     <Compile Include="FRTestAcqNet.cs">
       <SubType>Form</SubType>
@@ -209,12 +194,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="FRZoneView.resx">
       <DependentUpon>FRZoneView.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="FRSensorView.resx">
-      <DependentUpon>FRSensorView.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="FRDetails.resx">
-      <DependentUpon>FRDetails.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="FRTestAcqNet.resx">
       <DependentUpon>FRTestAcqNet.cs</DependentUpon>

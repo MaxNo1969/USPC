@@ -119,7 +119,7 @@ namespace USPC
             MouseEventArgs mea = e as MouseEventArgs;
             HitTestResult htRes = c.HitTest(mea.X, mea.Y, ChartElementType.DataPoint);
             int zone = htRes.PointIndex;
-            if (zone > Program.result.zones) return;
+            if (zone > Program.result.zone) return;
             ListZones values = Program.result.values;
             int count = values[zone][sensor].Count;
             double[] data = new double[count];

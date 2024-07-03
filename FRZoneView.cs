@@ -126,7 +126,7 @@ namespace USPC
             {
                 case Keys.Right:
                     {
-                        if (zone < Program.result.zones - 1)
+                        if (zone < Program.result.zone - 1)
                             zone++;
                         else
                             zone = 0;
@@ -137,7 +137,7 @@ namespace USPC
                         if (zone > 0)
                             zone--;
                         else
-                            zone = Program.result.zones - 1;
+                            zone = Program.result.zone - 1;
                         break;
                     }
                 case Keys.Up:
@@ -145,12 +145,12 @@ namespace USPC
                         if (sensor > 0)
                             sensor--;
                         else
-                            sensor = Program.result.sensors - 1;
+                            sensor = Result.sensors - 1;
                         break;
                     }
                 case Keys.Down:
                     {
-                        if (sensor < Program.result.sensors - 1)
+                        if (sensor < Result.sensors - 1)
                             sensor++;
                         else
                             sensor = 0;
