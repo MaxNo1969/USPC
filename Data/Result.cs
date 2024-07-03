@@ -145,8 +145,7 @@ namespace Data
             {
                 for (int channel = 0; channel < sensors; channel++)
                 {
-                    
-                    for(int i =0;i<numberOfScans;i++)
+                   for(int i =0;i<numberOfScans;i++)
                         listSensors[channel].Add(Result.deadZone);
                     zoneSensorResults[zones][channel] = Result.deadZone;
                 }
@@ -190,6 +189,7 @@ namespace Data
             for (int numBoard = 0; numBoard < Program.numBoards; numBoard++)
             {
                 USPCData data = Program.data[numBoard];
+                log.add(LogRecord.LogReason.debug, "{0}: {1}: zones = {2}, offsets[0]={3}, ofsets[1]={4}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, zones, _offsets[0], _offsets[1]);
                 int currentOffsetFrames = _offsets[numBoard];
                 data.currentOffsetZones++;                
                 data.offsets[data.currentOffsetZones] = currentOffsetFrames;
@@ -248,10 +248,10 @@ namespace Data
                     if (DrawResults.IsBrakDef(zoneSensorResults[zones][sensor])) zoneResults[zones] = false;
                 }
             }
+            log.add(LogRecord.LogReason.debug, "{0}: {1}: {2} {3}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, "Добавлена зона", zones);
             zones++;
             zonesLengths.Add(AppSettings.s.zoneSize);
             values.Add(listSensors);
-            log.add(LogRecord.LogReason.debug, "{0}: {1}: {2} {3}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, "Добавлена зона", zones);
         }
 
         public const int notMeasured = 101;

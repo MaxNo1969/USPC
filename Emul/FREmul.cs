@@ -232,7 +232,7 @@ namespace EMUL
                 Thread.Sleep(1000);
                 bool iBaseSet = false;
                 TubeStartTime = DateTime.Now;
-                timerStrob = new System.Threading.Timer(timerZoneCallback, null, strobTime, strobTime);
+                timerStrob = new System.Threading.Timer(timerZoneCallback, null, 0, strobTime);
                 while (!worker.CancellationPending)
                 {
                     double msEplaced = (DateTime.Now - TubeStartTime).TotalMilliseconds;
