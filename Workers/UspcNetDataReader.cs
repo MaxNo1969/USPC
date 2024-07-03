@@ -46,12 +46,17 @@ namespace USPC
 
         void worker_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
-            log.add(LogRecord.LogReason.debug,"{0}: {1}: {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, e.ProgressPercentage);
+            //log.add(LogRecord.LogReason.debug,"{0}: {1}: {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, e.ProgressPercentage);
         }
 
-        AcqSatus acqStatus = new AcqSatus();
+        //AcqSatus acqStatus = new AcqSatus();
         AcqAscan[] buffer = new AcqAscan[AppSettings.s.BufferSize];
-        
+        Int32 status = (Int32)ACQ_STATUS.ACQ_NO_CONFIGURED;
+        Int32 NumberOfScansAcquired = 0;
+        Int32 NumberOfScansRead = 0;
+        Int32 bufferSize = 0;
+        Int32 scanSize = 0;
+
         void worker_DoWork(object sender, DoWorkEventArgs e)
         {
             log.add(LogRecord.LogReason.debug,"{0}: {1}: board={2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, board);
@@ -71,9 +76,10 @@ namespace USPC
                 }
                 try
                 {
-                    if (Program.pcxus.status(board, ref acqStatus.status, ref acqStatus.NumberOfScansAcquired, ref acqStatus.NumberOfScansRead, ref acqStatus.bufferSize, ref acqStatus.scanSize))
-                    {
-                        if (acqStatus.status == (int)ACQ_STATUS.ACQ_RUNNING)
+                    //if (Program.pcxus.status(board, ref acqStatus.status, ref acqStatus.NumberOfScansAcquired, ref acqStatus.NumberOfScansRead, ref acqStatus.bufferSize, ref acqStatus.scanSize))
+                    if (Program.pcxus.status(board, ref status, ref NumberOfScansAcquired, ref NumberOfScansRead, ref bufferSize, ref scanSize))
+                        {
+                        if (status == (int)ACQ_STATUS.ACQ_RUNNING)
                         {
                             Int32 NumberOfScans = Program.pcxus.read(board, ref buffer);
                             if (dataAcquired != null) dataAcquired(NumberOfScans, buffer);
@@ -84,7 +90,8 @@ namespace USPC
                         }
                         else
                         {
-                            log.add(LogRecord.LogReason.info, "Board: {0}, ACQ_STATUS: {1}, BufferSize(in numbers od scans): {2}, ScanSize(in number of DWORD): {3}", board, ((ACQ_STATUS)acqStatus.status).ToString(), acqStatus.bufferSize, acqStatus.scanSize);
+                            //log.add(LogRecord.LogReason.info, "Board: {0}, ACQ_STATUS: {1}, BufferSize(in numbers od scans): {2}, ScanSize(in number of DWORD): {3}", board, ((ACQ_STATUS)acqStatus.status).ToString(), acqStatus.bufferSize, acqStatus.scanSize);
+                            log.add(LogRecord.LogReason.info, "Board: {0}, ACQ_STATUS: {1}, BufferSize(in numbers od scans): {2}, ScanSize(in number of DWORD): {3}", board, ((ACQ_STATUS)status).ToString(), bufferSize, scanSize);
                         }
                     }
                 }
