@@ -50,19 +50,11 @@ namespace USPC
                     {
                         case "read":
                             {
-                                try
-                                {
-                                    IFormatter formatter = new BinaryFormatter();
-                                    AcqAscan[] scans = (AcqAscan[])formatter.Deserialize(stream);
-                                    //log.add(LogRecord.LogReason.debug, "{0}: {1}: command = \"{2}\", {3} scans readed", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, _func, scans.Length);
-                                    ret = (Object)scans;
-                                    return result;
-                                }
-                                catch (Exception ex)
-                                {
-                                    log.add(LogRecord.LogReason.error, "{0}: {1}: read Error = {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name,ex.Message);
-                                    return result;
-                                }
+                                IFormatter formatter = new BinaryFormatter();
+                                AcqAscan[] scans = (AcqAscan[])formatter.Deserialize(stream);
+                                //log.add(LogRecord.LogReason.debug, "{0}: {1}: command = \"{2}\", {3} scans readed", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, _func, scans.Length);
+                                ret = (Object)scans;
+                                return result;
                             }
                         case "readdouble":
                             {
