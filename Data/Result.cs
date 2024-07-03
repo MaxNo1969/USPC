@@ -207,7 +207,7 @@ namespace Data
                         if (channel < 4)
                         {
                             listSensors[channel].Add(thick);
-                            if (thick < zoneSensorResults[zones][channel]) zoneSensorResults[zones][channel] = thick;
+                            if (zoneSensorResults[zones][channel] == notMeasured || thick < zoneSensorResults[zones][channel]) zoneSensorResults[zones][channel] = thick;
                         }
                         else
                         {
