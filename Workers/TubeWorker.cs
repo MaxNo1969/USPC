@@ -141,33 +141,29 @@ namespace USPC
             log.add(LogRecord.LogReason.debug, "{0}: {1}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name);
             for (int i = 0; i < 2; i++)
             {
-                if (dataReaders[i] != null && dataReaders[i].IsBusy)
-                {
-                    dataReaders[i].CancelAsync();
-                    while (dataReaders[i].IsBusy)Application.DoEvents();
-                }
+                dataReaders[i].CancelAsync();
             }
-            if (zbWorker != null && zbWorker.IsBusy)
-            {
-                zbWorker.CancelAsync();
-                while (zbWorker.IsBusy) Application.DoEvents();
-            }
+            zbWorker.CancelAsync();
         }
 
         void startWorkers()
         {
             log.add(LogRecord.LogReason.debug, "{0}: {1}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name);
-            if (zbWorker != null && !zbWorker.IsBusy)
-                zbWorker.RunWorkerAsync();
+            //if (zbWorker != null && !zbWorker.IsBusy)
+            //    zbWorker.RunWorkerAsync();
+            //for (int i = 0; i < 2; i++)
+            //{
+            //    if (dataReaders[i] != null && !dataReaders[i].IsBusy)
+            //    {
+            //        dataReaders[i].RunWorkerAsync();
+            //        //while (!dataReaders[i].IsBusy) ;
+            //    }
+            //}
+            zbWorker.RunWorkerAsync();
             for (int i = 0; i < 2; i++)
             {
-                if (dataReaders[i] != null && !dataReaders[i].IsBusy)
-                {
-                    dataReaders[i].RunWorkerAsync();
-                    while (!dataReaders[i].IsBusy) ;
-                }
+                dataReaders[i].RunWorkerAsync();
             }
-            
         }
         #endregion запуск/остановка сбора данных по всем платам
 
@@ -183,7 +179,7 @@ namespace USPC
                 string errStr = string.Empty;
                 curState = WrkStates.startWorkCycle;
                 waitCycleStarted = DateTime.Now;
-                while (true)
+                while (!CancellationPending)
                 {
                     //Проверяем сигналы ICC и  CYCLE - они должны быть выставлены воё время работы
                     if (controlCycle && !Program.sl["ЦИКЛ"].Val)
@@ -261,7 +257,7 @@ namespace USPC
                             else
                             {
                                 //Не дождались сигнала "КОНТРОЛЬ"
-                                if((DateTime.Now - waitControlStarted ).TotalSeconds > iWrkTimeout)
+                                if ((DateTime.Now - waitControlStarted).TotalSeconds > iWrkTimeout)
                                 {
                                     errStr = "Не дождались сигнала \"КОНТРОЛЬ\"";
                                     curState = WrkStates.error;
@@ -315,12 +311,23 @@ namespace USPC
             }
             catch (Exception ex)
             {
+                //speedCalced = false;
+                //sl["РАБОТА"].Val = false;
+                //stopWorkers();
+                //log.add(LogRecord.LogReason.error, "{0}: {1}: Error: {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message);
+                //controlCycle = false;
+                //e.Cancel = true;
+                log.add(LogRecord.LogReason.error, "{0}: {1}: Error: {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message);
+                return;
+            }
+            finally
+            {
                 speedCalced = false;
                 sl["РАБОТА"].Val = false;
                 stopWorkers();
-                log.add(LogRecord.LogReason.error, "{0}: {1}: Error: {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message);
+                //log.add(LogRecord.LogReason.error, "{0}: {1}: {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, "Finally");
+                controlCycle = false;
                 e.Cancel = true;
-                return;
             }
         }
         private void prepareBoardsForWork()

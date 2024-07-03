@@ -59,12 +59,7 @@ namespace USPC
         void MainWorkWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             log.add(LogRecord.LogReason.debug, "{0}: {1}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name);
-            if (worker != null && worker.IsBusy)
-            {
-                worker.CancelAsync();
-                while (worker.IsBusy) Thread.Sleep(100);
-                //worker = null;
-            }
+            worker.CancelAsync();
         }
 
         void MainWorkWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)
@@ -74,17 +69,29 @@ namespace USPC
 
         void MainWorkWorker_DoWork(object sender, DoWorkEventArgs e)
         {
-            while (!MainWorkWorker.CancellationPending)
+            try
             {
-                StartTubeWorker();
-                while (worker.IsBusy)
+                while (!MainWorkWorker.CancellationPending)
                 {
-                    Thread.Sleep(1000);
-                    Application.DoEvents();
+                    StartTubeWorker();
+                    while (worker.IsBusy)
+                    {
+                        Thread.Sleep(1000);
+                        Application.DoEvents();
+                    }
                 }
+                e.Cancel = true;
+                return;
             }
-            e.Cancel = true;
-            return;
+            catch (Exception ex)
+            {
+                log.add(LogRecord.LogReason.error, "{0}: {1}: Error: {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message);
+            }
+            finally
+            {
+                //worker.CancelAsync();
+                MainWorkWorker.CancelAsync();
+            }
         }
 
         #region Протокол и сигнвлы
@@ -241,8 +248,10 @@ namespace USPC
             {
                 //При остановке снимаем сигнал "РАБОТА"
                 Program.sl["РАБОТА"].Val = false;
+                worker.zbWorker.CancelAsync();
+                worker.CancelAsync();
                 MainWorkWorker.CancelAsync();
-                while (MainWorkWorker.IsBusy) Thread.Sleep(100);
+                //while (MainWorkWorker.IsBusy) Thread.Sleep(100);
                 setSb("Info", "Нажмите F5 для начала работы");
                 setStartStopMenu(true);
             }
