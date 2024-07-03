@@ -143,6 +143,11 @@ namespace Data
             }
             for (int numBoard = 0; numBoard < Program.numBoards; numBoard++)
             {
+                
+                USPCData data = Program.data[numBoard];
+                data.currentOffsetZones++;
+                int currentOffsetFrames = 0;
+                data.offsets[data.currentOffsetZones] = currentOffsetFrames;
                 for (int channel = 0; channel < sensors; channel++)
                 {
                    for(int i =0;i<numberOfScans;i++)
@@ -165,6 +170,8 @@ namespace Data
             }
             for (int numBoard = 0; numBoard < Program.numBoards; numBoard++)
             {
+                USPCData data = Program.data[numBoard];
+                data.currentOffsetZones++;                
                 for (int channel = 0; channel < sensors; channel++)
                 {
 
@@ -181,6 +188,7 @@ namespace Data
 
         public void addZone(int[] _offsets)
         {
+            log.add(LogRecord.LogReason.debug, "{0}: {1}: zones = {2}, offsets[0]={3}, ofsets[1]={4}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, zones, _offsets[0], _offsets[1]);
             ListSensors listSensors = new ListSensors();
             for (int sens = 0; sens < sensors; sens++)
             {
@@ -189,7 +197,6 @@ namespace Data
             for (int numBoard = 0; numBoard < Program.numBoards; numBoard++)
             {
                 USPCData data = Program.data[numBoard];
-                log.add(LogRecord.LogReason.debug, "{0}: {1}: zones = {2}, offsets[0]={3}, ofsets[1]={4}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, zones, _offsets[0], _offsets[1]);
                 int currentOffsetFrames = _offsets[numBoard];
                 data.currentOffsetZones++;                
                 data.offsets[data.currentOffsetZones] = currentOffsetFrames;
