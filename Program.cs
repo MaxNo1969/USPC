@@ -24,6 +24,24 @@ namespace USPC
         public static BoardState boardState = BoardState.NotOpened;
         public static int numBoards = 2;
         public static PCXUSNET pcxus = null;
+        public static void prepareBoardsForWork(bool _foAcquition)
+        {
+            Program.pcxus.close();
+            Program.pcxus.open(2);
+            Program.pcxus.load(Program.typeSize.currentTypeSize.configName);
+            if (_foAcquition)
+            {
+                for (int board = 0; board < Program.numBoards; board++)
+                {
+                    Program.pcxus.config(board, AppSettings.s.BufferSize, AppSettings.s.InterruptFluidity);
+                    AcqSatus acqStatus = new AcqSatus();
+                    Program.pcxus.status(board, ref acqStatus.status, ref acqStatus.NumberOfScansAcquired, ref acqStatus.NumberOfScansRead, ref acqStatus.bufferSize, ref acqStatus.scanSize);
+                    log.add(LogRecord.LogReason.info, "Board: {0}, ACQ_STATUS: {1}, BufferSize(in numbers od scans): {2}, ScanSize(in number of DWORD): {3}", board, ((ACQ_STATUS)acqStatus.status).ToString(), acqStatus.bufferSize, acqStatus.scanSize);
+                    Program.pcxus.start(board);
+                }
+            }
+        }
+
         public static USPCData[] data = new USPCData[numBoards];
         //ToDo: Переделать
         public static void saveData(Stream _stream)
