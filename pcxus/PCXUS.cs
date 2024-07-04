@@ -785,7 +785,7 @@ namespace USPC
             if (!checkHandle()) return 0;
             Int32 NumberOfRead = 0;
             Int32 ScansBacklog = 0;
-            error = PCXUS_ACQ_READ(hPCXUS, _board, 0, _timeout, ref NumberOfRead, ref ScansBacklog, _data);
+            error = PCXUS_ACQ_READ(hPCXUS, _board, -1, _timeout, ref NumberOfRead, ref ScansBacklog, _data);
             if (error != 0)
             {
                 log.add(LogRecord.LogReason.error, "{0}: {1}: 0x{2:X8}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, error);
