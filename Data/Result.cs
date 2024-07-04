@@ -123,10 +123,8 @@ namespace Data
 
     class Result
     {
-        public const int sensors = 12;
         public int zone {get;private set;}
         List<int> offsets = new List<int>();
-
         
         public ListZones values = new ListZones();
         //Итоги в разрезе зона/датчик
@@ -138,13 +136,13 @@ namespace Data
         {
             int numberOfScans = 100;
             ListSensors listSensors = new ListSensors();
-            for (int sens = 0; sens < sensors; sens++)
+            for (int sens = 0; sens < USPCData.countSensors; sens++)
             {
                 listSensors.Add(new ListValues());
             }
             for (int numBoard = 0; numBoard < Program.numBoards; numBoard++)
             {
-                for (int channel = 0; channel < sensors; channel++)
+                for (int channel = 0; channel < USPCData.countSensors; channel++)
                 {
                     for (int i = 0; i < numberOfScans; i++)
                         listSensors[channel].Add(Result.deadZone);
@@ -161,13 +159,13 @@ namespace Data
         {
             int numberOfScans = 100;
             ListSensors listSensors = new ListSensors();
-            for (int sens = 0; sens < sensors; sens++)
+            for (int sens = 0; sens < USPCData.countSensors; sens++)
             {
                 listSensors.Add(new ListValues());
             }
             for (int numBoard = 0; numBoard < Program.numBoards; numBoard++)
             {
-                for (int channel = 0; channel < sensors; channel++)
+                for (int channel = 0; channel < USPCData.countSensors; channel++)
                 {
 
                     for (int i = 0; i < numberOfScans; i++)
@@ -185,7 +183,7 @@ namespace Data
         {
             log.add(LogRecord.LogReason.debug, "{0}: {1}: zones = {2}, offsets[0]={3}, ofsets[1]={4}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, zone, _offsets[0], _offsets[1]);
             ListSensors listSensors = new ListSensors();
-            for (int sens = 0; sens < sensors; sens++)
+            for (int sens = 0; sens < USPCData.countSensors; sens++)
             {
                 listSensors.Add(new ListValues());
             }
@@ -208,7 +206,7 @@ namespace Data
                         if (channel < 4)
                         {
                             listSensors[channel].Add(thick);
-                            if (zoneSensorResults[zone-1][channel] == notMeasured || thick < zoneSensorResults[zone-1][channel]) zoneSensorResults[zone-1][channel] = thick;
+                            if (zoneSensorResults[zone][channel] == notMeasured || thick < zoneSensorResults[zone][channel]) zoneSensorResults[zone][channel] = thick;
                         }
                         else
                         {
@@ -222,13 +220,13 @@ namespace Data
                         if (channel < 4)
                         {
                             listSensors[channel + 4].Add(def);
-                            if (zoneSensorResults[zone-1][channel + 4]==notMeasured || def > zoneSensorResults[zone-1][channel + 4]) zoneSensorResults[zone-1][channel + 4] = def;
+                            if (zoneSensorResults[zone][channel + 4]==notMeasured || def > zoneSensorResults[zone][channel + 4]) zoneSensorResults[zone][channel + 4] = def;
                         }
                         //Поперечная дефектоскопия
                         else if (channel < 8)
                         {
                             listSensors[channel + 4].Add(def);
-                            if (zoneSensorResults[zone-1][channel + 4] == notMeasured || def > zoneSensorResults[zone-1][channel + 4]) zoneSensorResults[zone-1][channel + 4] = def;
+                            if (zoneSensorResults[zone][channel + 4] == notMeasured || def > zoneSensorResults[zone][channel + 4]) zoneSensorResults[zone][channel + 4] = def;
                         }
                         else
                         {
@@ -238,33 +236,31 @@ namespace Data
                 }
             }
             zoneResults[zone-1] = true;
-            for (int sensor = 0; sensor < sensors; sensor++)
+            for (int sensor = 0; sensor < USPCData.countSensors; sensor++)
             {
                 if(sensor<4)
                 {
-                    if(DrawResults.IsBrakThick(zoneSensorResults[zone][sensor]))zoneResults[zone-1]=false;
+                    if(DrawResults.IsBrakThick(zoneSensorResults[zone][sensor]))zoneResults[zone]=false;
                 }
                 else
                 {
-                    if (DrawResults.IsBrakDef(zoneSensorResults[zone][sensor])) zoneResults[zone-1] = false;
+                    if (DrawResults.IsBrakDef(zoneSensorResults[zone][sensor])) zoneResults[zone] = false;
                 }
             }
             log.add(LogRecord.LogReason.debug, "{0}: {1}: {2} {3}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, "Добавлена зона", zone);
-            zone++;
             zonesLengths.Add(AppSettings.s.zoneSize);
             values.Add(listSensors);
+            zone++;
         }
 
-        public const int notMeasured = 101;
-        public const int deadZone = 102;
+        public const double notMeasured = 101.0;
+        public const double deadZone = 102.0;
         public void ClearZoneSensorResult()
         {
             for (int z = 0; z < USPCData.countZones; z++)
             {
-                zoneSensorResults[z] = new double[sensors];
-                for (int s = 0; s < 4; s++)
-                    zoneSensorResults[z][s] = notMeasured;
-                for (int s = 4; s < 12; s++)
+                zoneSensorResults[z] = new double[USPCData.countSensors];
+                for (int s = 0; s < USPCData.countSensors; s++)
                     zoneSensorResults[z][s] = notMeasured;
                 zoneResults[z] = false;
             }

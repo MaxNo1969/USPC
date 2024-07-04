@@ -49,11 +49,6 @@ namespace USPC
                     {
                         currentOffsets[board] = Program.data[board].currentOffsetFrames;
                     }
-                    //if (strobCounter > 0)
-                    //{
-                    //    Program.result.addZone(currentOffsets); 
-                    //    log.add(LogRecord.LogReason.info, "{0}: {1}: CurrentOffsets = {2} {3}, {4}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, currentOffsets[0], currentOffsets[1], strobCounter);
-                    //}
                     if(strobCounter>0)
                         Program.result.addZone(currentOffsets); 
                     log.add(LogRecord.LogReason.info, "{0}: {1}: CurrentOffsets = {2} {3}, {4}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, currentOffsets[0], currentOffsets[1], strobCounter);

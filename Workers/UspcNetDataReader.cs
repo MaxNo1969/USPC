@@ -49,8 +49,8 @@ namespace USPC
             //log.add(LogRecord.LogReason.debug,"{0}: {1}: {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, e.ProgressPercentage);
         }
 
-        //AcqSatus acqStatus = new AcqSatus();
-        AcqAscan[] buffer = new AcqAscan[AppSettings.s.BufferSize];
+        //AcqAscan[] buffer = new AcqAscan[AppSettings.s.BufferSize];
+        AcqAscan[] buffer;
         Int32 status = (Int32)ACQ_STATUS.ACQ_NO_CONFIGURED;
         Int32 NumberOfScansAcquired = 0;
         Int32 NumberOfScansRead = 0;
@@ -60,13 +60,6 @@ namespace USPC
         void worker_DoWork(object sender, DoWorkEventArgs e)
         {
             log.add(LogRecord.LogReason.debug,"{0}: {1}: board={2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, board);
-            //Program.pcxus.config(board, AppSettings.s.BufferSize, AppSettings.s.InterruptFluidity);
-            //AcqSatus acqStatus = new AcqSatus();
-            //Program.pcxus.status(board, ref acqStatus.status, ref acqStatus.NumberOfScansAcquired, ref acqStatus.NumberOfScansRead, ref acqStatus.bufferSize, ref acqStatus.scanSize);
-            //log.add(LogRecord.LogReason.info, "Board: {0}, ACQ_STATUS: {1}, BufferSize(in numbers od scans): {2}, ScanSize(in number of DWORD): {3}", board, ((ACQ_STATUS)acqStatus.status).ToString(), acqStatus.bufferSize, acqStatus.scanSize);
-            //Program.pcxus.start(board);
-            ////Смещаем указатель буфера в начало
-            //Program.data[board].Start();
             while (true)
             {
                 if (CancellationPending)
@@ -83,14 +76,11 @@ namespace USPC
                         {
                             Int32 NumberOfScans = Program.pcxus.read(board, ref buffer);
                             if (dataAcquired != null) dataAcquired(NumberOfScans, buffer);
-                            Array.Copy(buffer, 0, data.ascanBuffer, data.currentOffsetFrames, NumberOfScans);
-                            data.labels.Add(new BufferStamp(DateTime.Now, data.currentOffsetFrames));
-                            data.currentOffsetFrames += NumberOfScans;
+                            data.addData(buffer, NumberOfScans);
                             ReportProgress(NumberOfScans, (object)buffer);
                         }
                         else
                         {
-                            //log.add(LogRecord.LogReason.info, "Board: {0}, ACQ_STATUS: {1}, BufferSize(in numbers od scans): {2}, ScanSize(in number of DWORD): {3}", board, ((ACQ_STATUS)acqStatus.status).ToString(), acqStatus.bufferSize, acqStatus.scanSize);
                             log.add(LogRecord.LogReason.info, "Board: {0}, ACQ_STATUS: {1}, BufferSize(in numbers od scans): {2}, ScanSize(in number of DWORD): {3}", board, ((ACQ_STATUS)status).ToString(), bufferSize, scanSize);
                         }
                     }

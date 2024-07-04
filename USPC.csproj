@@ -82,7 +82,6 @@
     <Compile Include="Chart\ChartCursorLine.cs" />
     <Compile Include="Chart\ChartExtras.cs" />
     <Compile Include="Csv\CSVHelper.cs" />
-    <Compile Include="Data\bufferstamp.cs" />
     <Compile Include="Data\USPCData.cs" />
     <Compile Include="DrawResults.cs" />
     <Compile Include="Emul\FREmul.cs">

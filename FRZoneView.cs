@@ -145,12 +145,12 @@ namespace USPC
                         if (sensor > 0)
                             sensor--;
                         else
-                            sensor = Result.sensors - 1;
+                            sensor = USPCData.countSensors - 1;
                         break;
                     }
                 case Keys.Down:
                     {
-                        if (sensor < Result.sensors - 1)
+                        if (sensor < USPCData.countSensors - 1)
                             sensor++;
                         else
                             sensor = 0;

@@ -20,28 +20,28 @@ namespace Data
         public const int countSensors = 12;
         public const int countFrames = 900000;
 
-        public static int lengthCaretka = 20;
-        
-        public int currentOffsetFrames;     //Номер последнего кадра 
+        public int currentOffsetFrames {get;private set;}     //Номер последнего кадра 
     	public AcqAscan[] ascanBuffer;	    //собранные кадры массив по платам
-        public TimeLabels labels;
-        //public List<Slice> allData;
-        //public List<Slice> zoneData; 
 
-	    //public int[] offsets;               //смещение кадров по зонам
-        //public int[] offsSensor;            //смещение кадров по датчикам
-	    //public double[] minZoneThickness;	//Минимальная толщина по зоне
-        //public double[][] minZoneSensorThickness;	//Минимальная толщина по зоне/датчику
-        //public int samplesPerZone;
         public void Start()                     // Выполнить перед началом цикла сбора кадров с платы
         {
             currentOffsetFrames = 0;
-            labels.Clear();
         }
         public void OffsetCounter(int offs)
         {
             currentOffsetFrames += offs;
-            labels.Add(new BufferStamp(DateTime.Now,currentOffsetFrames));
+        }
+
+        public bool addData(AcqAscan[] _data, int _cnt)
+        {
+            if (currentOffsetFrames + _cnt > countFrames)
+                return false;
+            else
+            {
+                Array.Copy(_data, 0, ascanBuffer, currentOffsetFrames, _cnt);
+                OffsetCounter(_cnt);
+                return true;
+            }
         }
 
         public static double TofToMm(UInt32 _tof)
@@ -63,13 +63,6 @@ namespace Data
         public USPCData()
         {
             ascanBuffer = new AcqAscan[countFrames];
-            //offsets = new int[countZones];
-            //offsSensor = new int[countSensors];
-            //minZoneThickness = new double[countZones];
-            //minZoneSensorThickness = new double[countZones][];
-            //for (int i = 0; i < countZones; i++)
-            //    minZoneSensorThickness[i] = new double[countSensors];
-            labels = new TimeLabels();
         }
     };
 }
