@@ -120,6 +120,9 @@
     <Compile Include="Gate.Designer.cs">
       <DependentUpon>Gate.cs</DependentUpon>
     </Compile>
+    <Compile Include="Workers\AscansReader.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Workers\TubeWorker.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -178,7 +181,7 @@
     <Compile Include="Workers\UspcNetDataReader.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Workers\ZoneBackGroundWorker.cs">
+    <Compile Include="Workers\ZoneWorker.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="ZoneThread.cs" />

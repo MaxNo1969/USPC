@@ -268,28 +268,28 @@ namespace USPC
             return numberOfScans;
         }
 
-        public bool readAscan(ref Ascan ascan,int _timeout = 100, int _board = 0, int _test = 0)
+        public bool readAscan(int _board, int _test,ref Ascan _ascan,int _timeout)
         {
             Random r =new Random();
             double Distance = 0.23;
-            ascan.G1TofWt = (uint)(Distance * 1000 / 5.0);
+            _ascan.G1TofWt = (uint)(Distance * 1000 / 5.0);
             Distance = 5.25;
-            ascan.G2TofWt = (uint)(Distance * 1000 / 5.0);
+            _ascan.G2TofWt = (uint)(Distance * 1000 / 5.0);
             Distance = 3.11;
-            ascan.GIFTof = (uint)(Distance * 1000 / 5.0);
-            ascan.G1Begin = 200;
-            ascan.G2Begin = 500;
-            ascan.G1End = 500;
-            ascan.G2End = 800;
-            ascan.G1Level = 60;
-            ascan.G2Level = 80;
-            ascan.G1Amp = (byte)(90 + r.Next(10));
-            ascan.G2Amp = (byte)(90 + r.Next(10));
-            ascan.DataSize = (ushort)(200+r.Next(20));
-            ascan.Points = new byte[ascan.DataSize];
-            for (int i = 0; i < ascan.DataSize; i++)
+            _ascan.GIFTof = (uint)(Distance * 1000 / 5.0);
+            _ascan.G1Begin = 200;
+            _ascan.G2Begin = 500;
+            _ascan.G1End = 500;
+            _ascan.G2End = 800;
+            _ascan.G1Level = 60;
+            _ascan.G2Level = 80;
+            _ascan.G1Amp = (byte)(90 + r.Next(10));
+            _ascan.G2Amp = (byte)(90 + r.Next(10));
+            _ascan.DataSize = (ushort)(200+r.Next(20));
+            _ascan.Points = new byte[_ascan.DataSize];
+            for (int i = 0; i < _ascan.DataSize; i++)
             {
-                ascan.Points[i] = (byte)(50 + r.Next(50));
+                _ascan.Points[i] = (byte)(50 + r.Next(50));
             }
             //log.add(LogRecord.LogReason.info, "{0}: {1}: Board={2},Test={3} DataSize={4}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, _board,_test, ascan.DataSize);
             return true;

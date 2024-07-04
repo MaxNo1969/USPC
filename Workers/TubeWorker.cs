@@ -10,14 +10,15 @@ using Settings;
 using System.Threading;
 using USPC.PCI_1730;
 using System.Windows.Forms;
+using USPC.Workers;
 
 namespace USPC
 {
     class TubeWorker:BackgroundWorker
     {
-        UspcNetDataReader[] dataReaders = null;
-        public ZoneBackGroundWorker zbWorker = null;
-        //public ZoneThread zoneThread = null;
+        //UspcNetDataReader[] dataReaders = null;
+        public AscansReader ascansReader;
+        public ZoneWorker zbWorker = null;
         DefSignals sl = Program.sl;
         bool speedCalced = false;
         public TubeWorker()
@@ -31,11 +32,12 @@ namespace USPC
             RunWorkerCompleted += new RunWorkerCompletedEventHandler(worker_RunWorkerCompleted);
 
             //Воркеры сбора данных для каждой платы
-            dataReaders = new UspcNetDataReader[2];
-            for (int i = 0; i < 2; i++)
-                dataReaders[i] = new UspcNetDataReader(i);
+            //dataReaders = new UspcNetDataReader[2];
+            //for (int i = 0; i < 2; i++)
+            //    dataReaders[i] = new UspcNetDataReader(i);
+            ascansReader = new AscansReader();
             //Воркер по добавлению зон
-            zbWorker = new ZoneBackGroundWorker();
+            zbWorker = new ZoneWorker();
             //zoneThread = new ZoneThread();
             speedCalced = false;
         }
@@ -139,32 +141,19 @@ namespace USPC
         void stopWorkers()
         {
             log.add(LogRecord.LogReason.debug, "{0}: {1}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name);
-            for (int i = 0; i < 2; i++)
-            {
-                dataReaders[i].CancelAsync();
-            }
+            //for (int i = 0; i < 2; i++)
+            //{
+            //    dataReaders[i].CancelAsync();
+            //}
+            ascansReader.CancelAsync();
             zbWorker.CancelAsync();
         }
 
         void startWorkers()
         {
             log.add(LogRecord.LogReason.debug, "{0}: {1}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name);
-            //if (zbWorker != null && !zbWorker.IsBusy)
-            //    zbWorker.RunWorkerAsync();
-            //for (int i = 0; i < 2; i++)
-            //{
-            //    if (dataReaders[i] != null && !dataReaders[i].IsBusy)
-            //    {
-            //        dataReaders[i].RunWorkerAsync();
-            //        //while (!dataReaders[i].IsBusy) ;
-            //    }
-            //}
+            ascansReader.RunWorkerAsync();
             zbWorker.RunWorkerAsync();
-            for (int i = 0; i < 2; i++)
-            {
-                log.add(LogRecord.LogReason.debug, "dataReaders[{0}].RunWorkerAsync()", i);
-                dataReaders[i].RunWorkerAsync();
-            }
         }
         #endregion запуск/остановка сбора данных по всем платам
 
@@ -217,7 +206,7 @@ namespace USPC
                                     if (!boardsPrepared)
                                     {
                                         //Инициализируем платы и загружаем конфигурацию
-                                        Program.prepareBoardsForWork(true);
+                                        Program.prepareBoardsForWork(false);
                                         boardsPrepared = true;
                                     }
                                     //Program.result.addDeadZoneStart();

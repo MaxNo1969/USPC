@@ -23,12 +23,17 @@ namespace USPC
         {
             InitializeComponent();
             Owner = _fr;
+            //FRWaitLongProcess waitWindow = new FRWaitLongProcess(this);
+            //waitWindow.Show();
+            //waitWindow.setMes("Открываем платы USPC...");
+            //Program.pcxus.open(2);
+            //waitWindow.setMes("Загружаем файл конфигурации...");
+            //Program.pcxus.load(Program.typeSize.currentTypeSize.configName);
+            //waitWindow.Close();
             FRWaitLongProcess waitWindow = new FRWaitLongProcess(this);
             waitWindow.Show();
             waitWindow.setMes("Открываем платы USPC...");
-            Program.pcxus.open(2);
-            waitWindow.setMes("Загружаем файл конфигурации...");
-            Program.pcxus.load(Program.typeSize.currentTypeSize.configName);
+            Program.prepareBoardsForWork(true);
             waitWindow.Close();
             for (int i = 0; i < Program.numBoards; i++)
             {

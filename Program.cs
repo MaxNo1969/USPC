@@ -13,6 +13,7 @@ using Settings;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Runtime.Remoting.Messaging;
+using USPC.Workers;
 
 namespace USPC
 {
@@ -89,38 +90,6 @@ namespace USPC
             int ret = 0;
             //В первую очередь запускаем логирование
             log.add(LogRecord.LogReason.info,@"Program: Начало выполнения программы.");
-            //try
-            //{
-            //    cmdLineArgs = getCmdStr(args);
-            //    if (cmdLineArgs != null)
-            //    {
-            //        #region Логирование
-            //        {
-            //            string msg = string.Empty;
-            //            foreach (KeyValuePair<string, string> kv in cmdLineArgs)
-            //            {
-            //                msg += string.Format(@"{0}={1}; ", kv.Key, kv.Value);
-            //                msg = msg.Trim();
-            //            }
-            //            log.add(LogRecord.LogReason.info, "{0}: {1}: {2}", "Program", System.Reflection.MethodBase.GetCurrentMethod().Name, msg);
-            //        }
-            //        #endregion
-            //    }
-            //    pcxus = new PCXUSNET(AppSettings.s.serverAddr);
-            //}
-            //catch (ArgumentException ex)
-            //{
-            //    log.add(LogRecord.LogReason.error, "{0}: {1}: {2}", "Program", System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message);
-            //    ShowExceptionDetails(ex);
-            //    return -1;
-            //}
-            //catch (KeyNotFoundException ex)
-            //{
-            //    log.add(LogRecord.LogReason.error, "{0}: {1}: {2}", "Program", System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message);
-            //    ShowExceptionDetails(ex);
-            //    return -1;
-            //}
-
             try
             {
                 FormPosSaver.deser();

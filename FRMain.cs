@@ -17,6 +17,7 @@ using Data;
 using CHART;
 using System.Threading.Tasks;
 using System.IO;
+using USPC.Workers;
 
 namespace USPC
 {
@@ -235,7 +236,8 @@ namespace USPC
             setStartStopMenu(false);
 
         }
-        
+
+        AscansReader reader = new AscansReader();
         /// <summary>
         /// Запуск/остановка рабочего потока
         /// (В workThread вызывается из другого потока)
@@ -245,18 +247,14 @@ namespace USPC
             log.add(LogRecord.LogReason.debug, "{0}: {1}: {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, miStart.Text);
             if (miStart.Text == "Старт")
             {
-                //StartTubeWorker();
-                MainWorkWorker.RunWorkerAsync();
-                setStartStopMenu(false);
+                Program.prepareBoardsForWork(false);
+                reader.RunWorkerAsync();
             }
             else
             {
                 //При остановке снимаем сигнал "РАБОТА"
                 Program.sl["РАБОТА"].Val = false;
-                worker.zbWorker.CancelAsync();
-                worker.CancelAsync();
-                MainWorkWorker.CancelAsync();
-                //while (MainWorkWorker.IsBusy) Thread.Sleep(100);
+                reader.CancelAsync();
                 setSb("Info", "Нажмите F5 для начала работы");
                 setStartStopMenu(true);
             }
@@ -412,7 +410,8 @@ namespace USPC
             long usedMem = GC.GetTotalMemory(false);
             sb.Items["heap"].Text = string.Format("{0,6}M", usedMem / (1024 * 1024));
             sb.Items["speed"].Text = string.Format("{0,7:F5}", AppSettings.s.speed);
-            sb.Items["dataSize"].Text = Program.data[0].currentOffsetFrames.ToString();
+            //sb.Items["dataSize"].Text = Program.data[0].currentOffsetFrames.ToString();
+            //sb.Items["dataSize"].Text = (Program.result.values.Count*Program.result.values[0].Count*Program.result.values[0][0].Count).ToString();
             //NotOpened, Opened, loaded, error
             /*
             int status = (int)ACQ_STATUS.ACQ_NO_CONFIGURED;

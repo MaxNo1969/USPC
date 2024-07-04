@@ -798,10 +798,10 @@ namespace USPC
             }
         }
 
-        public bool readAscan(ref Ascan ascan,int _timeout = 100, int _board = 0, int _test = 0)
+        public bool readAscan(int _board, int _test,ref Ascan _ascan, int _timeout)
         {
 
-            error = PCXUS_ACQ_ASCAN(_board, _test, ref ascan, _timeout);
+            error = PCXUS_ACQ_ASCAN(_board, _test, ref _ascan, _timeout);
             if (error != 0)
             {
                 //log.add(LogRecord.LogReason.error, "{0}: {1}: 0x{2:X8}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, error);

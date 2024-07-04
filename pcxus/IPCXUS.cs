@@ -20,7 +20,7 @@ namespace USPC
         bool stop(Int32 _board);
         bool clear(Int32 _board);
         Int32 read(Int32 _board, ref AcqAscan[] _data, int _timeout = 200);
-        bool readAscan(ref Ascan ascan, int _timeout = 100, int _board = 0, int _test = 0);
+        bool readAscan(int _board, int _test, ref Ascan ascan, int _timeout);
         int Err { get; }
     }
 }

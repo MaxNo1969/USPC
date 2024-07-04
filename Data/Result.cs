@@ -134,30 +134,28 @@ namespace Data
         public bool[] zoneResults;
         public void addDeadZoneStart()
         {
-            int numberOfScans = 100;
+            int numberOfScans = Program.typeSize.currentTypeSize.deadZoneStart;
             ListSensors listSensors = new ListSensors();
             for (int sens = 0; sens < USPCData.countSensors; sens++)
             {
                 listSensors.Add(new ListValues());
             }
-            for (int numBoard = 0; numBoard < Program.numBoards; numBoard++)
+            for (int sensor = 0; sensor < USPCData.countSensors; sensor++)
             {
-                for (int channel = 0; channel < USPCData.countSensors; channel++)
+                for (int i = 0; i < numberOfScans; i++)
                 {
-                    for (int i = 0; i < numberOfScans; i++)
-                        listSensors[channel].Add(Result.deadZone);
-                    zoneSensorResults[zone][channel] = Result.deadZone;
+                    listSensors[sensor].Add(Result.deadZone);
+                    zoneSensorResults[zone][sensor] = Result.deadZone;
                 }
             }
             zone++;
             zonesLengths.Add(Program.typeSize.currentTypeSize.deadZoneStart);
             values.Add(listSensors);
-            offsets.Add(0);
             Program.frMain.zbWorker_ProgressChanged(null, null);
         }
         public void addDeadZoneEnd()
         {
-            int numberOfScans = 100;
+            int numberOfScans = Program.typeSize.currentTypeSize.deadZoneEnd; 
             ListSensors listSensors = new ListSensors();
             for (int sens = 0; sens < USPCData.countSensors; sens++)
             {
@@ -253,6 +251,46 @@ namespace Data
             zone++;
         }
 
+        public void CalcZone(int _zone)
+        {
+            log.add(LogRecord.LogReason.debug, "{0}: {1}: _zone = {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, _zone);
+            for (int board = 0; board < Program.numBoards; board++)
+            {
+                for(int sensor =0;sensor<USPCData.countSensors;sensor++)
+                {
+                    for(int meas = 0; meas<values[_zone].Count;meas++)
+                    {
+                        
+                        if (zoneSensorResults[_zone][sensor+board*4] == notMeasured)
+                            zoneSensorResults[_zone][sensor+board*4] = values[_zone][sensor+board*4][meas];
+                        else if(board==0)
+                        {
+                            if(values[_zone][sensor][meas] < zoneSensorResults[_zone][sensor]) 
+                                zoneSensorResults[_zone][sensor] = values[_zone][sensor][meas];
+                        }
+                        else
+                        {
+                            if(values[_zone][sensor+4][meas] > zoneSensorResults[_zone][sensor+4]) 
+                                zoneSensorResults[_zone][sensor+4] = values[_zone][sensor+4][meas];
+                        }
+                    }
+                }
+            }
+        }
+        public void AddZone()
+        {
+            log.add(LogRecord.LogReason.debug, "{0}: {1}: zone = {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, zone);
+            ListSensors listSensors = new ListSensors();
+            for (int sens = 0; sens < USPCData.countSensors; sens++)
+            {
+                listSensors.Add(new ListValues());
+            }
+            values.Add(listSensors);
+            zonesLengths.Add(AppSettings.s.zoneSize);
+            //zone++;
+        }
+        
+        
         public const double notMeasured = 101.0;
         public const double deadZone = 102.0;
         public void ClearZoneSensorResult()

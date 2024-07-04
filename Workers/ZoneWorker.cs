@@ -11,11 +11,11 @@ using PCI1730;
 
 namespace USPC
 {
-    class ZoneBackGroundWorker:BackgroundWorker
+    class ZoneWorker:BackgroundWorker
     {
         private const int waitStrobeTime = 30*1000;
          
-        public ZoneBackGroundWorker()
+        public ZoneWorker()
         {
             log.add(LogRecord.LogReason.info, "{0}: {1}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name);
             WorkerReportsProgress = true;
@@ -36,22 +36,20 @@ namespace USPC
             //log.add(LogRecord.LogReason.info, "{0}: {1}: e.ProgressPercentage = {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, e.ProgressPercentage);
         }
 
-        int[] currentOffsets = new int[Program.numBoards];
         int strobCounter = 0;
         void worker_DoWork(object sender, DoWorkEventArgs e)
         {
+            Result result = Program.result;
             log.add(LogRecord.LogReason.info,"{0}: {1}: {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, "Worker started");
             while (!CancellationPending)
             {
                 if (Program.sl["СТРОБ"].Val)
                 {
-                    for (int board = 0; board < Program.numBoards; board++)
-                    {
-                        currentOffsets[board] = Program.data[board].currentOffsetFrames;
-                    }
-                    if(strobCounter>0)
-                        Program.result.addZone(currentOffsets); 
-                    log.add(LogRecord.LogReason.info, "{0}: {1}: CurrentOffsets = {2} {3}, {4}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, currentOffsets[0], currentOffsets[1], strobCounter);
+                    //if (strobCounter > 0)
+                    //{
+                    //    if (result.zone > 1) result.CalcZone();
+                    //    result.AddZone();
+                    //}
                     ReportProgress(Program.data[0].currentOffsetFrames * 100 / USPCData.countFrames);
                     strobCounter++;
                     Thread.Sleep(AppSettings.s.StrobResetTimeout);
