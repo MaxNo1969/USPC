@@ -51,42 +51,50 @@ namespace USPC.Workers
                 {
                     for (int channel = 0; channel < USPCData.countSensors; channel++)
                     {
+                        double def = 0;
+                        double thick = 0;
                         if (Program.pcxus.readAscan(board, channel, ref ascan, timeout))
                         {
-                            double def = ascan.G1Amp;
+                            def = ascan.G1Amp;
                             uint tof = ascan.G1TofWt * 5;
-                            double thick = USPCData.TofToMm(tof);
-                            //log.add(LogRecord.LogReason.debug, "board={0} channel={1} def={2} thick={3}",board,channel,def,thick);
-                            if (board == 0)
+                            thick = USPCData.TofToMm(tof);
+                        }
+                        else
+                        {
+                            def = Result.deadZone;
+                            thick = Result.deadZone;
+                        }
+
+                        //log.add(LogRecord.LogReason.debug, "board={0} channel={1} def={2} thick={3}",board,channel,def,thick);
+                        if (board == 0)
+                        {
+                            if (channel < 4)
                             {
-                                if (channel < 4)
-                                {
-                                    result.values[result.zone][channel].Add(thick);
-                                }
-                                else
-                                {
-                                    //log.add(LogRecord.LogReason.error, "{0}: {1}: Попытка чтения канала {2} с  платы {3}", GetType().Name, MethodBase.GetCurrentMethod().Name, channel, board);
-                                }
+                                result.values[result.zone][channel].Add(thick);
                             }
                             else
                             {
-                                if (channel < 4)
-                                {
-                                    result.values[result.zone][channel + 4].Add(def);
-                                }
-                                else if (channel < 8)
-                                {
-                                    result.values[result.zone][channel + 4].Add(def);
-                                }
-                                else
-                                {
-                                    //log.add(LogRecord.LogReason.error, "{0}: {1}: Попытка чтения канала {2} с  платы {3}", GetType().Name, MethodBase.GetCurrentMethod().Name, channel, board);
-                                }
+                                //log.add(LogRecord.LogReason.error, "{0}: {1}: Попытка чтения канала {2} с  платы {3}", GetType().Name, MethodBase.GetCurrentMethod().Name, channel, board);
+                            }
+                        }
+                        else
+                        {
+                            if (channel < 4)
+                            {
+                                result.values[result.zone][channel + 4].Add(def);
+                            }
+                            else if (channel < 8)
+                            {
+                                result.values[result.zone][channel + 4].Add(def);
+                            }
+                            else
+                            {
+                                //log.add(LogRecord.LogReason.error, "{0}: {1}: Попытка чтения канала {2} с  платы {3}", GetType().Name, MethodBase.GetCurrentMethod().Name, channel, board);
                             }
                         }
                     }
-                    //Thread.Sleep(50);
                 }
+                //Thread.Sleep(50);
             }
         }
     }
