@@ -306,12 +306,13 @@ namespace USPC
         
         private void timer_Tick(object sender, EventArgs e)
         {
-            Object retval = new Object();
-            PCXUSNetworkClient client = new PCXUSNetworkClient(AppSettings.s.serverAddr);
-            int res = client.callNetworkFunction(string.Format("{0},{1},{2},{3}","ascan",board,test,timeout),out retval);
-            if (res == 0)
+            //Object retval = new Object();
+            //PCXUSNetworkClient client = new PCXUSNetworkClient(AppSettings.s.serverAddr);
+            //int res = client.callNetworkFunction(string.Format("{0},{1},{2},{3}","ascan",board,test,timeout),out retval);
+            //if (res == 0)
+            Ascan ascan = new Ascan();
+            if (Program.pcxus.readAscan(board, test, ref ascan, timeout))
             {
-                Ascan ascan = (Ascan)retval;
                 // Update gate information
                 gateIF.UpdateGate(Gate.GateNum.GateIF, ascan);
                 gate1.UpdateGate(Gate.GateNum.Gate1, ascan);

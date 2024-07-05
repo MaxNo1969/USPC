@@ -46,10 +46,10 @@ namespace USPC
                 if (Program.sl["СТРОБ"].Val)
                 {
                     //if (strobCounter > 0)
-                    //{
-                    //    if (result.zone > 1) result.CalcZone();
-                    //    result.AddZone();
-                    //}
+                    {
+                        if (result.zone >= 0) result.CalcZone(result.zone);
+                        result.AddZone();
+                    }
                     ReportProgress(Program.data[0].currentOffsetFrames * 100 / USPCData.countFrames);
                     strobCounter++;
                     Thread.Sleep(AppSettings.s.StrobResetTimeout);

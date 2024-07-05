@@ -141,10 +141,6 @@ namespace USPC
         void stopWorkers()
         {
             log.add(LogRecord.LogReason.debug, "{0}: {1}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name);
-            //for (int i = 0; i < 2; i++)
-            //{
-            //    dataReaders[i].CancelAsync();
-            //}
             ascansReader.CancelAsync();
             zbWorker.CancelAsync();
         }
@@ -238,6 +234,7 @@ namespace USPC
                             {
                                 Program.sl["РЕЗУЛЬТАТ"].Val = false;
                                 Program.sl["СТРБРЕЗ"].Val = false;
+                                //Program.result.AddZone();
                                 //Включить сбор данных с модуля контроля. Ожидать пропадания сигнала КОНТРОЛЬ. 
                                 startWorkers();
                                 tubeStarted = DateTime.Now;

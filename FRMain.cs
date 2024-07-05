@@ -247,14 +247,18 @@ namespace USPC
             log.add(LogRecord.LogReason.debug, "{0}: {1}: {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, miStart.Text);
             if (miStart.Text == "Старт")
             {
-                Program.prepareBoardsForWork(false);
-                reader.RunWorkerAsync();
+                //Program.prepareBoardsForWork(false);
+                MainWorkWorker.RunWorkerAsync();
+                setStartStopMenu(false);
             }
             else
             {
                 //При остановке снимаем сигнал "РАБОТА"
                 Program.sl["РАБОТА"].Val = false;
-                reader.CancelAsync();
+                worker.zbWorker.CancelAsync();
+                worker.CancelAsync();
+                MainWorkWorker.CancelAsync();
+                //while (MainWorkWorker.IsBusy) Thread.Sleep(100);
                 setSb("Info", "Нажмите F5 для начала работы");
                 setStartStopMenu(true);
             }

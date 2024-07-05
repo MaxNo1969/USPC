@@ -148,7 +148,7 @@ namespace Data
                     zoneSensorResults[zone][sensor] = Result.deadZone;
                 }
             }
-            zone++;
+            //zone++;
             zonesLengths.Add(Program.typeSize.currentTypeSize.deadZoneStart);
             values.Add(listSensors);
             Program.frMain.zbWorker_ProgressChanged(null, null);
@@ -171,7 +171,7 @@ namespace Data
                     zoneSensorResults[zone][channel] = Result.deadZone;
                 }
             }
-            zone++;
+            //zone++;
             zonesLengths.Add(Program.typeSize.currentTypeSize.deadZoneEnd);
             values.Add(listSensors);
             Program.frMain.zbWorker_ProgressChanged(null, null);
@@ -256,22 +256,23 @@ namespace Data
             log.add(LogRecord.LogReason.debug, "{0}: {1}: _zone = {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, _zone);
             for (int board = 0; board < Program.numBoards; board++)
             {
-                for(int sensor =0;sensor<USPCData.countSensors;sensor++)
+                int sensorsCount = (board == 0) ? 4 : 8;
+                for (int sensor = 0; sensor < sensorsCount; sensor++)
                 {
-                    for(int meas = 0; meas<values[_zone].Count;meas++)
+                    for (int meas = 0; meas < values[_zone].Count; meas++)
                     {
-                        
-                        if (zoneSensorResults[_zone][sensor+board*4] == notMeasured)
-                            zoneSensorResults[_zone][sensor+board*4] = values[_zone][sensor+board*4][meas];
-                        else if(board==0)
+
+                        if (zoneSensorResults[_zone][sensor + board * 4] == notMeasured)
+                            zoneSensorResults[_zone][sensor + board * 4] = values[_zone][sensor + board * 4][meas];
+                        else if (board == 0)
                         {
-                            if(values[_zone][sensor][meas] < zoneSensorResults[_zone][sensor]) 
+                            if (values[_zone][sensor][meas] < zoneSensorResults[_zone][sensor])
                                 zoneSensorResults[_zone][sensor] = values[_zone][sensor][meas];
                         }
                         else
                         {
-                            if(values[_zone][sensor+4][meas] > zoneSensorResults[_zone][sensor+4]) 
-                                zoneSensorResults[_zone][sensor+4] = values[_zone][sensor+4][meas];
+                            if (values[_zone][sensor + 4][meas] > zoneSensorResults[_zone][sensor + 4])
+                                zoneSensorResults[_zone][sensor + 4] = values[_zone][sensor + 4][meas];
                         }
                     }
                 }
@@ -287,7 +288,7 @@ namespace Data
             }
             values.Add(listSensors);
             zonesLengths.Add(AppSettings.s.zoneSize);
-            //zone++;
+            zone++;
         }
         
         
