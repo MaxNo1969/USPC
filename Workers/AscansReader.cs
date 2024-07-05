@@ -43,9 +43,10 @@ namespace USPC.Workers
             Random r = new Random();
             Result result = Program.result;
             //result.AddZone();
-            if (result.values[result.zone] == null) return;
             while (!CancellationPending)
             {
+                if (result.values[result.zone] == null) return;
+                //if (result.zone == 0) return;
                 for (int board = 0; board < Program.numBoards; board++)
                 {
                     for (int channel = 0; channel < USPCData.countSensors; channel++)
@@ -84,7 +85,7 @@ namespace USPC.Workers
                             }
                         }
                     }
-                    Thread.Sleep(100);
+                    //Thread.Sleep(50);
                 }
             }
         }

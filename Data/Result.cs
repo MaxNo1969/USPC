@@ -5,6 +5,7 @@ using System.Text;
 using USPC;
 using PROTOCOL;
 using Settings;
+using System.Diagnostics;
 
 namespace Data
 {
@@ -40,6 +41,7 @@ namespace Data
                 return _list.Count;
             }
         }
+
         public void Clear()
         {
             _list.Clear();
@@ -145,8 +147,8 @@ namespace Data
                 for (int i = 0; i < numberOfScans; i++)
                 {
                     listSensors[sensor].Add(Result.deadZone);
-                    zoneSensorResults[zone][sensor] = Result.deadZone;
                 }
+                zoneSensorResults[zone][sensor] = Result.deadZone;
             }
             //zone++;
             zonesLengths.Add(Program.typeSize.currentTypeSize.deadZoneStart);
@@ -233,7 +235,7 @@ namespace Data
                     }
                 }
             }
-            zoneResults[zone-1] = true;
+            zoneResults[zone] = true;
             for (int sensor = 0; sensor < USPCData.countSensors; sensor++)
             {
                 if(sensor<4)
@@ -259,22 +261,47 @@ namespace Data
                 int sensorsCount = (board == 0) ? 4 : 8;
                 for (int sensor = 0; sensor < sensorsCount; sensor++)
                 {
-                    for (int meas = 0; meas < values[_zone].Count; meas++)
+                    int sensReal;
+                    if(board==0)
+                        sensReal = sensor;
+                    else 
+                        sensReal = sensor+4;
+                    for (int meas = 0; meas < values[_zone][sensReal].Count; meas++)
                     {
+                        try
+                        {
 
-                        if (zoneSensorResults[_zone][sensor + board * 4] == notMeasured)
-                            zoneSensorResults[_zone][sensor + board * 4] = values[_zone][sensor + board * 4][meas];
-                        else if (board == 0)
-                        {
-                            if (values[_zone][sensor][meas] < zoneSensorResults[_zone][sensor])
-                                zoneSensorResults[_zone][sensor] = values[_zone][sensor][meas];
+                            if (zoneSensorResults[_zone][sensReal] == notMeasured)
+                                zoneSensorResults[_zone][sensReal] = values[_zone][sensReal][meas];
+                            else if (board == 0)
+                            {
+                                if (zoneSensorResults[_zone][sensReal] != Result.deadZone && values[_zone][sensReal][meas] < zoneSensorResults[_zone][sensReal])
+                                    zoneSensorResults[_zone][sensReal] = values[_zone][sensReal][meas];
+                            }
+                            else
+                            {
+                                if (values[_zone][sensReal][meas] > zoneSensorResults[_zone][sensReal])
+                                    zoneSensorResults[_zone][sensReal] = values[_zone][sensReal][meas];
+                            }
                         }
-                        else
+                        catch (Exception ex)
                         {
-                            if (values[_zone][sensor + 4][meas] > zoneSensorResults[_zone][sensor + 4])
-                                zoneSensorResults[_zone][sensor + 4] = values[_zone][sensor + 4][meas];
+                            log.add(LogRecord.LogReason.error, "{0}: {1}: Error: {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message);
+                            log.add(LogRecord.LogReason.error, ex.StackTrace);
                         }
                     }
+                }
+            }
+            zoneResults[zone] = true;
+            for (int sensor = 0; sensor < USPCData.countSensors; sensor++)
+            {
+                if (sensor < 4)
+                {
+                    if (DrawResults.IsBrakThick(zoneSensorResults[zone][sensor])) zoneResults[zone] = false;
+                }
+                else
+                {
+                    if (DrawResults.IsBrakDef(zoneSensorResults[zone][sensor])) zoneResults[zone] = false;
                 }
             }
         }
@@ -322,7 +349,16 @@ namespace Data
 
         internal bool GetTubeResult()
         {
-            return true;
+            bool res = true;
+            for (int z = 0; z < zone; z++)
+            {
+                if (zoneResults[z] == false)
+                {
+                    res = false;
+                    break;
+                }
+            }
+            return res;
         }
     }
 

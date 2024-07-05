@@ -268,23 +268,18 @@ namespace USPC
             return numberOfScans;
         }
 
+        public static uint MmToTof(double _mm)
+        {
+            return (uint)(_mm * 1000000000/5.0 / 6400.0 /100.0);
+        }
+
         public bool readAscan(int _board, int _test,ref Ascan _ascan,int _timeout)
         {
             Random r =new Random();
-            double Distance = 0.23;
-            _ascan.G1TofWt = (uint)(Distance * 1000 / 5.0);
-            Distance = 5.25;
-            _ascan.G2TofWt = (uint)(Distance * 1000 / 5.0);
-            Distance = 3.11;
-            _ascan.GIFTof = (uint)(Distance * 1000 / 5.0);
-            _ascan.G1Begin = 200;
-            _ascan.G2Begin = 500;
-            _ascan.G1End = 500;
-            _ascan.G2End = 800;
-            _ascan.G1Level = 60;
-            _ascan.G2Level = 80;
-            _ascan.G1Amp = (byte)(90 + r.Next(10));
-            _ascan.G2Amp = (byte)(90 + r.Next(10));
+            double thick = _test;
+            _ascan.G1TofWt = (uint)(MmToTof(thick));
+            _ascan.GIFTof = (uint)(MmToTof(thick));
+            _ascan.G1Amp = (byte)(50+_test);
             _ascan.DataSize = (ushort)(200+r.Next(20));
             _ascan.Points = new byte[_ascan.DataSize];
             for (int i = 0; i < _ascan.DataSize; i++)

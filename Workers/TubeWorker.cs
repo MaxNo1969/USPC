@@ -280,8 +280,6 @@ namespace USPC
                             Program.sl["РЕЗУЛЬТАТ"].Val = Program.result.GetTubeResult();
                             Thread.Sleep(500);
                             Program.sl["СТРБРЕЗ"].Val = true;
-
-                            Program.sl["РЕЗУЛЬТАТ"].Val = true;
                             stopWorkers();
                             Action action = () => Program.frMain.setStartStopMenu(true);
                             Program.frMain.Invoke(action);

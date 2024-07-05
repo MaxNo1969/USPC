@@ -52,12 +52,12 @@ namespace USPC
             a.AxisY.LabelStyle.Enabled = false;
             a.AxisY.MajorGrid.Enabled = false;
 
-            a.CursorX.Interval = 1;
-            a.CursorX.IsUserEnabled = true;
-            a.CursorX.IsUserSelectionEnabled = false;
-            a.CursorX.LineColor = Color.Black;
-            a.CursorX.LineWidth = 3;
-            a.CursorX.Position = 0;
+            //a.CursorX.Interval = 1;
+            //a.CursorX.IsUserEnabled = true;
+            //a.CursorX.IsUserSelectionEnabled = false;
+            //a.CursorX.LineColor = Color.Black;
+            //a.CursorX.LineWidth = 3;
+            //a.CursorX.Position = 0;
 
             _c.ChartAreas.Clear();
             _c.ChartAreas.Add(a);
@@ -82,7 +82,7 @@ namespace USPC
             _c.Series[0].Points.Clear();
             for (int i = 0; i < _data.Length; i++)
             {
-                int ind = _c.Series[0].Points.AddXY(i, 100);
+                int ind = _c.Series[0].Points.AddXY(i+1, 100);
                 int val = (int)_data[i];
                 _c.Series[0].Points[ind].Color = DrawResults.GetDefectColor(val);
             }
@@ -94,7 +94,7 @@ namespace USPC
             for (int i = 0; i < _data.Length; i++)
             {
                 double val = _data[i];
-                int ind = _c.Series[0].Points.AddXY(i, val);
+                int ind = _c.Series[0].Points.AddXY(i+1, val);
                 _c.Series[0].Points[ind].Color = DrawResults.GetThicknessColor(val);
             }
         }

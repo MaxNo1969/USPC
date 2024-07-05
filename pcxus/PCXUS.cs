@@ -5,6 +5,7 @@ using System.Text;
 using System.Runtime.InteropServices;
 using PROTOCOL;
 using System.Diagnostics;
+using System.Threading;
 
 namespace USPC
 {
@@ -800,8 +801,8 @@ namespace USPC
 
         public bool readAscan(int _board, int _test,ref Ascan _ascan, int _timeout)
         {
-
-            error = PCXUS_ACQ_ASCAN(_board, _test, ref _ascan, _timeout);
+            int counter = 0;
+            while ((error = PCXUS_ACQ_ASCAN(_board, _test, ref _ascan, _timeout)) != 0 && ++counter < 100) Thread.Sleep(10);
             if (error != 0)
             {
                 //log.add(LogRecord.LogReason.error, "{0}: {1}: 0x{2:X8}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, error);

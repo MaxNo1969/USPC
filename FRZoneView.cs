@@ -25,22 +25,22 @@ namespace USPC
             setupResultChart();
         }
 
-        public void UpdateChart(double[] _data, int length, bool _isThick)
+        public void UpdateChart(double[] _data, int _length, bool _isThick)
         {
             if (_data == null || _data.Length == 0) return;
-            chartResult.ChartAreas[0].AxisX.Maximum = length;
+            chartResult.ChartAreas[0].AxisX.Maximum = _length;
             chartResult.Series[0].Points.Clear();
-            double step = (double)length / (double)_data.Length;
+            double step = (double)_length / (double)_data.Length;
             for (int i = 0; i < _data.Length; i++)
             {
                 double val = (double)_data.GetValue(i);
-                int ind = chartResult.Series[0].Points.AddXY(i * step, val);
+                int ind = chartResult.Series[0].Points.AddXY((i+1) * step, val);
                 chartResult.Series[0].Points[ind].Color = (_isThick) ? DrawResults.GetThicknessColor(val) : DrawResults.GetDefectColor((int)val);
             }
 
         }
 
-        public void UpdateChart(int _zone,int _sensor,int length)
+        public void UpdateChart(int _zone,int _sensor,int _length)
         {
             ListZones values = Program.result.values;
             int count = values[zone][sensor].Count;
@@ -53,17 +53,17 @@ namespace USPC
             if (sensor < 4)
             {
                 Text = string.Format("Толщинометрия: Зона:{0} Датчик: {1}", zone, sensor);
-                UpdateChart(data, length, true);
+                UpdateChart(data, _length, true);
             }
             else if (sensor < 8)
             {
                 Text = string.Format("Продольная дефектоскопия: Зона:{0} Датчик: {1}", zone, sensor - 4);
-                UpdateChart(data, length, false);
+                UpdateChart(data, _length, false);
             }
             else
             {
                 Text = string.Format("Поперечная дефектоскопия: Зона:{0} Датчик: {1}", zone, sensor - 8);
-                UpdateChart(data, length, false);
+                UpdateChart(data, _length, false);
             }
         }
 
