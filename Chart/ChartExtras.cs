@@ -59,7 +59,7 @@ namespace CHART
     static class ChartExtrasChart
     {
         
-        public static void putDataOnChart(this Chart chart, System.Array data,bool _isThickness)
+        public static void putDoubleDataOnChart(this Chart chart, System.Array data,bool _isThickness)
         {
             if (data == null) return;
             chart.Series[0].Points.Clear();
@@ -67,7 +67,19 @@ namespace CHART
             {
                 double val = (double)data.GetValue(i);
                 int ind = chart.Series[0].Points.AddXY(i, val);
-                chart.Series[0].Points[ind].Color = (_isThickness) ? DrawResults.GetThicknessColor(val) : DrawResults.GetDefectColor(val);
+                chart.Series[0].Points[ind].Color = (_isThickness) ? DrawResults.GetThicknessColor(val) : DrawResults.GetDefectColor((int)val);
+            }
+        }
+
+        public static void putIntDataOnChart(this Chart chart, System.Array data, bool _isThickness)
+        {
+            if (data == null) return;
+            chart.Series[0].Points.Clear();
+            for (int i = 0; i < data.Length; i++)
+            {
+                int val = (int)data.GetValue(i);
+                int ind = chart.Series[0].Points.AddXY(i, val);
+                chart.Series[0].Points[ind].Color = (_isThickness) ? DrawResults.GetThicknessColor(val) : DrawResults.GetDefectColor((int)val);
             }
         }
 
@@ -129,6 +141,7 @@ namespace CHART
                 chart.Series[0].Points[i].Color = DrawResults.GetColor(uspcData.offsets[i]*USPCData.countSensors+uspcData.offsSensor[sensor]);
         }
         */
+        /*
         public static void putColorDecision(this Chart chart, double[] minTh, int sensor)
         {
             if (chart.Series[0].Points == null || chart.Series[0].Points.Count == 0) return;
@@ -141,5 +154,6 @@ namespace CHART
             for (int i = 0; i < chart.Series[0].Points.Count; i++)
                 chart.Series[0].Points[i].Color = DrawResults.GetDefectColor(uspcData.minZoneThickness[i]);
         }
+        */ 
     }
 }

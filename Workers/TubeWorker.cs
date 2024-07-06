@@ -10,14 +10,15 @@ using Settings;
 using System.Threading;
 using USPC.PCI_1730;
 using System.Windows.Forms;
+using USPC.Workers;
 
 namespace USPC
 {
     class TubeWorker:BackgroundWorker
     {
-        UspcNetDataReader[] dataReaders = null;
-        public ZoneBackGroundWorker zbWorker = null;
-        //public ZoneThread zoneThread = null;
+        //UspcNetDataReader[] dataReaders = null;
+        public AscansReader ascansReader;
+        public ZoneWorker zbWorker = null;
         DefSignals sl = Program.sl;
         bool speedCalced = false;
         public TubeWorker()
@@ -31,11 +32,12 @@ namespace USPC
             RunWorkerCompleted += new RunWorkerCompletedEventHandler(worker_RunWorkerCompleted);
 
             //Воркеры сбора данных для каждой платы
-            dataReaders = new UspcNetDataReader[2];
-            for (int i = 0; i < 2; i++)
-                dataReaders[i] = new UspcNetDataReader(i);
+            //dataReaders = new UspcNetDataReader[2];
+            //for (int i = 0; i < 2; i++)
+            //    dataReaders[i] = new UspcNetDataReader(i);
+            ascansReader = new AscansReader();
             //Воркер по добавлению зон
-            zbWorker = new ZoneBackGroundWorker();
+            zbWorker = new ZoneWorker();
             //zoneThread = new ZoneThread();
             speedCalced = false;
         }
@@ -139,34 +141,15 @@ namespace USPC
         void stopWorkers()
         {
             log.add(LogRecord.LogReason.debug, "{0}: {1}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name);
-            for (int i = 0; i < 2; i++)
-            {
-                if (dataReaders[i] != null && dataReaders[i].IsBusy)
-                {
-                    dataReaders[i].CancelAsync();
-                    while (dataReaders[i].IsBusy)Application.DoEvents();
-                }
-            }
-            if (zbWorker != null && zbWorker.IsBusy)
-            {
-                zbWorker.CancelAsync();
-                while (zbWorker.IsBusy) Application.DoEvents();
-            }
+            ascansReader.CancelAsync();
+            zbWorker.CancelAsync();
         }
 
         void startWorkers()
         {
             log.add(LogRecord.LogReason.debug, "{0}: {1}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name);
-            if (zbWorker != null && !zbWorker.IsBusy)
-                zbWorker.RunWorkerAsync();
-            for (int i = 0; i < 2; i++)
-            {
-                if (dataReaders[i] != null && !dataReaders[i].IsBusy)
-                {
-                    dataReaders[i].RunWorkerAsync();
-                }
-            }
-            
+            ascansReader.RunWorkerAsync();
+            zbWorker.RunWorkerAsync();
         }
         #endregion запуск/остановка сбора данных по всем платам
 
@@ -182,7 +165,7 @@ namespace USPC
                 string errStr = string.Empty;
                 curState = WrkStates.startWorkCycle;
                 waitCycleStarted = DateTime.Now;
-                while (true)
+                while (!CancellationPending)
                 {
                     //Проверяем сигналы ICC и  CYCLE - они должны быть выставлены воё время работы
                     if (controlCycle && !Program.sl["ЦИКЛ"].Val)
@@ -219,9 +202,10 @@ namespace USPC
                                     if (!boardsPrepared)
                                     {
                                         //Инициализируем платы и загружаем конфигурацию
-                                        prepareBoardsForWork();
+                                        Program.prepareBoardsForWork(false);
                                         boardsPrepared = true;
                                     }
+                                    //Program.result.addDeadZoneStart();
                                 }
                                 if (Program.sl["ЦИКЛ"].Val)
                                 {
@@ -231,6 +215,7 @@ namespace USPC
                                     controlCycle = true;
                                     waitControlStarted = DateTime.Now;
                                     curState = WrkStates.waitTube;
+                                    Program.result.addDeadZoneStart();
                                     break;
                                 }
                                 else
@@ -249,6 +234,7 @@ namespace USPC
                             {
                                 Program.sl["РЕЗУЛЬТАТ"].Val = false;
                                 Program.sl["СТРБРЕЗ"].Val = false;
+                                //Program.result.AddZone();
                                 //Включить сбор данных с модуля контроля. Ожидать пропадания сигнала КОНТРОЛЬ. 
                                 startWorkers();
                                 tubeStarted = DateTime.Now;
@@ -258,7 +244,7 @@ namespace USPC
                             else
                             {
                                 //Не дождались сигнала "КОНТРОЛЬ"
-                                if((DateTime.Now - waitControlStarted ).TotalSeconds > iWrkTimeout)
+                                if ((DateTime.Now - waitControlStarted).TotalSeconds > iWrkTimeout)
                                 {
                                     errStr = "Не дождались сигнала \"КОНТРОЛЬ\"";
                                     curState = WrkStates.error;
@@ -286,17 +272,18 @@ namespace USPC
                             }
                             break;
                         case WrkStates.endWork:
+                            Program.result.addDeadZoneEnd();
                             //Перестаём контролировать цикл
                             controlCycle = false;
                             //По окончании сбора, обработки и передачи результата. 
-                            //Program.sl.set(Program.sl["РАБОТА"], false);
                             Program.sl["РАБОТА"].Val = false;
-                            //Program.sl.set(Program.sl["РЕЗУЛЬТАТ"], true);
-                            Program.sl["РЕЗУЛЬТАТ"].Val = true;
+                            Program.sl["РЕЗУЛЬТАТ"].Val = Program.result.GetTubeResult();
+                            Thread.Sleep(500);
+                            Program.sl["СТРБРЕЗ"].Val = true;
                             stopWorkers();
                             Action action = () => Program.frMain.setStartStopMenu(true);
                             Program.frMain.Invoke(action);
-                            Thread.Sleep(100);
+                            boardsPrepared = false;
                             speedCalced = false;
                             e.Cancel = true;
                             return;
@@ -309,22 +296,24 @@ namespace USPC
             }
             catch (Exception ex)
             {
+                //speedCalced = false;
+                //sl["РАБОТА"].Val = false;
+                //stopWorkers();
+                //log.add(LogRecord.LogReason.error, "{0}: {1}: Error: {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message);
+                //controlCycle = false;
+                //e.Cancel = true;
+                log.add(LogRecord.LogReason.error, "{0}: {1}: Error: {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message);
+                return;
+            }
+            finally
+            {
                 speedCalced = false;
                 sl["РАБОТА"].Val = false;
                 stopWorkers();
-                log.add(LogRecord.LogReason.error, "{0}: {1}: Error: {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message);
+                //log.add(LogRecord.LogReason.error, "{0}: {1}: {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, "Finally");
+                controlCycle = false;
                 e.Cancel = true;
-                return;
             }
         }
-
-        private void prepareBoardsForWork()
-        {
-            Program.pcxus.close();
-            Program.pcxus.open(2);
-            //Program.pcxus.load("tube147x11 (12 kanala 16,40).us");
-            Program.pcxus.load("default.us");
-        }
-
     }
 }

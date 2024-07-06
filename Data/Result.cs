@@ -5,6 +5,7 @@ using System.Text;
 using USPC;
 using PROTOCOL;
 using Settings;
+using System.Diagnostics;
 
 namespace Data
 {
@@ -40,6 +41,7 @@ namespace Data
                 return _list.Count;
             }
         }
+
         public void Clear()
         {
             _list.Clear();
@@ -123,43 +125,88 @@ namespace Data
 
     class Result
     {
-        public int sensors = 12;
-        public int zones;
-
+        public int zone {get;private set;}
+        List<int> offsets = new List<int>();
         
         public ListZones values = new ListZones();
         //Итоги в разрезе зона/датчик
         public double[][] zoneSensorResults;
+        public List<int> zonesLengths = new List<int>();
         //Итоги по зоне
         public bool[] zoneResults;
+        public void addDeadZoneStart()
+        {
+            int numberOfScans = Program.typeSize.currentTypeSize.deadZoneStart;
+            ListSensors listSensors = new ListSensors();
+            for (int sens = 0; sens < USPCData.countSensors; sens++)
+            {
+                listSensors.Add(new ListValues());
+            }
+            for (int sensor = 0; sensor < USPCData.countSensors; sensor++)
+            {
+                for (int i = 0; i < numberOfScans; i++)
+                {
+                    listSensors[sensor].Add(Result.deadZone);
+                }
+                zoneSensorResults[zone][sensor] = Result.deadZone;
+            }
+            //zone++;
+            zonesLengths.Add(Program.typeSize.currentTypeSize.deadZoneStart);
+            values.Add(listSensors);
+            Program.frMain.zbWorker_ProgressChanged(null, null);
+        }
+        public void addDeadZoneEnd()
+        {
+            int numberOfScans = Program.typeSize.currentTypeSize.deadZoneEnd; 
+            ListSensors listSensors = new ListSensors();
+            for (int sens = 0; sens < USPCData.countSensors; sens++)
+            {
+                listSensors.Add(new ListValues());
+            }
+            for (int numBoard = 0; numBoard < Program.numBoards; numBoard++)
+            {
+                for (int channel = 0; channel < USPCData.countSensors; channel++)
+                {
+
+                    for (int i = 0; i < numberOfScans; i++)
+                        listSensors[channel].Add(Result.deadZone);
+                    zoneSensorResults[zone][channel] = Result.deadZone;
+                }
+            }
+            //zone++;
+            zonesLengths.Add(Program.typeSize.currentTypeSize.deadZoneEnd);
+            values.Add(listSensors);
+            Program.frMain.zbWorker_ProgressChanged(null, null);
+        }
+
         public void addZone(int[] _offsets)
         {
+            log.add(LogRecord.LogReason.debug, "{0}: {1}: zones = {2}, offsets[0]={3}, ofsets[1]={4}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, zone, _offsets[0], _offsets[1]);
             ListSensors listSensors = new ListSensors();
-            for (int sens = 0; sens < sensors; sens++)
+            for (int sens = 0; sens < USPCData.countSensors; sens++)
             {
                 listSensors.Add(new ListValues());
             }
             for (int numBoard = 0; numBoard < Program.numBoards; numBoard++)
             {
                 USPCData data = Program.data[numBoard];
-                //int currentOffsetFrames = data.currentOffsetFrames;
                 int currentOffsetFrames = _offsets[numBoard];
-                data.currentOffsetZones++;                
-                data.offsets[data.currentOffsetZones] = currentOffsetFrames;
-                int numberOfFrames = data.offsets[data.currentOffsetZones] - data.offsets[data.currentOffsetZones - 1];
+                offsets.Add(_offsets[numBoard]);
+                int numberOfFrames = currentOffsetFrames - offsets[zone-1];
                 for (int frameOffset = 0; frameOffset < numberOfFrames; frameOffset++)
                 {
-                    AcqAscan scan = data.ascanBuffer[data.offsets[data.currentOffsetZones - 1]+frameOffset];
+                    AcqAscan scan = data.ascanBuffer[offsets[zone-1]+frameOffset];
                     int channel = scan.Channel;
                     double def = scan.G1Amp;
-                    double thick = 2.5e-6 * scan.G1Tof * Program.scopeVelocity;
+                    uint tof = (scan.G1Tof & AcqAscan.TOF_MASK) * 5;
+                    double thick = USPCData.TofToMm(tof);
                     //С первой платы получаем данные по толщинометрии
                     if (numBoard == 0)
                     {
                         if (channel < 4)
                         {
                             listSensors[channel].Add(thick);
-                            if (thick < zoneSensorResults[zones][channel]) zoneSensorResults[zones][channel] = thick;
+                            if (zoneSensorResults[zone][channel] == notMeasured || thick < zoneSensorResults[zone][channel]) zoneSensorResults[zone][channel] = thick;
                         }
                         else
                         {
@@ -173,13 +220,13 @@ namespace Data
                         if (channel < 4)
                         {
                             listSensors[channel + 4].Add(def);
-                            if (def < zoneSensorResults[zones][channel + 4]) zoneSensorResults[zones][channel + 4] = def;
+                            if (zoneSensorResults[zone][channel + 4]==notMeasured || def > zoneSensorResults[zone][channel + 4]) zoneSensorResults[zone][channel + 4] = def;
                         }
                         //Поперечная дефектоскопия
                         else if (channel < 8)
                         {
                             listSensors[channel + 4].Add(def);
-                            if (def < zoneSensorResults[zones][channel + 4]) zoneSensorResults[zones][channel + 4] = def;
+                            if (zoneSensorResults[zone][channel + 4] == notMeasured || def > zoneSensorResults[zone][channel + 4]) zoneSensorResults[zone][channel + 4] = def;
                         }
                         else
                         {
@@ -188,50 +235,131 @@ namespace Data
                     }
                 }
             }
-            zoneResults[zones] = true;
-            for (int sensor = 0; sensor < sensors; sensor++)
+            zoneResults[zone] = true;
+            for (int sensor = 0; sensor < USPCData.countSensors; sensor++)
             {
                 if(sensor<4)
                 {
-                    if(DrawResults.IsBrakThick(zoneSensorResults[zones][sensor]))zoneResults[zones]=false;
+                    if(DrawResults.IsBrakThick(zoneSensorResults[zone][sensor]))zoneResults[zone]=false;
                 }
                 else
                 {
-                    if (DrawResults.IsBrakDef(zoneSensorResults[zones][sensor])) zoneResults[zones] = false;
+                    if (DrawResults.IsBrakDef(zoneSensorResults[zone][sensor])) zoneResults[zone] = false;
                 }
             }
-            zones++;
+            log.add(LogRecord.LogReason.debug, "{0}: {1}: {2} {3}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, "Добавлена зона", zone);
+            zonesLengths.Add(AppSettings.s.zoneSize);
             values.Add(listSensors);
-            log.add(LogRecord.LogReason.debug, "{0}: {1}: {2} {3}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, "Добавлена зона", zones);
+            zone++;
         }
 
-        public const int notMeasured = 101;
+        public void CalcZone(int _zone)
+        {
+            log.add(LogRecord.LogReason.debug, "{0}: {1}: _zone = {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, _zone);
+            for (int board = 0; board < Program.numBoards; board++)
+            {
+                int sensorsCount = (board == 0) ? 4 : 8;
+                for (int sensor = 0; sensor < sensorsCount; sensor++)
+                {
+                    int sensReal;
+                    if(board==0)
+                        sensReal = sensor;
+                    else 
+                        sensReal = sensor+4;
+                    for (int meas = 0; meas < values[_zone][sensReal].Count; meas++)
+                    {
+                        try
+                        {
+
+                            if (zoneSensorResults[_zone][sensReal] == notMeasured)
+                                zoneSensorResults[_zone][sensReal] = values[_zone][sensReal][meas];
+                            else if (board == 0)
+                            {
+                                if (zoneSensorResults[_zone][sensReal] != Result.deadZone && values[_zone][sensReal][meas] < zoneSensorResults[_zone][sensReal])
+                                    zoneSensorResults[_zone][sensReal] = values[_zone][sensReal][meas];
+                            }
+                            else
+                            {
+                                if (values[_zone][sensReal][meas] > zoneSensorResults[_zone][sensReal])
+                                    zoneSensorResults[_zone][sensReal] = values[_zone][sensReal][meas];
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            log.add(LogRecord.LogReason.error, "{0}: {1}: Error: {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message);
+                            log.add(LogRecord.LogReason.error, ex.StackTrace);
+                        }
+                    }
+                }
+            }
+            zoneResults[zone] = true;
+            for (int sensor = 0; sensor < USPCData.countSensors; sensor++)
+            {
+                if (sensor < 4)
+                {
+                    if (DrawResults.IsBrakThick(zoneSensorResults[zone][sensor])) zoneResults[zone] = false;
+                }
+                else
+                {
+                    if (DrawResults.IsBrakDef(zoneSensorResults[zone][sensor])) zoneResults[zone] = false;
+                }
+            }
+        }
+        public void AddZone()
+        {
+            log.add(LogRecord.LogReason.debug, "{0}: {1}: zone = {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, zone);
+            ListSensors listSensors = new ListSensors();
+            for (int sens = 0; sens < USPCData.countSensors; sens++)
+            {
+                listSensors.Add(new ListValues());
+            }
+            values.Add(listSensors);
+            zonesLengths.Add(AppSettings.s.zoneSize);
+            zone++;
+        }
+        
+        
+        public const double notMeasured = 101.0;
+        public const double deadZone = 102.0;
         public void ClearZoneSensorResult()
         {
             for (int z = 0; z < USPCData.countZones; z++)
             {
-                zoneSensorResults[z] = new double[sensors];
-                for (int s = 0; s < 4; s++)
-                    zoneSensorResults[z][s] = notMeasured;
-                for (int s = 4; s < 12; s++)
+                zoneSensorResults[z] = new double[USPCData.countSensors];
+                for (int s = 0; s < USPCData.countSensors; s++)
                     zoneSensorResults[z][s] = notMeasured;
                 zoneResults[z] = false;
             }
         }
         public Result()
         {
-            zones = 0;
+            zone = 0;
             zoneSensorResults = new double[USPCData.countZones][];
             zoneResults = new bool[USPCData.countZones];
             ClearZoneSensorResult();
         }
         public void Clear()
         {
-            zones = 0;
+            zone = 0;
+            offsets.Clear();
             values.Clear();
             ClearZoneSensorResult();
         }
 
+
+        internal bool GetTubeResult()
+        {
+            bool res = true;
+            for (int z = 0; z < zone; z++)
+            {
+                if (zoneResults[z] == false)
+                {
+                    res = false;
+                    break;
+                }
+            }
+            return res;
+        }
     }
 
 }

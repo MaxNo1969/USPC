@@ -258,7 +258,7 @@ namespace USPC
                     _data[i].ScanCounter = scanCounter;
                     _data[i].PulserCounter = scanCounter;
                     scanCounter++;
-                    _data[i].G1Amp = (byte)(95 + r.Next(10));
+                    _data[i].G1Amp = (byte)(50 + r.Next(20));
                     double val = 8 + (r.NextDouble() - 0.5) * 2;
                     uint G1Tof = (uint)(val / (2.5e-6 * scopeVelocity));
                     _data[i].G1Tof = G1Tof;
@@ -268,30 +268,26 @@ namespace USPC
             return numberOfScans;
         }
 
-        public bool readAscan(ref Ascan ascan,int _timeout = 100, int _board = 0, int _test = 0)
+        public static uint MmToTof(double _mm)
+        {
+            return (uint)(_mm * 1000000000/5.0 / 6400.0 /100.0);
+        }
+
+        public bool readAscan(int _board, int _test,ref Ascan _ascan,int _timeout)
         {
             Random r =new Random();
-            double Distance = 0.23;
-            ascan.G1TofWt = (uint)(Distance * 1000 / 5.0);
-            Distance = 5.25;
-            ascan.G2TofWt = (uint)(Distance * 1000 / 5.0);
-            Distance = 3.11;
-            ascan.GIFTof = (uint)(Distance * 1000 / 5.0);
-            ascan.G1Begin = 200;
-            ascan.G2Begin = 500;
-            ascan.G1End = 500;
-            ascan.G2End = 800;
-            ascan.G1Level = 60;
-            ascan.G2Level = 80;
-            ascan.G1Amp = (byte)(90 + r.Next(10));
-            ascan.G2Amp = (byte)(90 + r.Next(10));
-            ascan.DataSize = (ushort)(200+r.Next(20));
-            ascan.Points = new byte[ascan.DataSize];
-            for (int i = 0; i < ascan.DataSize; i++)
+            double thick = _test;
+            _ascan.G1TofWt = (uint)(MmToTof(thick));
+            _ascan.GIFTof = (uint)(MmToTof(thick));
+            _ascan.G1Amp = (byte)(50+_test);
+            _ascan.DataSize = (ushort)(200+r.Next(20));
+            _ascan.Points = new byte[_ascan.DataSize];
+            for (int i = 0; i < _ascan.DataSize; i++)
             {
-                ascan.Points[i] = (byte)(50 + r.Next(50));
+                _ascan.Points[i] = (byte)(50 + r.Next(50));
             }
-            //log.add(LogRecord.LogReason.info, "{0}: {1}: Board={2},Test={3} DataSize={4}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, _board,_test, ascan.DataSize);
+            //log.add(LogRecord.LogReason.info, "{0}: {1}: Board={2},Test={3} DataSize={4}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, _board,_test, _ascan.DataSize);
+            error = 0;
             return true;
         }
 

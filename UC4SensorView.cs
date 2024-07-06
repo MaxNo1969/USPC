@@ -29,11 +29,11 @@ namespace USPC
             _c.Dock = DockStyle.Fill;
             //_c.Tag = i;
             var a = new ChartArea("Default");
-            a.InnerPlotPosition.Auto = false;
-            a.InnerPlotPosition.X = 0;
-            a.InnerPlotPosition.Y = 0;
-            a.InnerPlotPosition.Width = 100;
-            a.InnerPlotPosition.Height = 100;
+            //a.InnerPlotPosition.Auto = false;
+            //a.InnerPlotPosition.X = 0;
+            //a.InnerPlotPosition.Y = 0;
+            //a.InnerPlotPosition.Width = 100;
+            //a.InnerPlotPosition.Height = 100;
 
             //a.AxisY.Crossing = 0;
             a.AxisY.MajorTickMark.Enabled = false;
@@ -41,8 +41,8 @@ namespace USPC
             a.AxisX.Minimum = 0;
             a.AxisX.Maximum = USPCData.countZones;
             a.AxisX.Interval = 10;
-            a.AxisX.LabelStyle.Enabled = false;
-            a.AxisX.MajorGrid.Enabled = false;
+            a.AxisX.LabelStyle.Enabled = true;
+            a.AxisX.MajorGrid.Enabled = true;
             
             a.AxisY.Minimum = 0;
             //a.AxisY.Maximum = 100;
@@ -52,12 +52,12 @@ namespace USPC
             a.AxisY.LabelStyle.Enabled = false;
             a.AxisY.MajorGrid.Enabled = false;
 
-            a.CursorX.Interval = 1;
-            a.CursorX.IsUserEnabled = true;
-            a.CursorX.IsUserSelectionEnabled = false;
-            a.CursorX.LineColor = Color.Black;
-            a.CursorX.LineWidth = 3;
-            a.CursorX.Position = 0;
+            //a.CursorX.Interval = 1;
+            //a.CursorX.IsUserEnabled = true;
+            //a.CursorX.IsUserSelectionEnabled = false;
+            //a.CursorX.LineColor = Color.Black;
+            //a.CursorX.LineWidth = 3;
+            //a.CursorX.Position = 0;
 
             _c.ChartAreas.Clear();
             _c.ChartAreas.Add(a);
@@ -68,30 +68,33 @@ namespace USPC
                 Color = Color.ForestGreen,
                 IsVisibleInLegend = false,
                 IsXValueIndexed = false,
+                BorderColor = Color.Black,
+                BorderWidth = 1,
                 ChartType = SeriesChartType.Column,
-                CustomProperties = "DrawingStyle=Emboss, PointWidth=1"
+                //CustomProperties = "DrawingStyle=Emboss, PointWidth=1"                
+                CustomProperties = "PointWidth=1"                
             };
             _c.Series.Add(ser);
         }
-        public static void PutDefDataOnChart(Chart _c,Array _data)
+        public static void PutDefDataOnChart(Chart _c,double[] _data)
         {
             if (_data == null) return;
             _c.Series[0].Points.Clear();
             for (int i = 0; i < _data.Length; i++)
             {
-                double val = (double)_data.GetValue(i);
-                int ind = _c.Series[0].Points.AddXY(i, val);
+                int ind = _c.Series[0].Points.AddXY(i+1, 100);
+                int val = (int)_data[i];
                 _c.Series[0].Points[ind].Color = DrawResults.GetDefectColor(val);
             }
         }
-        public static void PutThickDataOnChart(Chart _c, Array _data)
+        public static void PutThickDataOnChart(Chart _c, double[] _data)
         {
             if (_data == null) return;
             _c.Series[0].Points.Clear();
             for (int i = 0; i < _data.Length; i++)
             {
-                double val = (double)_data.GetValue(i);
-                int ind = _c.Series[0].Points.AddXY(i, val);
+                double val = _data[i];
+                int ind = _c.Series[0].Points.AddXY(i+1, val);
                 _c.Series[0].Points[ind].Color = DrawResults.GetThicknessColor(val);
             }
         }
@@ -109,5 +112,26 @@ namespace USPC
             //Поскольку перекрываем всю поверхность то ничего не делаем        
         }
 
+        private void ch_Click(object sender, EventArgs e)
+        {
+            Chart c = sender as Chart;
+            int sensor = (int)c.Tag;
+            MouseEventArgs mea = e as MouseEventArgs;
+            HitTestResult htRes = c.HitTest(mea.X, mea.Y, ChartElementType.DataPoint);
+            int zone = htRes.PointIndex;
+            if (zone > Program.result.zone) return;
+            ListZones values = Program.result.values;
+            int count = values[zone][sensor].Count;
+            double[] data = new double[count];
+            for (int i = 0; i < count; i++)
+            {
+                data[i] = values[zone][sensor][i];
+            }
+            FRZoneView frm = new FRZoneView(Program.frMain);
+            frm.sensor = sensor;
+            frm.zone = zone;
+            frm.UpdateChart(zone, sensor, Program.result.zonesLengths[zone]);
+            frm.Show();
+        }
     }
 }

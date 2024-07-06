@@ -10,6 +10,10 @@ using PCI1730;
 using Data;
 using USPC.PCI_1730;
 using Settings;
+using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.Runtime.Remoting.Messaging;
+using USPC.Workers;
 
 namespace USPC
 {
@@ -21,9 +25,47 @@ namespace USPC
         public static BoardState boardState = BoardState.NotOpened;
         public static int numBoards = 2;
         public static PCXUSNET pcxus = null;
+        public static void prepareBoardsForWork(bool _foAcquition)
+        {
+            Program.pcxus.close();
+            Program.pcxus.open(2);
+            Program.pcxus.load(Program.typeSize.currentTypeSize.configName);
+            if (_foAcquition)
+            {
+                for (int board = 0; board < Program.numBoards; board++)
+                {
+                    Program.pcxus.config(board, AppSettings.s.BufferSize, AppSettings.s.InterruptFluidity);
+                    AcqSatus acqStatus = new AcqSatus();
+                    Program.pcxus.status(board, ref acqStatus.status, ref acqStatus.NumberOfScansAcquired, ref acqStatus.NumberOfScansRead, ref acqStatus.bufferSize, ref acqStatus.scanSize);
+                    log.add(LogRecord.LogReason.info, "Board: {0}, ACQ_STATUS: {1}, BufferSize(in numbers od scans): {2}, ScanSize(in number of DWORD): {3}", board, ((ACQ_STATUS)acqStatus.status).ToString(), acqStatus.bufferSize, acqStatus.scanSize);
+                    Program.pcxus.start(board);
+                }
+            }
+        }
+
         public static USPCData[] data = new USPCData[numBoards];
+        //ToDo: Переделать
+        public static void saveData(Stream _stream)
+        {
+            if (_stream.CanWrite)
+            {
+                BinaryFormatter formatter = new BinaryFormatter();
+                formatter.Serialize(_stream, data);
+            }
+        }
+        public static void loadData(Stream _stream)
+        {
+            if (_stream.CanRead)
+            {
+                BinaryFormatter formatter = new BinaryFormatter();
+                data = (USPCData[])formatter.Deserialize(_stream);
+            }
+        }
         public static TypeSize typeSize = new TypeSize();
         public static Result result = new Result();
+        public static void saveResult(string _fileName)
+        {
+        }
         public static FRMain frMain = null;
         public static int medianFilterWidth = 5;
 
@@ -48,38 +90,6 @@ namespace USPC
             int ret = 0;
             //В первую очередь запускаем логирование
             log.add(LogRecord.LogReason.info,@"Program: Начало выполнения программы.");
-            //try
-            //{
-            //    cmdLineArgs = getCmdStr(args);
-            //    if (cmdLineArgs != null)
-            //    {
-            //        #region Логирование
-            //        {
-            //            string msg = string.Empty;
-            //            foreach (KeyValuePair<string, string> kv in cmdLineArgs)
-            //            {
-            //                msg += string.Format(@"{0}={1}; ", kv.Key, kv.Value);
-            //                msg = msg.Trim();
-            //            }
-            //            log.add(LogRecord.LogReason.info, "{0}: {1}: {2}", "Program", System.Reflection.MethodBase.GetCurrentMethod().Name, msg);
-            //        }
-            //        #endregion
-            //    }
-            //    pcxus = new PCXUSNET(AppSettings.s.serverAddr);
-            //}
-            //catch (ArgumentException ex)
-            //{
-            //    log.add(LogRecord.LogReason.error, "{0}: {1}: {2}", "Program", System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message);
-            //    ShowExceptionDetails(ex);
-            //    return -1;
-            //}
-            //catch (KeyNotFoundException ex)
-            //{
-            //    log.add(LogRecord.LogReason.error, "{0}: {1}: {2}", "Program", System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message);
-            //    ShowExceptionDetails(ex);
-            //    return -1;
-            //}
-
             try
             {
                 FormPosSaver.deser();
@@ -90,6 +100,7 @@ namespace USPC
                     data[i] = new USPCData();
                 }
                 frMain = new FRMain();
+                ThreadPool.SetMinThreads(100, 100);
                 Application.Run(frMain);
             }
             catch (Exception e)

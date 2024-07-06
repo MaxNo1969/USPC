@@ -1,6 +1,6 @@
 ﻿namespace USPC
 {
-    partial class FRResultView
+    partial class FRZoneView
     {
         /// <summary>
         /// Required designer variable.

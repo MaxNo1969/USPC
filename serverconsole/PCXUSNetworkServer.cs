@@ -161,15 +161,15 @@ namespace USPC
                             int test = (cmdAndParams.Length > 2) ? ConvertToInt(cmdAndParams[2], 0) : 0;
                             int timeout = (cmdAndParams.Length > 3) ? ConvertToInt(cmdAndParams[3],defTimeout) : defTimeout;
                             Ascan ascan = new Ascan();
-                            int counter = 0;
-                            while (!pcxus.readAscan(ref ascan, timeout,board,test) || counter++ < 5) ;
+                            //int counter = 0;
+                            //while (!pcxus.readAscan(board,test,ref ascan, timeout) || counter++ < 5) ;
+                            pcxus.readAscan(board, test, ref ascan, timeout);
                             ret = (UInt32)pcxus.Err;
                             byte[] byteArray = BitConverter.GetBytes(ret);
                             _stream.Write(byteArray, 0, byteArray.Length);
                             if (ret == 0)
                             {
                                 IFormatter formatter = new BinaryFormatter();
-                                //XmlSerializer formatter = new XmlSerializer(typeof(Ascan));
                                 formatter.Serialize(_stream, ascan);
                             }
                             _stream.Close();

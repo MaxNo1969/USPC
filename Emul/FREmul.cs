@@ -70,9 +70,10 @@ namespace EMUL
         {
             if (worker == null || !worker.IsBusy) return;
             sl.set(sl["СТРОБ"], true);
-            while(!sl.get(sl["СТРБРЕЗ"]))Application.DoEvents();
-            worker.ReportProgress(101, string.Format("СТРОБ!"));
+            Thread.Sleep(200);
             sl.set(sl["СТРОБ"], false);
+            if(worker.IsBusy)
+                worker.ReportProgress(101, "СТРОБ!");
         }
 
         void worker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
@@ -118,7 +119,7 @@ namespace EMUL
         const int updateCountersPeriod = 1000;
         const int WaitReadyTime = 2000;
         const int WaitWorkTime = 2000;
-        int MoveTubeTime = 30000;
+        int MoveTubeTime = 300000;
 
         DateTime TubeStartTime;
         DateTime dtStartWait;
@@ -228,6 +229,7 @@ namespace EMUL
                 }
                 worker.ReportProgress(101, "Выставляем сигнал \"КОНТРОЛЬ\"...");
                 sl.set(sl["КОНТРОЛЬ"], true);
+                Thread.Sleep(1000);
                 bool iBaseSet = false;
                 TubeStartTime = DateTime.Now;
                 timerStrob = new System.Threading.Timer(timerZoneCallback, null, 0, strobTime);

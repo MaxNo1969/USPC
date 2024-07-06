@@ -23,12 +23,17 @@ namespace USPC
         {
             InitializeComponent();
             Owner = _fr;
+            //FRWaitLongProcess waitWindow = new FRWaitLongProcess(this);
+            //waitWindow.Show();
+            //waitWindow.setMes("Открываем платы USPC...");
+            //Program.pcxus.open(2);
+            //waitWindow.setMes("Загружаем файл конфигурации...");
+            //Program.pcxus.load(Program.typeSize.currentTypeSize.configName);
+            //waitWindow.Close();
             FRWaitLongProcess waitWindow = new FRWaitLongProcess(this);
             waitWindow.Show();
             waitWindow.setMes("Открываем платы USPC...");
-            Program.pcxus.open(2);
-            waitWindow.setMes("Загружаем файл конфигурации...");
-            Program.pcxus.load("default.us");
+            Program.prepareBoardsForWork(true);
             waitWindow.Close();
             for (int i = 0; i < Program.numBoards; i++)
             {
@@ -62,30 +67,15 @@ namespace USPC
             try
             {
                 AcqChart.Series["Gate1Amp"].Points.Clear();
-                AcqChart.Series["Gate2Amp"].Points.Clear();
-                
-                //AcqChart.ChartAreas["Default"].AxisY.Minimum = 0.0;
-                //AcqChart.ChartAreas["Default"].AxisY.Maximum = 200.0;
-                //AcqChart.ChartAreas["Default"].AxisY.Interval = 10.0;
-
                 AcqChart.ChartAreas["Default"].AxisX.Minimum = 0;
                 AcqChart.ChartAreas["Default"].AxisX.Maximum = _numberOfScans;
 
                 for (int iPoint = 0; iPoint < _numberOfScans; iPoint++)
                 {
                     {
-                        //uint tof = _data[iPoint].G1Tof & AcqAscan.TOF_MASK;
-                        //double val = 2.5e-6 * tof * USPCData.scopeVelocity;
                         double val = _data[iPoint].G1Amp;
                         AcqChart.Series["Gate1Amp"].Points.AddXY(iPoint, val);
                         lblGate1MaxTof.Text = val.ToString();
-                    }
-                    {
-                        //uint tof = _data[iPoint].G2Tof & AcqAscan.TOF_MASK;
-                        //double val = 2.5e-6 * tof * USPCData.scopeVelocity;
-                        double val = _data[iPoint].G2Amp;
-                        AcqChart.Series["Gate2Amp"].Points.AddXY(iPoint, val);
-                        lblGate2MaxTof.Text = val.ToString();
                     }
                 }
             }
@@ -100,16 +90,13 @@ namespace USPC
         private void btnStart_Click(object sender, EventArgs e)
         {
             StartStopToggle(false);
-            for (int i = 0; i < Program.numBoards; i++)
-                if (dataReader[i] != null && !dataReader[i].IsBusy) dataReader[i].RunWorkerAsync();
+            for (int i = 0; i < Program.numBoards; i++)dataReader[i].RunWorkerAsync();
         }
 
         private void btnStop_Click(object sender, EventArgs e)
         {
             StartStopToggle(true);
-            for (int i = 0; i < Program.numBoards; i++)
-                if (dataReader[i] != null && dataReader[i].IsBusy) dataReader[i].CancelAsync();
-            //Program.data.saveAsync("data.bin");
+            for (int i = 0; i < Program.numBoards; i++)dataReader[i].CancelAsync();
         }
 
         private void FRTestAcq_FormClosing(object sender, FormClosingEventArgs e)

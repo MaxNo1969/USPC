@@ -158,10 +158,10 @@ namespace USPC
             return numberScans;
         }
 
-        public bool readAscan(ref Ascan ascan, int _timeout = 100, int _board = 0, int _test = 0)
+        public bool readAscan(int _board, int _test,ref Ascan ascan,int _timeout)
         {
-            error = netClient.callNetworkFunction(string.Format("{0},{1}", "read", _board), out obj);
-            ascan = (Ascan)obj;
+            error = netClient.callNetworkFunction(string.Format("{0},{1},{2},{3}", "ascan", _board, _test, _timeout), out obj);
+            if(obj != null) ascan = (Ascan)obj;
             return (error == 0);
         }
 

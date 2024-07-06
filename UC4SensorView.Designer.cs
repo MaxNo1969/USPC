@@ -94,6 +94,7 @@
             this.ch4.Series.Add(series1);
             this.ch4.Size = new System.Drawing.Size(1012, 22);
             this.ch4.TabIndex = 4;
+            this.ch4.Click += new System.EventHandler(this.ch_Click);
             // 
             // ch3
             // 
@@ -115,6 +116,7 @@
             this.ch3.Series.Add(series2);
             this.ch3.Size = new System.Drawing.Size(1012, 20);
             this.ch3.TabIndex = 3;
+            this.ch3.Click += new System.EventHandler(this.ch_Click);
             // 
             // ch2
             // 
@@ -130,12 +132,14 @@
             this.ch2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.ch2.Location = new System.Drawing.Point(6, 64);
             this.ch2.Name = "ch2";
+            series3.BorderColor = System.Drawing.Color.Black;
             series3.ChartArea = "Default";
             series3.IsVisibleInLegend = false;
             series3.Name = "ser";
             this.ch2.Series.Add(series3);
             this.ch2.Size = new System.Drawing.Size(1012, 20);
             this.ch2.TabIndex = 2;
+            this.ch2.Click += new System.EventHandler(this.ch_Click);
             // 
             // ch1
             // 
@@ -159,6 +163,7 @@
             this.ch1.Location = new System.Drawing.Point(3, 32);
             this.ch1.Margin = new System.Windows.Forms.Padding(0);
             this.ch1.Name = "ch1";
+            series4.BorderColor = System.Drawing.Color.Black;
             series4.ChartArea = "Default";
             series4.IsVisibleInLegend = false;
             series4.Name = "ser";
@@ -166,6 +171,7 @@
             this.ch1.Series.Add(series4);
             this.ch1.Size = new System.Drawing.Size(1018, 26);
             this.ch1.TabIndex = 0;
+            this.ch1.Click += new System.EventHandler(this.ch_Click);
             // 
             // pInfo
             // 

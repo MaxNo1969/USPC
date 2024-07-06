@@ -72,7 +72,7 @@ namespace USPC
             waitWindow.setMes("Открываем платы USPC...");
             Program.pcxus.open(2);
             waitWindow.setMes("Загружаем файл конфигурации...");
-            Program.pcxus.load("default.us");
+            Program.pcxus.load(Program.typeSize.currentTypeSize.configName);
             waitWindow.setMes("Читаем параметры..."); 
             info.Video = (AscanInfo.VideoMode)GetVal("scope_video", waitWindow);
             info.ZeroVideo = GetVal("scope_zero",waitWindow);
@@ -160,8 +160,8 @@ namespace USPC
             AscanChart.Series["Gate1NegPlot"].Points.Clear();
             AscanChart.Series["Gate1Pos2Plot"].Points.Clear();
             AscanChart.Series["Gate1Neg2Plot"].Points.Clear();
-            if ((Ascan.G1InAscan & Ascan.GateInAscan.GateStartInAscan) == Ascan.GateInAscan.GateStartInAscan ||
-                (Ascan.G1InAscan & Ascan.GateInAscan.GateEndInAscan) == Ascan.GateInAscan.GateEndInAscan)
+            //if ((Ascan.G1InAscan & Ascan.GateInAscan.GateStartInAscan) == Ascan.GateInAscan.GateStartInAscan ||
+            //    (Ascan.G1InAscan & Ascan.GateInAscan.GateEndInAscan) == Ascan.GateInAscan.GateEndInAscan)
             {
                 double Begin = Info.ZeroVideo + Ascan.G1Begin / 1000.0;
                 double End = Info.ZeroVideo + Ascan.G1End / 1000.0;
@@ -212,8 +212,8 @@ namespace USPC
             AscanChart.Series["Gate2NegPlot"].Points.Clear();
             AscanChart.Series["Gate2Pos2Plot"].Points.Clear();
             AscanChart.Series["Gate2Neg2Plot"].Points.Clear();
-            if ((Ascan.G2InAscan & Ascan.GateInAscan.GateStartInAscan) == Ascan.GateInAscan.GateStartInAscan ||
-                (Ascan.G2InAscan & Ascan.GateInAscan.GateEndInAscan) == Ascan.GateInAscan.GateEndInAscan)
+            //if ((Ascan.G2InAscan & Ascan.GateInAscan.GateStartInAscan) == Ascan.GateInAscan.GateStartInAscan ||
+            //    (Ascan.G2InAscan & Ascan.GateInAscan.GateEndInAscan) == Ascan.GateInAscan.GateEndInAscan)
             {
                 double Begin = Info.ZeroVideo + Ascan.G2Begin / 1000.0;
                 double End = Info.ZeroVideo + Ascan.G2End / 1000.0;
@@ -262,8 +262,8 @@ namespace USPC
             // Draw Gate IF plot
             AscanChart.Series["GateIFPosPlot"].Points.Clear();
             AscanChart.Series["GateIFNegPlot"].Points.Clear();
-            if ((Ascan.GIFInAscan & Ascan.GateIFInAscan.GateStartInAscan) == Ascan.GateIFInAscan.GateStartInAscan ||
-                (Ascan.GIFInAscan & Ascan.GateIFInAscan.GateEndInAscan) == Ascan.GateIFInAscan.GateEndInAscan)
+            //if ((Ascan.GIFInAscan & Ascan.GateIFInAscan.GateStartInAscan) == Ascan.GateIFInAscan.GateStartInAscan ||
+            //    (Ascan.GIFInAscan & Ascan.GateIFInAscan.GateEndInAscan) == Ascan.GateIFInAscan.GateEndInAscan)
             {
                 double Begin = Info.ZeroVideo + Ascan.GIFBegin / 1000.0;
                 double End = Info.ZeroVideo + Ascan.GIFEnd / 1000.0;
@@ -306,12 +306,13 @@ namespace USPC
         
         private void timer_Tick(object sender, EventArgs e)
         {
-            Object retval = new Object();
-            PCXUSNetworkClient client = new PCXUSNetworkClient(AppSettings.s.serverAddr);
-            int res = client.callNetworkFunction(string.Format("{0},{1},{2},{3}","ascan",board,test,timeout),out retval);
-            if (res == 0)
+            //Object retval = new Object();
+            //PCXUSNetworkClient client = new PCXUSNetworkClient(AppSettings.s.serverAddr);
+            //int res = client.callNetworkFunction(string.Format("{0},{1},{2},{3}","ascan",board,test,timeout),out retval);
+            //if (res == 0)
+            Ascan ascan = new Ascan();
+            if (Program.pcxus.readAscan(board, test, ref ascan, timeout))
             {
-                Ascan ascan = (Ascan)retval;
                 // Update gate information
                 gateIF.UpdateGate(Gate.GateNum.GateIF, ascan);
                 gate1.UpdateGate(Gate.GateNum.Gate1, ascan);
@@ -339,13 +340,13 @@ namespace USPC
         private void cbBoards_SelectedIndexChanged(object sender, EventArgs e)
         {
             ComboBox cb = (ComboBox)sender;
-            if (cb.SelectedIndex > 0) board = cb.SelectedIndex;
+            if (cb.SelectedIndex >= 0) board = cb.SelectedIndex;
         }
 
         private void cbTest_SelectedIndexChanged(object sender, EventArgs e)
         {
             ComboBox cb = (ComboBox)sender;
-            if (cb.SelectedIndex > 0) test = cb.SelectedIndex;
+            if (cb.SelectedIndex >= 0) test = cb.SelectedIndex;
         }
 
         private void textBoxTimeout_TextChanged(object sender, EventArgs e)
