@@ -803,7 +803,7 @@ namespace USPC
         {
             int counter = 0;
             while ((error = PCXUS_ACQ_ASCAN(_board, _test, ref _ascan,10)) != 0 && ++counter < 10)Thread.Sleep(10);
-            log.add(LogRecord.LogReason.debug, "board={0} Test={1} timeout={2}", _board, _test, _timeout);
+            //log.add(LogRecord.LogReason.debug, "board={0} Test={1} timeout={2}", _board, _test, _timeout);
             if (error != 0)
             {
                 log.add(LogRecord.LogReason.error, "{0}: {1}: 0x{2:X8}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, error);
@@ -811,7 +811,7 @@ namespace USPC
             }
             else
             {
-                log.add(LogRecord.LogReason.info, "{0}: {1}: {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, counter);
+                //log.add(LogRecord.LogReason.info, "{0}: {1}: {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, counter);
                 return true;
             }
         }
