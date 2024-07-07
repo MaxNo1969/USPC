@@ -1,6 +1,6 @@
 ﻿namespace USPC
 {
-    partial class FRTestAscaNet
+    partial class FRTestAscan
     {
         /// <summary>
         /// Required designer variable.

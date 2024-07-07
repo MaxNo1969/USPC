@@ -406,13 +406,14 @@ namespace USPC
             FRUspcInfo frm = new FRUspcInfo(this);
             frm.Show();
         }
-
+        public bool readAscansEnabled = false;
         private void timerUpdUI_Tick(object sender, EventArgs e)
         {
             long usedMem = GC.GetTotalMemory(false);
             sb.Items["heap"].Text = string.Format("{0,6}M", usedMem / (1024 * 1024));
             sb.Items["speed"].Text = string.Format("{0,7:F5}", AppSettings.s.speed);
             sb.Items["dataSize"].Text = Program.result.GetDataSize().ToString();
+            if (readAscansEnabled) readAscans();
             //sb.Items["dataSize"].Text = (Program.result.values.Count*Program.result.values[0].Count*Program.result.values[0][0].Count).ToString();
             //NotOpened, Opened, loaded, error
             /*
@@ -437,7 +438,7 @@ namespace USPC
 
         private void miTestAscanFromNet_Click(object sender, EventArgs e)
         {
-            FRTestAscaNet frm = new FRTestAscaNet(this);
+            FRTestAscan frm = new FRTestAscan(this);
             frm.Show();
         }
 
@@ -647,6 +648,35 @@ namespace USPC
         {
             FREmul frEmul = new FREmul(this);
             frEmul.Show();
+        }
+
+        private void readAscans()
+        {
+            Ascan ascan = new Ascan();
+            Result result = Program.result;
+            for (int board = 0; board < Program.numBoards; board++)
+            {
+                for (int channel = 0; channel < Program.channelsOnBoard[board]; channel++)
+                {
+                    int resultChannel = board * 4 + channel;
+                    if (Program.pcxus.readAscan(board, channel, ref ascan, AppSettings.s.BoardReadTimeout))
+                    {
+                        if (result.values[result.zone] != null && result.values[result.zone][resultChannel] != null)
+                        {
+                            result.values[result.zone][resultChannel].Add(ascan);
+                        }
+                        else
+                        {
+                            log.add(LogRecord.LogReason.error, "{0}: {1}: {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, "Не добавлена зона или датчик");
+                        }
+                    }
+                    else
+                    {
+                        Program.result.values[result.zone][resultChannel].Add(result.notMeasuredAscan);
+                        log.add(LogRecord.LogReason.warning, "{0}: {1}: Не удалось прочитать ascan board={2} channel={3}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, board, channel);
+                    }
+                }
+            }
         }
     }
 }

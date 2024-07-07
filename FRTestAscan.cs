@@ -13,7 +13,7 @@ using Settings;
 
 namespace USPC
 {
-    public partial class FRTestAscaNet : Form
+    public partial class FRTestAscan : Form
     {
         AscanInfo info;
         int board = 0;
@@ -98,7 +98,7 @@ namespace USPC
         }
 
 
-        public FRTestAscaNet(FRMain _frMain)
+        public FRTestAscan(FRMain _frMain)
         {
             InitializeComponent();
             cbBoards.SelectedIndex = 0;
