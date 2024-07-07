@@ -559,10 +559,11 @@ namespace USPC
             {
                 try
                 {
-                    using (FileStream fs = new FileStream(sfd.FileName, FileMode.Create))
+                    using (StreamWriter fs = new StreamWriter(sfd.FileName, false))
                     {
                         FRWaitLongProcess frm = new FRWaitLongProcess(this);                        
                         frm.Show();
+                        Program.result.save(fs);
                         frm.setMes(string.Format("Сохранение файла {0}", sfd.FileName));
                         frm.Close();
                     }
