@@ -36,6 +36,5 @@ namespace USPC.Workers
                 if(reader.IsBusy)reader.CancelAsync();
             }
         }
-
     }
 }

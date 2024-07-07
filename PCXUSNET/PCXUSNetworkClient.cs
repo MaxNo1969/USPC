@@ -44,7 +44,11 @@ namespace USPC
                     int numberOfBytesRead = stream.Read(bytesResult, 0, bytesResult.Length);
                     Int32 result = BitConverter.ToInt32(bytesResult, 0);
                     //Ошибка
-
+                    if (result != 0)
+                    {
+                        ret = null;
+                        return result;
+                    }
                     string[] funcAndArgs = _func.Split(new char[] { ',' });
                     switch (funcAndArgs[0])
                     {
