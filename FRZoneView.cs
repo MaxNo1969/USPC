@@ -188,7 +188,9 @@ namespace USPC
             HitTestResult htRes = c.HitTest(mea.X, mea.Y, ChartElementType.DataPoint);
             int ascanIndex = htRes.PointIndex;
             Ascan ascan = Program.result.values[zone][sensor][ascanIndex];
-            FRShowAscan frm = new FRShowAscan(zone, sensor, ascanIndex, ascan, Program.frMain);
+            int board = (sensor < 4) ? 0 : 1;
+            int realSensor = sensor - board * 4;
+            FRShowAscan frm = new FRShowAscan(board, realSensor, ascanIndex, ascan, Program.frMain);
             frm.Show();
         }
 
