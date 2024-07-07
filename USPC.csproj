@@ -56,6 +56,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Data\Result.cs" />
+    <Compile Include="Data\ThickConverter.cs" />
     <Compile Include="FRResult.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -96,12 +97,6 @@
     <Compile Include="FRZoneView.Designer.cs">
       <DependentUpon>FRZoneView.cs</DependentUpon>
     </Compile>
-    <Compile Include="FRTestAcqNet.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="FRTestAcqNet.designer.cs">
-      <DependentUpon>FRTestAcqNet.cs</DependentUpon>
-    </Compile>
     <Compile Include="PCXUSNET\FRTestTcp.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -120,7 +115,8 @@
     <Compile Include="Gate.Designer.cs">
       <DependentUpon>Gate.cs</DependentUpon>
     </Compile>
-    <Compile Include="Workers\AscansReader.cs">
+    <Compile Include="Workers\AscansReader.cs" />
+    <Compile Include="Workers\ChannelAscansReader.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Workers\TubeWorker.cs">
@@ -178,13 +174,9 @@
     <Compile Include="UC4SensorView.Designer.cs">
       <DependentUpon>UC4SensorView.cs</DependentUpon>
     </Compile>
-    <Compile Include="Workers\UspcNetDataReader.cs">
-      <SubType>Component</SubType>
-    </Compile>
     <Compile Include="Workers\ZoneWorker.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="ZoneThread.cs" />
     <EmbeddedResource Include="Emul\FREmul.resx">
       <DependentUpon>FREmul.cs</DependentUpon>
     </EmbeddedResource>
@@ -196,9 +188,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="FRZoneView.resx">
       <DependentUpon>FRZoneView.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="FRTestAcqNet.resx">
-      <DependentUpon>FRTestAcqNet.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="PCXUSNET\FRTestTcp.resx">
       <DependentUpon>FRTestTcp.cs</DependentUpon>

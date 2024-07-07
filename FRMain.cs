@@ -226,8 +226,6 @@ namespace USPC
                 worker = new TubeWorker();
                 worker.zbWorker.ProgressChanged += new ProgressChangedEventHandler(zbWorker_ProgressChanged);
             }
-            for (int board = 0; board < Program.numBoards; board++)
-                Program.data[board].Start();
             Program.result.Clear();
             Action action = () =>  ClearCharts();
             Program.frMain.Invoke(action);
@@ -237,7 +235,7 @@ namespace USPC
 
         }
 
-        AscansReader reader = new AscansReader();
+        AscansReader reader = new AscansReader(200);
         /// <summary>
         /// Запуск/остановка рабочего потока
         /// (В workThread вызывается из другого потока)
@@ -414,7 +412,7 @@ namespace USPC
             long usedMem = GC.GetTotalMemory(false);
             sb.Items["heap"].Text = string.Format("{0,6}M", usedMem / (1024 * 1024));
             sb.Items["speed"].Text = string.Format("{0,7:F5}", AppSettings.s.speed);
-            //sb.Items["dataSize"].Text = Program.data[0].currentOffsetFrames.ToString();
+            sb.Items["dataSize"].Text = Program.result.GetDataSize().ToString();
             //sb.Items["dataSize"].Text = (Program.result.values.Count*Program.result.values[0].Count*Program.result.values[0][0].Count).ToString();
             //NotOpened, Opened, loaded, error
             /*
@@ -506,8 +504,6 @@ namespace USPC
 
         private void miTestUSPCAscan_Click(object sender, EventArgs e)
         {
-            FRTestAcqNet frm = new FRTestAcqNet(this);
-            frm.Show();
         }
         #region Обработчики меню
         public struct WorkerArgs
@@ -543,7 +539,6 @@ namespace USPC
                         FRWaitLongProcess frm = new FRWaitLongProcess(this);
                         frm.Show();
                         frm.setMes(string.Format("Загрузка файла {0}", ofd.FileName));
-                        Program.loadData(fs);
                         frm.Close();
                     }
                 }
@@ -569,7 +564,6 @@ namespace USPC
                         FRWaitLongProcess frm = new FRWaitLongProcess(this);                        
                         frm.Show();
                         frm.setMes(string.Format("Сохранение файла {0}", sfd.FileName));
-                        Program.saveData(fs);
                         frm.Close();
                     }
                 }
@@ -639,28 +633,6 @@ namespace USPC
                 FileName = "1.csv";
                 using (StreamWriter writer = new StreamWriter(FileName))
                 {
-                    string s;
-
-                    for (int i = 0; i < Program.data[0].currentOffsetFrames; i++)
-                    {
-                        AcqAscan scan = Program.data[0].ascanBuffer[i];
-                        uint tof = (scan.G1Tof & AcqAscan.TOF_MASK) * 5;
-                        double thick = USPCData.TofToMm(tof);
-                        s = string.Format("{0};{1};{2};{3}", scan.ScanCounter, scan.Channel, tof, thick);
-                        writer.WriteLine(s);
-                    }
-                }
-                FileName = "2.csv";
-                using (StreamWriter writer = new StreamWriter(FileName))
-                {
-                    string s;
-
-                    for (int i = 0; i < Program.data[1].currentOffsetFrames; i++)
-                    {
-                        AcqAscan scan = Program.data[1].ascanBuffer[i];
-                        s = string.Format("{0};{1};{2}", scan.Channel, scan.ScanCounter, scan.G1Amp);
-                        writer.WriteLine(s);
-                    }
                 }
             }
             catch (Exception ex)

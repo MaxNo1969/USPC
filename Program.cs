@@ -23,7 +23,9 @@ namespace USPC
         public static Dictionary<string, string> cmdLineArgs = null;
 
         public static BoardState boardState = BoardState.NotOpened;
-        public static int numBoards = 2;
+        public const int numBoards = 2;
+        public static readonly int[] channelsOnBoard = { 4, 8 };
+        public const int numChannes = 12;
         public static PCXUSNET pcxus = null;
         public static void prepareBoardsForWork(bool _foAcquition)
         {
@@ -43,24 +45,6 @@ namespace USPC
             }
         }
 
-        public static USPCData[] data = new USPCData[numBoards];
-        //ToDo: Переделать
-        public static void saveData(Stream _stream)
-        {
-            if (_stream.CanWrite)
-            {
-                BinaryFormatter formatter = new BinaryFormatter();
-                formatter.Serialize(_stream, data);
-            }
-        }
-        public static void loadData(Stream _stream)
-        {
-            if (_stream.CanRead)
-            {
-                BinaryFormatter formatter = new BinaryFormatter();
-                data = (USPCData[])formatter.Deserialize(_stream);
-            }
-        }
         public static TypeSize typeSize = new TypeSize();
         public static Result result = new Result();
         public static void saveResult(string _fileName)
@@ -95,10 +79,6 @@ namespace USPC
                 FormPosSaver.deser();
                 pcxus = new PCXUSNET(AppSettings.s.serverAddr);
                 sl = new DefSignals();
-                for (int i = 0; i < numBoards;i++ )
-                {
-                    data[i] = new USPCData();
-                }
                 frMain = new FRMain();
                 ThreadPool.SetMinThreads(100, 100);
                 Application.Run(frMain);

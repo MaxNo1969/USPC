@@ -31,11 +31,7 @@ namespace USPC
             ProgressChanged += new ProgressChangedEventHandler(worker_ProgressChanged);
             RunWorkerCompleted += new RunWorkerCompletedEventHandler(worker_RunWorkerCompleted);
 
-            //Воркеры сбора данных для каждой платы
-            //dataReaders = new UspcNetDataReader[2];
-            //for (int i = 0; i < 2; i++)
-            //    dataReaders[i] = new UspcNetDataReader(i);
-            ascansReader = new AscansReader();
+            ascansReader = new AscansReader(AppSettings.s.BoardReadTimeout);
             //Воркер по добавлению зон
             zbWorker = new ZoneWorker();
             //zoneThread = new ZoneThread();
@@ -141,14 +137,14 @@ namespace USPC
         void stopWorkers()
         {
             log.add(LogRecord.LogReason.debug, "{0}: {1}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name);
-            ascansReader.CancelAsync();
+            ascansReader.stop();
             zbWorker.CancelAsync();
         }
 
         void startWorkers()
         {
             log.add(LogRecord.LogReason.debug, "{0}: {1}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name);
-            ascansReader.RunWorkerAsync();
+            ascansReader.start();
             zbWorker.RunWorkerAsync();
         }
         #endregion запуск/остановка сбора данных по всем платам

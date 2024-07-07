@@ -270,16 +270,16 @@ namespace USPC
 
         public static uint MmToTof(double _mm)
         {
-            return (uint)(_mm * 1000000000/5.0 / 6400.0 /100.0);
+            return (uint)(_mm * 1000000000 / 6400 / 100);
         }
 
         public bool readAscan(int _board, int _test,ref Ascan _ascan,int _timeout)
         {
             Random r =new Random();
-            double thick = _test;
+            double thick = 12.0 + r.NextDouble() * 5;
             _ascan.G1TofWt = (uint)(MmToTof(thick));
             _ascan.GIFTof = (uint)(MmToTof(thick));
-            _ascan.G1Amp = (byte)(50+_test);
+            _ascan.G1Amp = (byte)(20+r.Next(50));
             _ascan.DataSize = (ushort)(200+r.Next(20));
             _ascan.Points = new byte[_ascan.DataSize];
             for (int i = 0; i < _ascan.DataSize; i++)

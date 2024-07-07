@@ -179,80 +179,6 @@ namespace Data
             Program.frMain.zbWorker_ProgressChanged(null, null);
         }
 
-        public void addZone(int[] _offsets)
-        {
-            log.add(LogRecord.LogReason.debug, "{0}: {1}: zones = {2}, offsets[0]={3}, ofsets[1]={4}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, zone, _offsets[0], _offsets[1]);
-            ListSensors listSensors = new ListSensors();
-            for (int sens = 0; sens < USPCData.countSensors; sens++)
-            {
-                listSensors.Add(new ListValues());
-            }
-            for (int numBoard = 0; numBoard < Program.numBoards; numBoard++)
-            {
-                USPCData data = Program.data[numBoard];
-                int currentOffsetFrames = _offsets[numBoard];
-                offsets.Add(_offsets[numBoard]);
-                int numberOfFrames = currentOffsetFrames - offsets[zone-1];
-                for (int frameOffset = 0; frameOffset < numberOfFrames; frameOffset++)
-                {
-                    AcqAscan scan = data.ascanBuffer[offsets[zone-1]+frameOffset];
-                    int channel = scan.Channel;
-                    double def = scan.G1Amp;
-                    uint tof = (scan.G1Tof & AcqAscan.TOF_MASK) * 5;
-                    double thick = USPCData.TofToMm(tof);
-                    //С первой платы получаем данные по толщинометрии
-                    if (numBoard == 0)
-                    {
-                        if (channel < 4)
-                        {
-                            listSensors[channel].Add(thick);
-                            if (zoneSensorResults[zone][channel] == notMeasured || thick < zoneSensorResults[zone][channel]) zoneSensorResults[zone][channel] = thick;
-                        }
-                        else
-                        {
-                            //log.add(LogRecord.LogReason.warning, "{0}: {1}: {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, "Номер канала на первой плате больше 4");
-                        }
-                    }
-                    //Со второй платы данные по дефектоскопии
-                    else
-                    {
-                        //Продольная дефектоскопия
-                        if (channel < 4)
-                        {
-                            listSensors[channel + 4].Add(def);
-                            if (zoneSensorResults[zone][channel + 4]==notMeasured || def > zoneSensorResults[zone][channel + 4]) zoneSensorResults[zone][channel + 4] = def;
-                        }
-                        //Поперечная дефектоскопия
-                        else if (channel < 8)
-                        {
-                            listSensors[channel + 4].Add(def);
-                            if (zoneSensorResults[zone][channel + 4] == notMeasured || def > zoneSensorResults[zone][channel + 4]) zoneSensorResults[zone][channel + 4] = def;
-                        }
-                        else
-                        {
-                            //log.add(LogRecord.LogReason.warning, "{0}: {1}: {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, "Номер канала на второй плате больше 8");
-                        }
-                    }
-                }
-            }
-            zoneResults[zone] = true;
-            for (int sensor = 0; sensor < USPCData.countSensors; sensor++)
-            {
-                if(sensor<4)
-                {
-                    if(DrawResults.IsBrakThick(zoneSensorResults[zone][sensor]))zoneResults[zone]=false;
-                }
-                else
-                {
-                    if (DrawResults.IsBrakDef(zoneSensorResults[zone][sensor])) zoneResults[zone] = false;
-                }
-            }
-            log.add(LogRecord.LogReason.debug, "{0}: {1}: {2} {3}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, "Добавлена зона", zone);
-            zonesLengths.Add(AppSettings.s.zoneSize);
-            values.Add(listSensors);
-            zone++;
-        }
-
         public void CalcZone(int _zone)
         {
             log.add(LogRecord.LogReason.debug, "{0}: {1}: _zone = {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, _zone);
@@ -359,6 +285,18 @@ namespace Data
                 }
             }
             return res;
+        }
+        public int GetDataSize()
+        {
+            int ret = 0;
+            for (int z = 0; z < values.Count;z++ )
+            {
+                for (int ch = 0; ch < values[z].Count;ch++ )
+                {
+                    ret += values[z][ch].Count;
+                }
+            }
+            return ret;
         }
     }
 

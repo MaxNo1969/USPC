@@ -50,7 +50,7 @@ namespace USPC
                         if (result.zone >= 0) result.CalcZone(result.zone);
                         result.AddZone();
                     }
-                    ReportProgress(Program.data[0].currentOffsetFrames * 100 / USPCData.countFrames);
+                    ReportProgress(0, null);
                     strobCounter++;
                     Thread.Sleep(AppSettings.s.StrobResetTimeout);
                 }
