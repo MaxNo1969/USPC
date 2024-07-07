@@ -56,7 +56,7 @@ namespace USPC.Workers
                     double val = (board == 0) ? thick : amp;
                     if (result.values[result.zone] != null && result.values[result.zone][resultChannel] != null)
                     {
-                        result.values[result.zone][resultChannel].Add(val);
+                        result.values[result.zone][resultChannel].Add(ascan);
                         //log.add(LogRecord.LogReason.debug, "{0}: {1}: board={2} channel={3} zone={4} count={5} val={6}", 
                         //    GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, 
                         //    board, channel,result.zone,result.values[result.zone][resultChannel].Count,val);
@@ -68,7 +68,7 @@ namespace USPC.Workers
                 }
                 else
                 {
-                    Program.result.values[result.zone][resultChannel].Add(Result.notMeasured);
+                    Program.result.values[result.zone][resultChannel].Add(result.notMeasuredAscan);
                     log.add(LogRecord.LogReason.warning, "{0}: {1}: Не удалось прочитать ascan board={2} channel={3}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, board, channel);
                 }
             }

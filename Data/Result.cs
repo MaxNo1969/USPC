@@ -7,13 +7,14 @@ using PROTOCOL;
 using Settings;
 using System.Diagnostics;
 using System.IO;
+using USPC.Data;
 
 namespace Data
 {
     public class ListValues
     {
-        private List<double> _list = new List<double>();
-        public void Add(double _val)
+        private List<Ascan> _list = new List<Ascan>();
+        public void Add(Ascan _val)
         {
             try
             {
@@ -24,7 +25,7 @@ namespace Data
                 log.add(LogRecord.LogReason.error, "{0}: {1}: Error: {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message);
             }
         }
-        public double this[int _index]
+        public Ascan this[int _index]
         {
             get
             {
@@ -147,7 +148,7 @@ namespace Data
             {
                 for (int i = 0; i < numberOfScans; i++)
                 {
-                    listSensors[sensor].Add(Result.deadZone);
+                    listSensors[sensor].Add(notMeasuredAscan);
                 }
                 zoneSensorResults[zone][sensor] = Result.deadZone;
             }
@@ -170,7 +171,7 @@ namespace Data
                 {
 
                     for (int i = 0; i < numberOfScans; i++)
-                        listSensors[channel].Add(Result.deadZone);
+                        listSensors[channel].Add(deadAscan);
                     zoneSensorResults[zone][channel] = Result.deadZone;
                 }
             }
@@ -197,18 +198,18 @@ namespace Data
                     {
                         try
                         {
-
+                            double val = (sensReal<4)?ThickConverter.TofToMm(values[_zone][sensReal][meas].G1TofWt):values[_zone][sensReal][meas].G1Amp;
                             if (zoneSensorResults[_zone][sensReal] == notMeasured)
-                                zoneSensorResults[_zone][sensReal] = values[_zone][sensReal][meas];
+                                    zoneSensorResults[_zone][sensReal] = val;
                             else if (board == 0)
                             {
-                                if (zoneSensorResults[_zone][sensReal] != Result.deadZone && values[_zone][sensReal][meas] < zoneSensorResults[_zone][sensReal])
-                                    zoneSensorResults[_zone][sensReal] = values[_zone][sensReal][meas];
+                                if (zoneSensorResults[_zone][sensReal] != Result.deadZone && val < zoneSensorResults[_zone][sensReal])
+                                    zoneSensorResults[_zone][sensReal] = val;
                             }
                             else
                             {
-                                if (values[_zone][sensReal][meas] > zoneSensorResults[_zone][sensReal])
-                                    zoneSensorResults[_zone][sensReal] = values[_zone][sensReal][meas];
+                                if (val > zoneSensorResults[_zone][sensReal])
+                                    zoneSensorResults[_zone][sensReal] = val;
                             }
                         }
                         catch (Exception ex)
@@ -248,6 +249,8 @@ namespace Data
         
         public const double notMeasured = 101.0;
         public const double deadZone = 102.0;
+        public Ascan notMeasuredAscan;
+        public Ascan deadAscan;
         public void ClearZoneSensorResult()
         {
             for (int z = 0; z < USPCData.countZones; z++)
@@ -263,6 +266,14 @@ namespace Data
             zone = 0;
             zoneSensorResults = new double[USPCData.countZones][];
             zoneResults = new bool[USPCData.countZones];
+            notMeasuredAscan = new Ascan()
+            {
+                G1Amp = (byte)notMeasured,
+            };
+            deadAscan = new Ascan()
+            {
+                G1Amp = (byte)deadZone,
+            };
             ClearZoneSensorResult();
         }
         public void Clear()

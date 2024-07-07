@@ -80,8 +80,8 @@ namespace USPC
                 pcxus = new PCXUSNET(AppSettings.s.serverAddr);
                 sl = new DefSignals();
                 frMain = new FRMain();
-                ThreadPool.SetMinThreads(100, 100);
-                Application.Run(frMain);
+                if(ThreadPool.SetMinThreads(1000, 100))
+                    Application.Run(frMain);
             }
             catch (Exception e)
             {

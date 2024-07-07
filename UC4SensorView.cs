@@ -9,6 +9,7 @@ using System.Windows.Forms;
 using System.Windows.Forms.DataVisualization.Charting;
 using Data;
 using System.Collections;
+using USPC.Data;
 
 namespace USPC
 {
@@ -125,7 +126,10 @@ namespace USPC
             double[] data = new double[count];
             for (int i = 0; i < count; i++)
             {
-                data[i] = values[zone][sensor][i];
+                if (sensor < 4)
+                    data[i] = ThickConverter.TofToMm(values[zone][sensor][i].G1TofWt);
+                else
+                    data[i] = values[zone][sensor][i].G1Amp;
             }
             FRZoneView frm = new FRZoneView(Program.frMain);
             frm.sensor = sensor;
