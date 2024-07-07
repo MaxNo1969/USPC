@@ -19,8 +19,7 @@ namespace USPC
         AscanInfo info;
         int board = 0;
         int test = 0;
-        int timeout = 0;
-
+        int meas = 0;
 
         public double GetVal(string _paramName)
         {
@@ -61,10 +60,17 @@ namespace USPC
         }
 
 
-        public FRShowAscan(Ascan _ascan,FRMain _frMain)
+        public FRShowAscan(int _board, int _test, int _meas,Ascan _ascan,FRMain _frMain)
         {
             InitializeComponent();
+            board = _board;
+            test = _test;
+            meas = _meas;
+            label6.Text = board.ToString();
+            label7.Text = test.ToString();
+            label9.Text = meas.ToString();
             ascan = _ascan;
+            info = GetAscanInfoNet(board,test);
             gateIF.UpdateGate(Gate.GateNum.GateIF, ascan);
             gate1.UpdateGate(Gate.GateNum.Gate1, ascan);
             gate2.UpdateGate(Gate.GateNum.Gate2, ascan);

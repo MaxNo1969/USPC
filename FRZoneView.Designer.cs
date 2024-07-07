@@ -56,15 +56,16 @@
             this.chartResult.Series.Add(series1);
             this.chartResult.Size = new System.Drawing.Size(1044, 589);
             this.chartResult.TabIndex = 4;
+            this.chartResult.Click += new System.EventHandler(this.chartResult_Click_1);
             this.chartResult.DoubleClick += new System.EventHandler(this.chartResult_Click);
             // 
-            // FRResultView
+            // FRZoneView
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1044, 589);
             this.Controls.Add(this.chartResult);
-            this.Name = "FRResultView";
+            this.Name = "FRZoneView";
             this.Text = "Результат контроля";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FRResultView_FormClosing);
             this.Load += new System.EventHandler(this.FRResultView_Load);

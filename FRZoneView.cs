@@ -10,6 +10,7 @@ using System.Windows.Forms.DataVisualization.Charting;
 using CHART;
 using FPS;
 using Data;
+using USPC.Data;
 
 namespace USPC
 {
@@ -40,29 +41,41 @@ namespace USPC
 
         }
 
+        Ascan[] ascans;
         public void UpdateChart(int _zone,int _sensor,int _length)
         {
             ListZones values = Program.result.values;
             int count = values[zone][sensor].Count;
             double[] data = new double[count];
-            for (int i = 0; i < count; i++)
-            {
-                data[i] = values[zone][sensor][i];
-            }
-
+            ascans = new Ascan[count];
             if (sensor < 4)
             {
                 Text = string.Format("Толщинометрия: Зона:{0} Датчик: {1}", zone, sensor);
+                for (int i = 0; i < count; i++)
+                {
+                    data[i] = ThickConverter.TofToMm(values[zone][sensor][i].G1TofWt);
+                    ascans[i] = values[zone][sensor][i];
+                }
                 UpdateChart(data, _length, true);
             }
             else if (sensor < 8)
             {
                 Text = string.Format("Продольная дефектоскопия: Зона:{0} Датчик: {1}", zone, sensor - 4);
+                for (int i = 0; i < count; i++)
+                {
+                    data[i] = values[zone][sensor][i].G1Amp;
+                    ascans[i] = values[zone][sensor][i];
+                }
                 UpdateChart(data, _length, false);
             }
             else
             {
                 Text = string.Format("Поперечная дефектоскопия: Зона:{0} Датчик: {1}", zone, sensor - 8);
+                for (int i = 0; i < count; i++)
+                {
+                    data[i] = values[zone][sensor][i].G1Amp;
+                    ascans[i] = values[zone][sensor][i];
+                }
                 UpdateChart(data, _length, false);
             }
         }
@@ -166,6 +179,17 @@ namespace USPC
             }
             UpdateChart(zone, sensor, Program.result.zonesLengths[zone]);
             return true;
+        }
+
+        private void chartResult_Click_1(object sender, EventArgs e)
+        {
+            Chart c = sender as Chart;
+            MouseEventArgs mea = e as MouseEventArgs;
+            HitTestResult htRes = c.HitTest(mea.X, mea.Y, ChartElementType.DataPoint);
+            int ascanIndex = htRes.PointIndex;
+            Ascan ascan = Program.result.values[zone][sensor][ascanIndex];
+            FRShowAscan frm = new FRShowAscan(zone, sensor, ascanIndex, ascan, Program.frMain);
+            frm.Show();
         }
 
     }
