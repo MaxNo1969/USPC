@@ -55,6 +55,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="FRSowAscan.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FRSowAscan.Designer.cs">
+      <DependentUpon>FRSowAscan.cs</DependentUpon>
+    </Compile>
     <Compile Include="Data\Result.cs" />
     <Compile Include="Data\ThickConverter.cs" />
     <Compile Include="FRResult.cs">
@@ -177,6 +183,9 @@
     <Compile Include="Workers\ZoneWorker.cs">
       <SubType>Component</SubType>
     </Compile>
+    <EmbeddedResource Include="FRSowAscan.resx">
+      <DependentUpon>FRSowAscan.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Emul\FREmul.resx">
       <DependentUpon>FREmul.cs</DependentUpon>
     </EmbeddedResource>
