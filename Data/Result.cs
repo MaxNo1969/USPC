@@ -6,6 +6,7 @@ using USPC;
 using PROTOCOL;
 using Settings;
 using System.Diagnostics;
+using System.IO;
 
 namespace Data
 {
@@ -298,6 +299,30 @@ namespace Data
             }
             return ret;
         }
+        public void save(StreamWriter _writer)
+        {
+            int z =0;
+            int ch =0;
+            int meas=0;
+            log.add(LogRecord.LogReason.info, "{0} {1} {2}", values.Count, values[0].Count, values[0][0].Count);
+            try
+            {
+                for (z = 0; z < values.Count; z++)
+                {
+                    for (ch = 0; ch < values[z].Count; ch++)
+                    {
+                        for (meas = 0; meas < values[z][ch].Count; meas++)
+                        {
+                            _writer.WriteLine("{0};{1};{2};{3}", z, ch, meas, values[z][ch][meas]);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                log.add(LogRecord.LogReason.error, "{0}: {1}: Error: {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message);
+                log.add(LogRecord.LogReason.error, "zone = {0} channel={1} meas={2} val={3}", z, ch, meas, values[z][ch][meas]);
+            }
+        }
     }
-
 }
