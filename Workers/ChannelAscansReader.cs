@@ -18,6 +18,7 @@ namespace USPC.Workers
         int board;
         int channel;
         int timeout;
+        List<Ascan> ascans = new List<Ascan>();
         public ChannelAscansReader(int _board,int _channel,int _timeout):base()
         {
             board = _board;

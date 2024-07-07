@@ -11,6 +11,8 @@ using System.Threading;
 using USPC.PCI_1730;
 using System.Windows.Forms;
 using USPC.Workers;
+using Data;
+using USPC.Data;
 
 namespace USPC
 {
@@ -21,6 +23,8 @@ namespace USPC
         public ZoneWorker zbWorker = null;
         DefSignals sl = Program.sl;
         bool speedCalced = false;
+        Result result = Program.result;
+        System.Windows.Forms.Timer tm;
         public TubeWorker()
         {
             //Натраиваем параметры воркера
@@ -36,6 +40,9 @@ namespace USPC
             zbWorker = new ZoneWorker();
             //zoneThread = new ZoneThread();
             speedCalced = false;
+            tm = new System.Windows.Forms.Timer();
+            tm.Enabled = false;
+            tm.Tick+=new EventHandler(tm_Tick);
         }
 
         void worker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
@@ -137,14 +144,16 @@ namespace USPC
         void stopWorkers()
         {
             log.add(LogRecord.LogReason.debug, "{0}: {1}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name);
-            ascansReader.stop();
+            //ascansReader.stop();
+            Program.frMain.readAscansEnabled = false;
             zbWorker.CancelAsync();
         }
 
         void startWorkers()
         {
             log.add(LogRecord.LogReason.debug, "{0}: {1}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name);
-            ascansReader.start();
+            //ascansReader.start();
+            Program.frMain.readAscansEnabled = true;
             zbWorker.RunWorkerAsync();
         }
         #endregion запуск/остановка сбора данных по всем платам
@@ -309,6 +318,39 @@ namespace USPC
                 //log.add(LogRecord.LogReason.error, "{0}: {1}: {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, "Finally");
                 controlCycle = false;
                 e.Cancel = true;
+            }
+        }
+
+        private void InitializeComponent()
+        {
+
+        }
+
+        private void tm_Tick(object sender, EventArgs e)
+        {
+            Ascan ascan = new Ascan();
+            for (int board = 0; board < Program.numBoards; board++)
+            {
+                for (int channel = 0; channel < Program.channelsOnBoard[board]; channel++)
+                {
+                    int resultChannel = board * 4 + channel;
+                    if (Program.pcxus.readAscan(board, channel, ref ascan, AppSettings.s.BoardReadTimeout))
+                    {
+                        if (result.values[result.zone] != null && result.values[result.zone][resultChannel] != null)
+                        {
+                            result.values[result.zone][resultChannel].Add(ascan);
+                        }
+                        else
+                        {
+                            log.add(LogRecord.LogReason.error, "{0}: {1}: {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, "Не добавлена зона или датчик");
+                        }
+                    }
+                    else
+                    {
+                        Program.result.values[result.zone][resultChannel].Add(result.notMeasuredAscan);
+                        log.add(LogRecord.LogReason.warning, "{0}: {1}: Не удалось прочитать ascan board={2} channel={3}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, board, channel);
+                    }
+                }
             }
         }
     }
