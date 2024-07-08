@@ -99,7 +99,7 @@
             | System.Windows.Forms.ToolStripStatusLabelBorderSides.Bottom)));
             boardStateLabel.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
             boardStateLabel.Name = "boardStateLabel";
-            boardStateLabel.Size = new System.Drawing.Size(150, 19);
+            boardStateLabel.Size = new System.Drawing.Size(19, 19);
             boardStateLabel.Text = "   ";
             // 
             // menu
@@ -351,7 +351,7 @@
             this.info.AutoSize = false;
             this.info.BorderSides = System.Windows.Forms.ToolStripStatusLabelBorderSides.Right;
             this.info.Name = "info";
-            this.info.Size = new System.Drawing.Size(683, 19);
+            this.info.Size = new System.Drawing.Size(783, 19);
             this.info.Spring = true;
             this.info.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 

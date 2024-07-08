@@ -342,20 +342,9 @@ namespace USPC
         {
             if (Program.boardState == BoardState.Opened)
             {
-                if (MessageBox.Show("Плата уже открыта!Переоткрыть?\nВсе настройки будут сброшены.", "Внимание!", MessageBoxButtons.YesNo, MessageBoxIcon.Error, MessageBoxDefaultButton.Button2) == DialogResult.Yes)
-                {
-                    Program.pcxus.close();
-                    Program.pcxus.open(2);
-                }
-                return;
+                if (MessageBox.Show("Плата уже открыта!Переоткрыть?\nВсе настройки будут сброшены.", "Внимание!", MessageBoxButtons.YesNo, MessageBoxIcon.Error, MessageBoxDefaultButton.Button2) != DialogResult.Yes)return;
             }
-            else
-            {
-                if (!Program.pcxus.open(2))
-                {
-                    log.add(LogRecord.LogReason.error, "{0}: {1}: Error: {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, (ErrorCode)Program.pcxus.Err);
-                }
-            }
+            Program.prepareBoardsForWork(false);
         }
 
         private void miLoadUSPC_Click(object sender, EventArgs e)
@@ -402,20 +391,12 @@ namespace USPC
             sb.Items["heap"].Text = string.Format("{0,6}M", usedMem / (1024 * 1024));
             sb.Items["speed"].Text = string.Format("{0,7:F5}", AppSettings.s.speed);
             sb.Items["dataSize"].Text = Program.result.GetDataSize().ToString();
-            //sb.Items["dataSize"].Text = (Program.result.values.Count*Program.result.values[0].Count*Program.result.values[0][0].Count).ToString();
-            //NotOpened, Opened, loaded, error
-            /*
-            int status = (int)ACQ_STATUS.ACQ_NO_CONFIGURED;
-            int NumberOfScansAcquired = 0;
-            int NumberOfScansRead = 0;
-            int BufferSize = 0;
-            int ScanSize =0;
-            Program.pcxus.status(0, ref status, ref NumberOfScansAcquired, ref NumberOfScansRead, ref BufferSize, ref ScanSize);
-            string s = ((ACQ_STATUS)status).ToString();
-            sb.Items["boardStateLabel"].Text = s;
-            //sb.Items["boardStateLabel"].BackColor = color;
-            */ 
-
+            if (Program.boardState == BoardState.Opened)
+                sb.Items["boardStateLabel"].BackColor = Color.Green;
+            else if(Program.boardState == BoardState.NotOpened)
+                sb.Items["boardStateLabel"].BackColor = SystemColors.Control;
+            else
+                sb.Items["boardStateLabel"].BackColor = Color.Red;
         }
 
         private void tCPServerToolStripMenuItem_Click(object sender, EventArgs e)

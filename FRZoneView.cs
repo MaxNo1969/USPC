@@ -53,7 +53,8 @@ namespace USPC
                 Text = string.Format("Толщинометрия: Зона:{0} Датчик: {1}", zone, sensor);
                 for (int i = 0; i < count; i++)
                 {
-                    data[i] = ThickConverter.TofToMm(values[zone][sensor][i].G1TofWt);
+                    uint tof = (values[zone][sensor][i].G1TofWt & Ascan.TOF_MASK) * 5;
+                    data[i] = ThickConverter.TofToMm(tof);
                     ascans[i] = values[zone][sensor][i];
                 }
                 UpdateChart(data, _length, true);
@@ -109,17 +110,6 @@ namespace USPC
                 CustomProperties = "DrawingStyle=Emboss, PointWidth=1"
             };
             chartResult.Series.Add(ser);
-        }
-
-        private void chartResult_Click(object sender, EventArgs e)
-        {
-            Chart c = sender as Chart;
-            MouseEventArgs mea = e as MouseEventArgs;
-            HitTestResult htRes = c.HitTest(mea.X, mea.Y, ChartElementType.DataPoint);
-            int zone = htRes.PointIndex;
-            //FRSensorView frSensorView = new FRSensorView(this, Program.data);
-            //frSensorView.Init();
-            //frSensorView.Show();
         }
 
         private void FRResultView_Load(object sender, EventArgs e)
@@ -184,14 +174,17 @@ namespace USPC
         private void chartResult_Click_1(object sender, EventArgs e)
         {
             Chart c = sender as Chart;
-            MouseEventArgs mea = e as MouseEventArgs;
-            HitTestResult htRes = c.HitTest(mea.X, mea.Y, ChartElementType.DataPoint);
-            int ascanIndex = htRes.PointIndex;
+            int ascanIndex = (int)c.ChartAreas[0].CursorX.Position;
             Ascan ascan = Program.result.values[zone][sensor][ascanIndex];
             int board = (sensor < 4) ? 0 : 1;
             int realSensor = sensor - board * 4;
             FRShowAscan frm = new FRShowAscan(board, realSensor, ascanIndex, ascan, Program.frMain);
             frm.Show();
+        }
+
+        private void chartResult_CursorPositionChanged(object sender, CursorEventArgs e)
+        {
+
         }
 
     }

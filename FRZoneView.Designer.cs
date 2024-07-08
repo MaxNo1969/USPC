@@ -56,8 +56,8 @@
             this.chartResult.Series.Add(series1);
             this.chartResult.Size = new System.Drawing.Size(1044, 589);
             this.chartResult.TabIndex = 4;
+            this.chartResult.CursorPositionChanged += new System.EventHandler<System.Windows.Forms.DataVisualization.Charting.CursorEventArgs>(this.chartResult_CursorPositionChanged);
             this.chartResult.Click += new System.EventHandler(this.chartResult_Click_1);
-            this.chartResult.DoubleClick += new System.EventHandler(this.chartResult_Click);
             // 
             // FRZoneView
             // 

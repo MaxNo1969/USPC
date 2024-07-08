@@ -198,7 +198,8 @@ namespace Data
                     {
                         try
                         {
-                            double val = (sensReal<4)?ThickConverter.TofToMm(values[_zone][sensReal][meas].G1TofWt):values[_zone][sensReal][meas].G1Amp;
+                            uint tof = (values[_zone][sensReal][meas].G1TofWt&Ascan.TOF_MASK)*5;
+                            double val = (sensReal<4)?ThickConverter.TofToMm(tof):values[_zone][sensReal][meas].G1Amp;
                             if (zoneSensorResults[_zone][sensReal] == notMeasured)
                                     zoneSensorResults[_zone][sensReal] = val;
                             else if (board == 0)

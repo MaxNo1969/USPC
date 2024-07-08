@@ -70,9 +70,7 @@ namespace USPC
             FRWaitLongProcess waitWindow = new FRWaitLongProcess(this);
             waitWindow.Show();
             waitWindow.setMes("Открываем платы USPC...");
-            Program.pcxus.open(2);
-            waitWindow.setMes("Загружаем файл конфигурации...");
-            Program.pcxus.load(Program.typeSize.currentTypeSize.configName);
+            Program.prepareBoardsForWork(false);
             waitWindow.setMes("Читаем параметры..."); 
             info.Video = (AscanInfo.VideoMode)GetVal("scope_video", waitWindow);
             info.ZeroVideo = GetVal("scope_zero",waitWindow);

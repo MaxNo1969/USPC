@@ -30,19 +30,23 @@ namespace USPC
         public static PCXUSNET pcxus = null;
         public static void prepareBoardsForWork(bool _foAcquition)
         {
-            Program.pcxus.close();
-            Program.pcxus.open(2);
-            Program.pcxus.load(Program.typeSize.currentTypeSize.configName);
-            if (_foAcquition)
+            if (boardState != BoardState.Opened)
             {
-                for (int board = 0; board < Program.numBoards; board++)
+                Program.pcxus.close();
+                Program.pcxus.open(2);
+                Program.pcxus.load(Program.typeSize.currentTypeSize.configName);
+                if (_foAcquition)
                 {
-                    Program.pcxus.config(board, AppSettings.s.BufferSize, AppSettings.s.InterruptFluidity);
-                    AcqSatus acqStatus = new AcqSatus();
-                    Program.pcxus.status(board, ref acqStatus.status, ref acqStatus.NumberOfScansAcquired, ref acqStatus.NumberOfScansRead, ref acqStatus.bufferSize, ref acqStatus.scanSize);
-                    log.add(LogRecord.LogReason.info, "Board: {0}, ACQ_STATUS: {1}, BufferSize(in numbers od scans): {2}, ScanSize(in number of DWORD): {3}", board, ((ACQ_STATUS)acqStatus.status).ToString(), acqStatus.bufferSize, acqStatus.scanSize);
-                    Program.pcxus.start(board);
+                    for (int board = 0; board < Program.numBoards; board++)
+                    {
+                        Program.pcxus.config(board, AppSettings.s.BufferSize, AppSettings.s.InterruptFluidity);
+                        AcqSatus acqStatus = new AcqSatus();
+                        Program.pcxus.status(board, ref acqStatus.status, ref acqStatus.NumberOfScansAcquired, ref acqStatus.NumberOfScansRead, ref acqStatus.bufferSize, ref acqStatus.scanSize);
+                        log.add(LogRecord.LogReason.info, "Board: {0}, ACQ_STATUS: {1}, BufferSize(in numbers od scans): {2}, ScanSize(in number of DWORD): {3}", board, ((ACQ_STATUS)acqStatus.status).ToString(), acqStatus.bufferSize, acqStatus.scanSize);
+                        Program.pcxus.start(board);
+                    }
                 }
+                log.add(LogRecord.LogReason.info, "{0}: {1}: Boards opened", "Program", System.Reflection.MethodBase.GetCurrentMethod().Name);
             }
         }
 

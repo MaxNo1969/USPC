@@ -53,12 +53,12 @@ namespace USPC
             a.AxisY.LabelStyle.Enabled = false;
             a.AxisY.MajorGrid.Enabled = false;
 
-            //a.CursorX.Interval = 1;
-            //a.CursorX.IsUserEnabled = true;
-            //a.CursorX.IsUserSelectionEnabled = false;
-            //a.CursorX.LineColor = Color.Black;
-            //a.CursorX.LineWidth = 3;
-            //a.CursorX.Position = 0;
+            a.CursorX.Interval = 1;
+            a.CursorX.IsUserEnabled = true;
+            a.CursorX.IsUserSelectionEnabled = false;
+            a.CursorX.LineColor = Color.Black;
+            a.CursorX.LineWidth = 3;
+            a.CursorX.Position = 0;
 
             _c.ChartAreas.Clear();
             _c.ChartAreas.Add(a);
@@ -117,9 +117,9 @@ namespace USPC
         {
             Chart c = sender as Chart;
             int sensor = (int)c.Tag;
-            MouseEventArgs mea = e as MouseEventArgs;
-            HitTestResult htRes = c.HitTest(mea.X, mea.Y, ChartElementType.DataPoint);
-            int zone = htRes.PointIndex;
+            //MouseEventArgs mea = e as MouseEventArgs;
+            //HitTestResult htRes = c.HitTest(mea.X, mea.Y, ChartElementType.DataPoint);
+            int zone = (int)c.ChartAreas[0].CursorX.Position;
             if (zone > Program.result.zone) return;
             ListZones values = Program.result.values;
             int count = values[zone][sensor].Count;
@@ -127,7 +127,10 @@ namespace USPC
             for (int i = 0; i < count; i++)
             {
                 if (sensor < 4)
-                    data[i] = ThickConverter.TofToMm(values[zone][sensor][i].G1TofWt);
+                {
+                    uint tof = (values[zone][sensor][i].G1TofWt & Ascan.TOF_MASK) * 5;
+                    data[i] = ThickConverter.TofToMm(tof);
+                }
                 else
                     data[i] = values[zone][sensor][i].G1Amp;
             }
