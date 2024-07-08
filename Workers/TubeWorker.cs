@@ -160,6 +160,8 @@ namespace USPC
         void worker_DoWork(object sender, DoWorkEventArgs e)
         {
             log.add(LogRecord.LogReason.debug, "{0}: {1}: {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, "Worker started");
+            if (Thread.CurrentThread.Name == null)
+                Thread.CurrentThread.Name = "TubeWorker";
             try
             {
                 //В эту строку запишем сообщение об ошибке

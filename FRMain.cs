@@ -70,6 +70,8 @@ namespace USPC
 
         void MainWorkWorker_DoWork(object sender, DoWorkEventArgs e)
         {
+            if (Thread.CurrentThread.Name == null)
+                Thread.CurrentThread.Name = "MainWorkWorker";
             try
             {
                 while (!MainWorkWorker.CancellationPending)
@@ -436,6 +438,7 @@ namespace USPC
 
         public void openSettings()
         {
+            miSettings.Enabled = false;
             FRSettings frm = new FRSettings(this);
             frm.FormClosed += new FormClosedEventHandler((object _o, FormClosedEventArgs _e) => { /*btnSettings.Enabled = true;*/ miSettings.Enabled = true; });
             frm.Show();
@@ -443,9 +446,7 @@ namespace USPC
 
         private void miSettings_Click(object sender, EventArgs e)
         {
-            FRSettings frm = new FRSettings(this);
-            frm.FormClosed += new FormClosedEventHandler((object _o, FormClosedEventArgs _e) => { /*btnSettings.Enabled = true;*/ miSettings.Enabled = true; });
-            frm.Show();
+            openSettings();
         }
 
         /// <summary>
@@ -632,7 +633,9 @@ namespace USPC
 
         private void miEmulToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            miEmul.Enabled = false;
             FREmul frEmul = new FREmul(this);
+            frEmul.FormClosed += new FormClosedEventHandler((object _o, FormClosedEventArgs _e) => { /*btnSettings.Enabled = true;*/ miEmul.Enabled = true; });
             frEmul.Show();
         }
     }
