@@ -56,6 +56,8 @@ namespace USPC
         public static DefSignals sl = null;
         public static double scopeVelocity = 6400.0;
 
+        public static int tubesCount = 0;
+
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
