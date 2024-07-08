@@ -41,6 +41,8 @@ namespace USPC
         {
             Result result = Program.result;
             log.add(LogRecord.LogReason.info,"{0}: {1}: {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, "Worker started");
+            if (Thread.CurrentThread.Name == null)
+                Thread.CurrentThread.Name = "ZoneWorker";
             while (!CancellationPending)
             {
                 if (Program.sl["СТРОБ"].Val)

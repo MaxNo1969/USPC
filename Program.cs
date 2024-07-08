@@ -26,6 +26,7 @@ namespace USPC
         public const int numBoards = 2;
         public static readonly int[] channelsOnBoard = { 4, 8 };
         public const int numChannes = 12;
+        public const int countZones = 70;
         public static PCXUSNET pcxus = null;
         public static void prepareBoardsForWork(bool _foAcquition)
         {

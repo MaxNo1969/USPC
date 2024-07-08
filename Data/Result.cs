@@ -140,11 +140,11 @@ namespace Data
         {
             int numberOfScans = Program.typeSize.currentTypeSize.deadZoneStart;
             ListSensors listSensors = new ListSensors();
-            for (int sens = 0; sens < USPCData.countSensors; sens++)
+            for (int sens = 0; sens < Program.numChannes; sens++)
             {
                 listSensors.Add(new ListValues());
             }
-            for (int sensor = 0; sensor < USPCData.countSensors; sensor++)
+            for (int sensor = 0; sensor < Program.numChannes; sensor++)
             {
                 for (int i = 0; i < numberOfScans; i++)
                 {
@@ -161,13 +161,13 @@ namespace Data
         {
             int numberOfScans = Program.typeSize.currentTypeSize.deadZoneEnd; 
             ListSensors listSensors = new ListSensors();
-            for (int sens = 0; sens < USPCData.countSensors; sens++)
+            for (int sens = 0; sens < Program.numChannes; sens++)
             {
                 listSensors.Add(new ListValues());
             }
             for (int numBoard = 0; numBoard < Program.numBoards; numBoard++)
             {
-                for (int channel = 0; channel < USPCData.countSensors; channel++)
+                for (int channel = 0; channel < Program.numChannes; channel++)
                 {
 
                     for (int i = 0; i < numberOfScans; i++)
@@ -221,7 +221,7 @@ namespace Data
                 }
             }
             zoneResults[zone] = true;
-            for (int sensor = 0; sensor < USPCData.countSensors; sensor++)
+            for (int sensor = 0; sensor < Program.numChannes; sensor++)
             {
                 if (sensor < 4)
                 {
@@ -237,7 +237,7 @@ namespace Data
         {
             log.add(LogRecord.LogReason.debug, "{0}: {1}: zone = {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, zone);
             ListSensors listSensors = new ListSensors();
-            for (int sens = 0; sens < USPCData.countSensors; sens++)
+            for (int sens = 0; sens < Program.numChannes; sens++)
             {
                 listSensors.Add(new ListValues());
             }
@@ -253,10 +253,10 @@ namespace Data
         public Ascan deadAscan;
         public void ClearZoneSensorResult()
         {
-            for (int z = 0; z < USPCData.countZones; z++)
+            for (int z = 0; z < Program.countZones; z++)
             {
-                zoneSensorResults[z] = new double[USPCData.countSensors];
-                for (int s = 0; s < USPCData.countSensors; s++)
+                zoneSensorResults[z] = new double[Program.numChannes];
+                for (int s = 0; s < Program.numChannes; s++)
                     zoneSensorResults[z][s] = notMeasured;
                 zoneResults[z] = false;
             }
@@ -264,8 +264,8 @@ namespace Data
         public Result()
         {
             zone = 0;
-            zoneSensorResults = new double[USPCData.countZones][];
-            zoneResults = new bool[USPCData.countZones];
+            zoneSensorResults = new double[Program.countZones][];
+            zoneResults = new bool[Program.countZones];
             notMeasuredAscan = new Ascan()
             {
                 G1Amp = (byte)notMeasured,

@@ -158,12 +158,12 @@ namespace USPC
                         if (sensor > 0)
                             sensor--;
                         else
-                            sensor = USPCData.countSensors - 1;
+                            sensor = Program.numChannes - 1;
                         break;
                     }
                 case Keys.Down:
                     {
-                        if (sensor < USPCData.countSensors - 1)
+                        if (sensor < Program.numChannes - 1)
                             sensor++;
                         else
                             sensor = 0;

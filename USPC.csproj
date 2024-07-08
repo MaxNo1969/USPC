@@ -63,12 +63,6 @@
     </Compile>
     <Compile Include="Data\Result.cs" />
     <Compile Include="Data\ThickConverter.cs" />
-    <Compile Include="FRResult.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="FRResult.Designer.cs">
-      <DependentUpon>FRResult.cs</DependentUpon>
-    </Compile>
     <Compile Include="FRWaitLongProcess.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -89,7 +83,6 @@
     <Compile Include="Chart\ChartCursorLine.cs" />
     <Compile Include="Chart\ChartExtras.cs" />
     <Compile Include="Csv\CSVHelper.cs" />
-    <Compile Include="Data\USPCData.cs" />
     <Compile Include="DrawResults.cs" />
     <Compile Include="Emul\FREmul.cs">
       <SubType>Form</SubType>
@@ -193,9 +186,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="FRMain.resx">
       <DependentUpon>FRMain.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="FRResult.resx">
-      <DependentUpon>FRResult.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="FRZoneView.resx">
       <DependentUpon>FRZoneView.cs</DependentUpon>

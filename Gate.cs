@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using Data;
+using USPC.Data;
 
 namespace USPC
 {
@@ -40,7 +41,7 @@ namespace USPC
                     lbAmpValue.Visible = false;
                     lbAmp.Visible = false;
                     Amplitude = 0;
-                    Distance = USPCData.TofToMm((ascan.GIFTof & Ascan.TOF_MASK) * 5);
+                    Distance = ThickConverter.TofToMm(ascan.GIFTof & Ascan.TOF_MASK);
                     if ((ascan.GIFFlags & Ascan.GateIFFlags.AmpAlarm) == Ascan.GateIFFlags.AmpAlarm)
                     {
                         AmpFillColor = Color.Red;
@@ -77,7 +78,7 @@ namespace USPC
                     lbAmp.Visible = true;
                     Amplitude = Math.Min(100.0, ascan.G1Amp);
                     uint tof = ascan.G1TofWt & Ascan.TOF_MASK*5;
-                    Distance = USPCData.TofToMm(tof);
+                    Distance = ThickConverter.TofToMm(tof);
                     if ((ascan.G1Flags & Ascan.GateFlags.CouplingAlarm) == Ascan.GateFlags.CouplingAlarm)
                     {
                         AmpFillColor = Color.Red;
@@ -113,8 +114,8 @@ namespace USPC
                     lbAmpValue.Visible = true;
                     lbAmp.Visible = true;
                     Amplitude = Math.Min(100.0, ascan.G2Amp);
-                    tof = (ascan.G2TofWt & Ascan.TOF_MASK) * 5;
-                    Distance = USPCData.TofToMm(tof);
+                    tof = (ascan.G2TofWt & Ascan.TOF_MASK);
+                    Distance = ThickConverter.TofToMm(tof);
                     if ((ascan.G2Flags & Ascan.GateFlags.CouplingAlarm) == Ascan.GateFlags.CouplingAlarm)
                     {
                         AmpFillColor = Color.Red;

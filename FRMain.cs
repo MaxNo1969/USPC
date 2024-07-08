@@ -70,6 +70,8 @@ namespace USPC
 
         void MainWorkWorker_DoWork(object sender, DoWorkEventArgs e)
         {
+            if (Thread.CurrentThread.Name == null)
+                Thread.CurrentThread.Name = "MainWorkWorker";
             try
             {
                 while (!MainWorkWorker.CancellationPending)
@@ -261,19 +263,19 @@ namespace USPC
         #region Вывод данных в основное окно
         private void PutDataOnCharts()
         {
-            double[] values01 = new double[USPCData.countZones];
-            double[] values02 = new double[USPCData.countZones];
-            double[] values03 = new double[USPCData.countZones];
-            double[] values04 = new double[USPCData.countZones];
-            double[] values05 = new double[USPCData.countZones];
-            double[] values06 = new double[USPCData.countZones];
-            double[] values07 = new double[USPCData.countZones];
-            double[] values08 = new double[USPCData.countZones];
-            double[] values09 = new double[USPCData.countZones];
-            double[] values10 = new double[USPCData.countZones];
-            double[] values11 = new double[USPCData.countZones];
-            double[] values12 = new double[USPCData.countZones];
-            for (int i = 0; i < USPCData.countZones; i++)
+            double[] values01 = new double[Program.countZones];
+            double[] values02 = new double[Program.countZones];
+            double[] values03 = new double[Program.countZones];
+            double[] values04 = new double[Program.countZones];
+            double[] values05 = new double[Program.countZones];
+            double[] values06 = new double[Program.countZones];
+            double[] values07 = new double[Program.countZones];
+            double[] values08 = new double[Program.countZones];
+            double[] values09 = new double[Program.countZones];
+            double[] values10 = new double[Program.countZones];
+            double[] values11 = new double[Program.countZones];
+            double[] values12 = new double[Program.countZones];
+            for (int i = 0; i < Program.countZones; i++)
             {
                 values01[i] = Program.result.zoneSensorResults[i][0];
                 values02[i] = Program.result.zoneSensorResults[i][1];
@@ -436,6 +438,7 @@ namespace USPC
 
         public void openSettings()
         {
+            miSettings.Enabled = false;
             FRSettings frm = new FRSettings(this);
             frm.FormClosed += new FormClosedEventHandler((object _o, FormClosedEventArgs _e) => { /*btnSettings.Enabled = true;*/ miSettings.Enabled = true; });
             frm.Show();
@@ -443,9 +446,7 @@ namespace USPC
 
         private void miSettings_Click(object sender, EventArgs e)
         {
-            FRSettings frm = new FRSettings(this);
-            frm.FormClosed += new FormClosedEventHandler((object _o, FormClosedEventArgs _e) => { /*btnSettings.Enabled = true;*/ miSettings.Enabled = true; });
-            frm.Show();
+            openSettings();
         }
 
         /// <summary>
@@ -632,7 +633,9 @@ namespace USPC
 
         private void miEmulToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            miEmul.Enabled = false;
             FREmul frEmul = new FREmul(this);
+            frEmul.FormClosed += new FormClosedEventHandler((object _o, FormClosedEventArgs _e) => { /*btnSettings.Enabled = true;*/ miEmul.Enabled = true; });
             frEmul.Show();
         }
     }

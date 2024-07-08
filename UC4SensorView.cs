@@ -40,7 +40,7 @@ namespace USPC
             a.AxisY.MajorTickMark.Enabled = false;
             
             a.AxisX.Minimum = 0;
-            a.AxisX.Maximum = USPCData.countZones;
+            a.AxisX.Maximum = Program.countZones;
             a.AxisX.Interval = 10;
             a.AxisX.LabelStyle.Enabled = true;
             a.AxisX.MajorGrid.Enabled = true;
