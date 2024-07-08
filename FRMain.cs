@@ -80,6 +80,13 @@ namespace USPC
                         Thread.Sleep(1000);
                         Application.DoEvents();
                     }
+                    Program.tubesCount++;
+                    lblTubesCount.Text = Program.tubesCount.ToString();
+                    Program.sl["РЕЗУЛЬТАТ"].Val = Program.result.GetTubeResult();
+                    Program.sl["СТРБРЕЗ"].Val = true;
+                    Thread.Sleep(500);
+                    Program.sl["РЕЗУЛЬТАТ"].Val = false;
+                    Program.sl["СТРБРЕЗ"].Val = false;
                     if (cbInterrupt.Checked)
                     {
                         e.Cancel = true;
@@ -237,11 +244,9 @@ namespace USPC
             else
             {
                 //При остановке снимаем сигнал "РАБОТА"
-                Program.sl["РАБОТА"].Val = false;
                 worker.zbWorker.CancelAsync();
                 worker.CancelAsync();
                 MainWorkWorker.CancelAsync();
-                //while (MainWorkWorker.IsBusy) Thread.Sleep(100);
                 setSb("Info", "Нажмите F5 для начала работы");
                 setStartStopMenu(true);
             }

@@ -26,15 +26,20 @@ namespace USPC.Workers
             channel = _channel;
             threadStart = new ThreadStart(ReadAscans);
             thread = new Thread(threadStart);
+            thread.Name = string.Format("ChannelReaderThread-{0}-{1}", board, channel);
+            thread.IsBackground = true;
+            thread.Priority = ThreadPriority.AboveNormal;
         }
         public void start()
         {
             thread.Start();
+            //log.add(LogRecord.LogReason.debug, "{0} запущен ThreadState={1}", thread.Name, thread.ThreadState);
         }
         public void stop()
         {
             terminate = true;
             thread.Join();
+            //log.add(LogRecord.LogReason.debug, "{0} остановлен ThreadState={1}", thread.Name, thread.ThreadState);
         }
         void ReadAscans()
         {
@@ -67,6 +72,8 @@ namespace USPC.Workers
                     log.add(LogRecord.LogReason.warning, "{0}: {1}: Не удалось прочитать ascan board={2} channel={3}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, board, channel);
                 }
             }
+            //log.add(LogRecord.LogReason.debug, "{0}: {1}: {2} Вышли из ReadAscans", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, thread.Name);
+            return;
         }
     }
 }
