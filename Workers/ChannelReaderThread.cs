@@ -51,7 +51,7 @@ namespace USPC.Workers
                 if (Program.pcxus.readAscan(board, channel, ref ascan, timeout))
                 {
                     double amp = ascan.G1Amp;
-                    uint tof = ascan.G1TofWt * 5;
+                    uint tof = (ascan.G1TofWt & Ascan.TOF_MASK) * 5;
                     double thick = ThickConverter.TofToMm(tof);
                     double val = (board == 0) ? thick : amp;
                     if (result.values[result.zone] != null && result.values[result.zone][resultChannel] != null)
