@@ -29,19 +29,19 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea2 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Series series12 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.Series series13 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.Series series14 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.Series series15 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.Series series16 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.Series series17 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.Series series18 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.Series series19 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.Series series20 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.Series series21 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.Series series22 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.Title title2 = new System.Windows.Forms.DataVisualization.Charting.Title();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.Series series2 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.Series series3 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.Series series4 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.Series series5 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.Series series6 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.Series series7 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.Series series8 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.Series series9 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.Series series10 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.Series series11 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.Title title1 = new System.Windows.Forms.DataVisualization.Charting.Title();
             this.btnStartStop = new System.Windows.Forms.Button();
             this.timer = new System.Windows.Forms.Timer(this.components);
             this.label1 = new System.Windows.Forms.Label();
@@ -113,97 +113,96 @@
             // AscanChart
             // 
             this.AscanChart.BackColor = System.Drawing.Color.Black;
-            chartArea2.AxisX.IsLabelAutoFit = false;
-            chartArea2.AxisX.LabelStyle.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            chartArea2.AxisX.LabelStyle.ForeColor = System.Drawing.Color.White;
-            chartArea2.AxisX.LineColor = System.Drawing.Color.White;
-            chartArea2.AxisX.MajorGrid.LineColor = System.Drawing.Color.White;
-            chartArea2.AxisY.LabelStyle.ForeColor = System.Drawing.Color.White;
-            chartArea2.AxisY.LineColor = System.Drawing.Color.White;
-            chartArea2.AxisY.MajorGrid.LineColor = System.Drawing.Color.White;
-            chartArea2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            chartArea2.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            chartArea2.Name = "Default";
-            this.AscanChart.ChartAreas.Add(chartArea2);
-            this.AscanChart.Location = new System.Drawing.Point(-2, 58);
+            chartArea1.AxisX.IsLabelAutoFit = false;
+            chartArea1.AxisX.LabelStyle.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            chartArea1.AxisX.LabelStyle.ForeColor = System.Drawing.Color.White;
+            chartArea1.AxisX.LineColor = System.Drawing.Color.White;
+            chartArea1.AxisX.MajorGrid.LineColor = System.Drawing.Color.White;
+            chartArea1.AxisY.LabelStyle.ForeColor = System.Drawing.Color.White;
+            chartArea1.AxisY.LineColor = System.Drawing.Color.White;
+            chartArea1.AxisY.MajorGrid.LineColor = System.Drawing.Color.White;
+            chartArea1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            chartArea1.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            chartArea1.Name = "Default";
+            this.AscanChart.ChartAreas.Add(chartArea1);
+            this.AscanChart.Location = new System.Drawing.Point(4, 58);
             this.AscanChart.Name = "AscanChart";
-            series12.ChartArea = "Default";
-            series12.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.FastLine;
-            series12.Color = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(192)))), ((int)(((byte)(0)))));
-            series12.Name = "AscanPlot";
-            series13.ChartArea = "Default";
-            series13.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.FastLine;
-            series13.Color = System.Drawing.Color.Red;
-            series13.Name = "Gate1PosPlot";
-            series14.ChartArea = "Default";
-            series14.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.FastLine;
-            series14.Color = System.Drawing.Color.Red;
-            series14.Name = "Gate1NegPlot";
-            series15.BorderDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.Dash;
-            series15.ChartArea = "Default";
-            series15.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.FastLine;
-            series15.Color = System.Drawing.Color.Red;
-            series15.Name = "Gate1Pos2Plot";
-            series16.BorderDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.Dash;
-            series16.ChartArea = "Default";
-            series16.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.FastLine;
-            series16.Color = System.Drawing.Color.Red;
-            series16.Name = "Gate1Neg2Plot";
-            series17.ChartArea = "Default";
-            series17.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.FastLine;
-            series17.Color = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(126)))), ((int)(((byte)(239)))));
-            series17.Name = "Gate2PosPlot";
-            series18.ChartArea = "Default";
-            series18.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.FastLine;
-            series18.Color = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(126)))), ((int)(((byte)(239)))));
-            series18.Name = "Gate2NegPlot";
-            series19.BorderDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.Dash;
-            series19.ChartArea = "Default";
-            series19.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.FastLine;
-            series19.Color = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(126)))), ((int)(((byte)(239)))));
-            series19.Name = "Gate2Pos2Plot";
-            series20.BorderDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.Dash;
-            series20.ChartArea = "Default";
-            series20.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.FastLine;
-            series20.Color = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(126)))), ((int)(((byte)(239)))));
-            series20.Name = "Gate2Neg2Plot";
-            series21.ChartArea = "Default";
-            series21.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.FastLine;
-            series21.Color = System.Drawing.Color.Yellow;
-            series21.Name = "GateIFPosPlot";
-            series22.ChartArea = "Default";
-            series22.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.FastLine;
-            series22.Color = System.Drawing.Color.Yellow;
-            series22.Name = "GateIFNegPlot";
-            this.AscanChart.Series.Add(series12);
-            this.AscanChart.Series.Add(series13);
-            this.AscanChart.Series.Add(series14);
-            this.AscanChart.Series.Add(series15);
-            this.AscanChart.Series.Add(series16);
-            this.AscanChart.Series.Add(series17);
-            this.AscanChart.Series.Add(series18);
-            this.AscanChart.Series.Add(series19);
-            this.AscanChart.Series.Add(series20);
-            this.AscanChart.Series.Add(series21);
-            this.AscanChart.Series.Add(series22);
+            series1.ChartArea = "Default";
+            series1.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.FastLine;
+            series1.Color = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(192)))), ((int)(((byte)(0)))));
+            series1.Name = "AscanPlot";
+            series2.ChartArea = "Default";
+            series2.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.FastLine;
+            series2.Color = System.Drawing.Color.Red;
+            series2.Name = "Gate1PosPlot";
+            series3.ChartArea = "Default";
+            series3.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.FastLine;
+            series3.Color = System.Drawing.Color.Red;
+            series3.Name = "Gate1NegPlot";
+            series4.BorderDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.Dash;
+            series4.ChartArea = "Default";
+            series4.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.FastLine;
+            series4.Color = System.Drawing.Color.Red;
+            series4.Name = "Gate1Pos2Plot";
+            series5.BorderDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.Dash;
+            series5.ChartArea = "Default";
+            series5.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.FastLine;
+            series5.Color = System.Drawing.Color.Red;
+            series5.Name = "Gate1Neg2Plot";
+            series6.ChartArea = "Default";
+            series6.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.FastLine;
+            series6.Color = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(126)))), ((int)(((byte)(239)))));
+            series6.Name = "Gate2PosPlot";
+            series7.ChartArea = "Default";
+            series7.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.FastLine;
+            series7.Color = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(126)))), ((int)(((byte)(239)))));
+            series7.Name = "Gate2NegPlot";
+            series8.BorderDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.Dash;
+            series8.ChartArea = "Default";
+            series8.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.FastLine;
+            series8.Color = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(126)))), ((int)(((byte)(239)))));
+            series8.Name = "Gate2Pos2Plot";
+            series9.BorderDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.Dash;
+            series9.ChartArea = "Default";
+            series9.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.FastLine;
+            series9.Color = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(126)))), ((int)(((byte)(239)))));
+            series9.Name = "Gate2Neg2Plot";
+            series10.ChartArea = "Default";
+            series10.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.FastLine;
+            series10.Color = System.Drawing.Color.Yellow;
+            series10.Name = "GateIFPosPlot";
+            series11.ChartArea = "Default";
+            series11.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.FastLine;
+            series11.Color = System.Drawing.Color.Yellow;
+            series11.Name = "GateIFNegPlot";
+            this.AscanChart.Series.Add(series1);
+            this.AscanChart.Series.Add(series2);
+            this.AscanChart.Series.Add(series3);
+            this.AscanChart.Series.Add(series4);
+            this.AscanChart.Series.Add(series5);
+            this.AscanChart.Series.Add(series6);
+            this.AscanChart.Series.Add(series7);
+            this.AscanChart.Series.Add(series8);
+            this.AscanChart.Series.Add(series9);
+            this.AscanChart.Series.Add(series10);
+            this.AscanChart.Series.Add(series11);
             this.AscanChart.Size = new System.Drawing.Size(536, 459);
             this.AscanChart.TabIndex = 8;
-            title2.Font = new System.Drawing.Font("Arial Black", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            title2.ForeColor = System.Drawing.Color.White;
-            title2.Name = "main";
-            title2.Text = "A-Scan";
-            this.AscanChart.Titles.Add(title2);
+            title1.Font = new System.Drawing.Font("Arial Black", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            title1.ForeColor = System.Drawing.Color.White;
+            title1.Name = "main";
+            title1.Text = "A-Scan";
+            this.AscanChart.Titles.Add(title1);
             // 
             // label4
             // 
-            this.label4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label4.AutoSize = true;
             this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.label4.Location = new System.Drawing.Point(12, 17);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(57, 20);
+            this.label4.Size = new System.Drawing.Size(63, 20);
             this.label4.TabIndex = 9;
-            this.label4.Text = "Board";
+            this.label4.Text = "Плата";
             // 
             // cbBoards
             // 
@@ -213,7 +212,7 @@
             this.cbBoards.Items.AddRange(new object[] {
             "1",
             "2"});
-            this.cbBoards.Location = new System.Drawing.Point(75, 14);
+            this.cbBoards.Location = new System.Drawing.Point(81, 14);
             this.cbBoards.Name = "cbBoards";
             this.cbBoards.Size = new System.Drawing.Size(58, 28);
             this.cbBoards.TabIndex = 10;
@@ -233,7 +232,7 @@
             "6",
             "7",
             "8"});
-            this.cbTest.Location = new System.Drawing.Point(189, 14);
+            this.cbTest.Location = new System.Drawing.Point(218, 14);
             this.cbTest.Name = "cbTest";
             this.cbTest.Size = new System.Drawing.Size(58, 28);
             this.cbTest.TabIndex = 12;
@@ -241,14 +240,13 @@
             // 
             // label5
             // 
-            this.label5.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label5.AutoSize = true;
             this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.label5.Location = new System.Drawing.Point(139, 17);
+            this.label5.Location = new System.Drawing.Point(145, 17);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(44, 20);
+            this.label5.Size = new System.Drawing.Size(71, 20);
             this.label5.TabIndex = 11;
-            this.label5.Text = "Test";
+            this.label5.Text = "Датчик";
             // 
             // gateIF
             // 
@@ -276,19 +274,18 @@
             // 
             // label6
             // 
-            this.label6.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label6.AutoSize = true;
             this.label6.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.label6.Location = new System.Drawing.Point(253, 17);
+            this.label6.Location = new System.Drawing.Point(282, 17);
             this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(73, 20);
+            this.label6.Size = new System.Drawing.Size(94, 20);
             this.label6.TabIndex = 13;
-            this.label6.Text = "Timeout";
+            this.label6.Text = "Задержка";
             // 
             // textBoxTimeout
             // 
             this.textBoxTimeout.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.textBoxTimeout.Location = new System.Drawing.Point(332, 14);
+            this.textBoxTimeout.Location = new System.Drawing.Point(382, 14);
             this.textBoxTimeout.Name = "textBoxTimeout";
             this.textBoxTimeout.Size = new System.Drawing.Size(48, 26);
             this.textBoxTimeout.TabIndex = 14;
@@ -296,7 +293,7 @@
             this.textBoxTimeout.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             this.textBoxTimeout.TextChanged += new System.EventHandler(this.textBoxTimeout_TextChanged);
             // 
-            // FRTestAscaNet
+            // FRTestAscan
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -316,7 +313,7 @@
             this.Controls.Add(this.gate1);
             this.Controls.Add(this.btnStartStop);
             this.MinimumSize = new System.Drawing.Size(700, 500);
-            this.Name = "FRTestAscaNet";
+            this.Name = "FRTestAscan";
             this.Text = "TestGetAscanFromNet";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.TestGetAscanFromNet_FormClosing);
             this.Load += new System.EventHandler(this.TestGetAscanFromNet_Load);

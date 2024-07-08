@@ -89,6 +89,7 @@ namespace USPC
                     Thread.Sleep(500);
                     Program.sl["РЕЗУЛЬТАТ"].Val = false;
                     Program.sl["СТРБРЕЗ"].Val = false;
+                    setStartStopMenu(true);
                     if (cbInterrupt.Checked)
                     {
                         e.Cancel = true;

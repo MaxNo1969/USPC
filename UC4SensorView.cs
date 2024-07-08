@@ -117,9 +117,7 @@ namespace USPC
         {
             Chart c = sender as Chart;
             int sensor = (int)c.Tag;
-            //MouseEventArgs mea = e as MouseEventArgs;
-            //HitTestResult htRes = c.HitTest(mea.X, mea.Y, ChartElementType.DataPoint);
-            int zone = (int)c.ChartAreas[0].CursorX.Position;
+            int zone = (int)c.ChartAreas[0].CursorX.Position-1;
             if (zone > Program.result.zone) return;
             ListZones values = Program.result.values;
             int count = values[zone][sensor].Count;

@@ -262,19 +262,19 @@ namespace USPC
 
         }
 
-        private void TestGetAscanFromNet_Load(object sender, EventArgs e)
+        private void FRShowAscan_Load(object sender, EventArgs e)
         {
             FormPosSaver.load(this);
         }
 
-        private void TestGetAscanFromNet_FormClosing(object sender, FormClosingEventArgs e)
+        private void FRShowAscan_FormClosing(object sender, FormClosingEventArgs e)
         {
             FormPosSaver.save(this);
         }
 
-        private void TestGetAscanFromNet_Resize(object sender, EventArgs e)
+        private void FRShowAscan_Resize(object sender, EventArgs e)
         {
-            AscanChart.SetBounds(0,58, ClientSize.Width-150, ClientSize.Height-58);
+            AscanChart.SetBounds(0, 58, ClientSize.Width - 150, ClientSize.Height - 58);
         }
     }
 }

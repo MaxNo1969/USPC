@@ -34,7 +34,7 @@ namespace USPC
             double step = (double)_length / (double)_data.Length;
             for (int i = 0; i < _data.Length; i++)
             {
-                double val = (double)_data.GetValue(i);
+                double val = (_isThick)?(double)_data.GetValue(i):100.0;
                 int ind = chartResult.Series[0].Points.AddXY((i+1) * step, val);
                 chartResult.Series[0].Points[ind].Color = (_isThick) ? DrawResults.GetThicknessColor(val) : DrawResults.GetDefectColor((int)val);
             }
@@ -174,7 +174,7 @@ namespace USPC
         private void chartResult_Click_1(object sender, EventArgs e)
         {
             Chart c = sender as Chart;
-            int ascanIndex = (int)c.ChartAreas[0].CursorX.Position;
+            int ascanIndex = (int)c.ChartAreas[0].CursorX.Position-1;
             Ascan ascan = Program.result.values[zone][sensor][ascanIndex];
             int board = (sensor < 4) ? 0 : 1;
             int realSensor = sensor - board * 4;
