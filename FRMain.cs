@@ -100,7 +100,7 @@ namespace USPC
             }
         }
 
-        #region Протокол и сигнвлы
+        #region Протокол и сигналы
         /// <summary>
         /// Настраиваем протокол
         /// Окно протокола создаем сразу оно будет существовать 
@@ -113,13 +113,17 @@ namespace USPC
             {
                 saveMethod = FRProt.SaveMethod._tofile,
                 Owner=_fr,
-                ShowInTaskbar=false,
+                ShowInTaskbar=true,
             };
             //Тут можно вставить обработчик закрытия формы
             pr.onHide += new FRProt.OnHideForm(() => { miWindowsProt.Checked = false; });
             pr.Visible = FormPosSaver.visible(pr);
             miWindowsProt.Checked = pr.Visible;
-            FormPosSaver.load(pr);
+            pr.FormClosing += new FormClosingEventHandler(protocolClosingEventHandler);
+        }
+        void protocolClosingEventHandler(object _o, FormClosingEventArgs _ea)
+        {
+            FormPosSaver.save(pr);
         }
         /// <summary>
         /// Настраиваем окно сигналов
@@ -132,7 +136,7 @@ namespace USPC
             fSignals = new FRSignals(Program.sl)
             {
                 Owner = _fr,
-                ShowInTaskbar = false,
+                ShowInTaskbar = true,
             };
             fSignals.onHide += new FRSignals.OnHideForm(() => { miWindowsSignals.Checked = false; });
             fSignals.Visible = FormPosSaver.visible(fSignals);
@@ -181,24 +185,6 @@ namespace USPC
             setSb("Info", "Для начала работы нажмите F5");
         }
 
-        public void ClearCharts()
-        {
-            UC4SensorView.ClearChart(CrossView.ch1);
-            UC4SensorView.ClearChart(CrossView.ch2);
-            UC4SensorView.ClearChart(CrossView.ch3);
-            UC4SensorView.ClearChart(CrossView.ch4);
-
-            UC4SensorView.ClearChart(LinearView.ch1);
-            UC4SensorView.ClearChart(LinearView.ch2);
-            UC4SensorView.ClearChart(LinearView.ch3);
-            UC4SensorView.ClearChart(LinearView.ch4);
-
-            UC4SensorView.ClearChart(ThickView.ch1);
-            UC4SensorView.ClearChart(ThickView.ch2);
-            UC4SensorView.ClearChart(ThickView.ch3);
-            UC4SensorView.ClearChart(ThickView.ch4);
-        }
-
         public void setStartStopMenu(bool _start)
         {
             if (InvokeRequired)
@@ -235,7 +221,6 @@ namespace USPC
 
         }
 
-        AscansReader reader = new AscansReader(200);
         /// <summary>
         /// Запуск/остановка рабочего потока
         /// (В workThread вызывается из другого потока)
@@ -268,7 +253,7 @@ namespace USPC
             Action action = () => { Program.frMain.PutDataOnCharts(); Program.frMain.setPb(Program.result.zone * AppSettings.s.zoneSize * 100 / AppSettings.s.tubeLength); };
             Program.frMain.Invoke(action);
         }
-
+        #region Вывод данных в основное окно
         private void PutDataOnCharts()
         {
             double[] values01 = new double[USPCData.countZones];
@@ -311,19 +296,24 @@ namespace USPC
             UC4SensorView.PutThickDataOnChart(ThickView.ch3, values03);
             UC4SensorView.PutThickDataOnChart(ThickView.ch4, values04);
         }
-
-        void testWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        public void ClearCharts()
         {
-            log.add(LogRecord.LogReason.info, "{0}: {1}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name);
+            UC4SensorView.ClearChart(CrossView.ch1);
+            UC4SensorView.ClearChart(CrossView.ch2);
+            UC4SensorView.ClearChart(CrossView.ch3);
+            UC4SensorView.ClearChart(CrossView.ch4);
+
+            UC4SensorView.ClearChart(LinearView.ch1);
+            UC4SensorView.ClearChart(LinearView.ch2);
+            UC4SensorView.ClearChart(LinearView.ch3);
+            UC4SensorView.ClearChart(LinearView.ch4);
+
+            UC4SensorView.ClearChart(ThickView.ch1);
+            UC4SensorView.ClearChart(ThickView.ch2);
+            UC4SensorView.ClearChart(ThickView.ch3);
+            UC4SensorView.ClearChart(ThickView.ch4);
         }
-
-        void testWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)
-        {
-            //log.add(LogRecord.LogReason.info, "{0}: {1}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name);
-            PutDataOnCharts();
-        }
-
-
+        #endregion
 
         private void miShowProt_Click(object sender, EventArgs e)
         {
@@ -338,7 +328,6 @@ namespace USPC
 
         private void FRMain_FormClosing(object sender, FormClosingEventArgs e)
         {
-            FormPosSaver.save(pr);
             FormPosSaver.save(this);
         }
 
@@ -349,9 +338,7 @@ namespace USPC
                 if (MessageBox.Show("Плата уже открыта!Переоткрыть?\nВсе настройки будут сброшены.", "Внимание!", MessageBoxButtons.YesNo, MessageBoxIcon.Error, MessageBoxDefaultButton.Button2) == DialogResult.Yes)
                 {
                     Program.pcxus.close();
-                    Program.boardState = BoardState.NotOpened;
                     Program.pcxus.open(2);
-                    Program.boardState = BoardState.Opened;
                 }
                 return;
             }
@@ -390,10 +377,6 @@ namespace USPC
                 log.add(LogRecord.LogReason.error, "{0}: {1}: Error: {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, (ErrorCode)Program.pcxus.Err);
                 Program.boardState = BoardState.Error;
             }
-            else
-            {
-                Program.boardState = BoardState.NotOpened;
-            }
         }
 
         private void miBoardInfo_Click(object sender, EventArgs e)
@@ -406,14 +389,12 @@ namespace USPC
             FRUspcInfo frm = new FRUspcInfo(this);
             frm.Show();
         }
-        public bool readAscansEnabled = false;
         private void timerUpdUI_Tick(object sender, EventArgs e)
         {
             long usedMem = GC.GetTotalMemory(false);
             sb.Items["heap"].Text = string.Format("{0,6}M", usedMem / (1024 * 1024));
             sb.Items["speed"].Text = string.Format("{0,7:F5}", AppSettings.s.speed);
             sb.Items["dataSize"].Text = Program.result.GetDataSize().ToString();
-            if (readAscansEnabled) readAscans();
             //sb.Items["dataSize"].Text = (Program.result.values.Count*Program.result.values[0].Count*Program.result.values[0][0].Count).ToString();
             //NotOpened, Opened, loaded, error
             /*
@@ -648,35 +629,6 @@ namespace USPC
         {
             FREmul frEmul = new FREmul(this);
             frEmul.Show();
-        }
-
-        private void readAscans()
-        {
-            Ascan ascan = new Ascan();
-            Result result = Program.result;
-            for (int board = 0; board < Program.numBoards; board++)
-            {
-                for (int channel = 0; channel < Program.channelsOnBoard[board]; channel++)
-                {
-                    int resultChannel = board * 4 + channel;
-                    if (Program.pcxus.readAscan(board, channel, ref ascan, AppSettings.s.BoardReadTimeout))
-                    {
-                        if (result.values[result.zone] != null && result.values[result.zone][resultChannel] != null)
-                        {
-                            result.values[result.zone][resultChannel].Add(ascan);
-                        }
-                        else
-                        {
-                            log.add(LogRecord.LogReason.error, "{0}: {1}: {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, "Не добавлена зона или датчик");
-                        }
-                    }
-                    else
-                    {
-                        Program.result.values[result.zone][resultChannel].Add(result.notMeasuredAscan);
-                        log.add(LogRecord.LogReason.warning, "{0}: {1}: Не удалось прочитать ascan board={2} channel={3}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, board, channel);
-                    }
-                }
-            }
         }
     }
 }

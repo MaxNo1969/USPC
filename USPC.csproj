@@ -122,9 +122,11 @@
       <DependentUpon>Gate.cs</DependentUpon>
     </Compile>
     <Compile Include="Workers\AscansReader.cs" />
+    <Compile Include="Workers\AscansReaderW.cs" />
     <Compile Include="Workers\ChannelAscansReader.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Workers\ChannelReaderThread.cs" />
     <Compile Include="Workers\TubeWorker.cs">
       <SubType>Component</SubType>
     </Compile>

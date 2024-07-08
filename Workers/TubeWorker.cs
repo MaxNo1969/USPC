@@ -144,17 +144,15 @@ namespace USPC
         void stopWorkers()
         {
             log.add(LogRecord.LogReason.debug, "{0}: {1}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name);
-            //ascansReader.stop();
-            Program.frMain.readAscansEnabled = false;
+            ascansReader.stop();
             zbWorker.CancelAsync();
         }
 
         void startWorkers()
         {
             log.add(LogRecord.LogReason.debug, "{0}: {1}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name);
-            //ascansReader.start();
-            Program.frMain.readAscansEnabled = true;
             zbWorker.RunWorkerAsync();
+            ascansReader.start();
         }
         #endregion запуск/остановка сбора данных по всем платам
 
