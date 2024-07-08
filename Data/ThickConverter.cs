@@ -11,7 +11,7 @@ namespace USPC.Data
         {
             //return 2.5e-6 * _tof * Program.scopeVelocity;
             //нс * м/с
-            return _tof * Program.scopeVelocity *2.5/ 1000000;
+            return (double)_tof * Program.scopeVelocity/2.0 / 1000000.0;
         }
 
         public static double TofToMm(AcqAscan _scan)
@@ -21,7 +21,7 @@ namespace USPC.Data
 
         public static uint MmToTof(double _mm)
         {
-            return (uint)((double)_mm * 100000.0 / Program.scopeVelocity / 2.5);
+            return (uint)((double)_mm * 100000.0 * 2 / Program.scopeVelocity);
         }
     }
 }
