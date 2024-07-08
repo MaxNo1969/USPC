@@ -40,9 +40,9 @@
             this.lbTOF.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lbTOF.Location = new System.Drawing.Point(91, 45);
             this.lbTOF.Name = "lbTOF";
-            this.lbTOF.Size = new System.Drawing.Size(26, 20);
+            this.lbTOF.Size = new System.Drawing.Size(35, 20);
             this.lbTOF.TabIndex = 4;
-            this.lbTOF.Text = "us";
+            this.lbTOF.Text = "mm";
             // 
             // lbDistanceValue
             // 

@@ -263,19 +263,19 @@ namespace USPC
         #region Вывод данных в основное окно
         private void PutDataOnCharts()
         {
-            double[] values01 = new double[USPCData.countZones];
-            double[] values02 = new double[USPCData.countZones];
-            double[] values03 = new double[USPCData.countZones];
-            double[] values04 = new double[USPCData.countZones];
-            double[] values05 = new double[USPCData.countZones];
-            double[] values06 = new double[USPCData.countZones];
-            double[] values07 = new double[USPCData.countZones];
-            double[] values08 = new double[USPCData.countZones];
-            double[] values09 = new double[USPCData.countZones];
-            double[] values10 = new double[USPCData.countZones];
-            double[] values11 = new double[USPCData.countZones];
-            double[] values12 = new double[USPCData.countZones];
-            for (int i = 0; i < USPCData.countZones; i++)
+            double[] values01 = new double[Program.countZones];
+            double[] values02 = new double[Program.countZones];
+            double[] values03 = new double[Program.countZones];
+            double[] values04 = new double[Program.countZones];
+            double[] values05 = new double[Program.countZones];
+            double[] values06 = new double[Program.countZones];
+            double[] values07 = new double[Program.countZones];
+            double[] values08 = new double[Program.countZones];
+            double[] values09 = new double[Program.countZones];
+            double[] values10 = new double[Program.countZones];
+            double[] values11 = new double[Program.countZones];
+            double[] values12 = new double[Program.countZones];
+            for (int i = 0; i < Program.countZones; i++)
             {
                 values01[i] = Program.result.zoneSensorResults[i][0];
                 values02[i] = Program.result.zoneSensorResults[i][1];
