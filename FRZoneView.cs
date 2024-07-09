@@ -181,7 +181,10 @@ namespace USPC
         private void chartResult_Click_1(object sender, EventArgs e)
         {
             Chart c = sender as Chart;
-            int ascanIndex = (int)c.ChartAreas[0].CursorX.Position-1;
+            MouseEventArgs mea = e as MouseEventArgs;
+            HitTestResult htRes = c.HitTest(mea.X, mea.Y, ChartElementType.DataPoint);
+            //int ascanIndex = (int)c.ChartAreas[0].CursorX.Position-1;
+            int ascanIndex = htRes.PointIndex;
             Ascan ascan = Program.result.values[zone][sensor][ascanIndex];
             int board = (sensor < 4) ? 0 : 1;
             int realSensor = sensor - board * 4;
