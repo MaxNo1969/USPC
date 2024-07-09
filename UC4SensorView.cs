@@ -118,7 +118,7 @@ namespace USPC
             Chart c = sender as Chart;
             int sensor = (int)c.Tag;
             int zone = (int)c.ChartAreas[0].CursorX.Position-1;
-            if (zone > Program.result.zone) return;
+            if (zone > Program.result.zone || zone < 0) return;
             ListZones values = Program.result.values;
             int count = values[zone][sensor].Count;
             double[] data = new double[count];

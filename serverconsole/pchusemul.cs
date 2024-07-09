@@ -280,8 +280,9 @@ namespace USPC
             double thick = 17.0 + r.NextDouble() * 5;
             _ascan.G1TofWt = (uint)(MmToTof(thick));
             _ascan.GIFTof = (uint)(MmToTof(thick));
-            _ascan.G1Amp = (byte)(20+r.Next(50));
-            _ascan.DataSize = (ushort)(200+r.Next(20));
+            //_ascan.G1Amp = (byte)(20+r.Next(50));
+            _ascan.G1Amp = 0;
+            _ascan.DataSize = (ushort)(200 + r.Next(20));
             _ascan.Points = new byte[_ascan.DataSize];
             for (int i = 0; i < _ascan.DataSize; i++)
             {

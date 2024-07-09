@@ -8,6 +8,7 @@ using Settings;
 using System.Diagnostics;
 using System.IO;
 using USPC.Data;
+using System.Runtime.Serialization.Formatters.Binary;
 
 namespace Data
 {
@@ -334,6 +335,33 @@ namespace Data
             {
                 log.add(LogRecord.LogReason.error, "{0}: {1}: Error: {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message);
                 log.add(LogRecord.LogReason.error, "zone = {0} channel={1} meas={2} val={3}", z, ch, meas, values[z][ch][meas]);
+            }
+        }
+        public void saveRes(Stream _stream)
+        {
+            try
+            {
+                BinaryFormatter formatter = new BinaryFormatter();
+                formatter.Serialize(_stream, this);
+            }
+            catch (Exception ex)
+            {
+                log.add(LogRecord.LogReason.error, "{0}: {1}: Error: {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message);
+            }
+        }
+        public static Result loadRes(Stream _stream)
+        {
+            try
+            {
+                
+                BinaryFormatter formatter = new BinaryFormatter();
+                Result result = (Result)formatter.Deserialize(_stream);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                log.add(LogRecord.LogReason.error, "{0}: {1}: Error: {2}", "Result", System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message);
+                return null;
             }
         }
     }

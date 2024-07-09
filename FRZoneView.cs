@@ -36,7 +36,8 @@ namespace USPC
             {
                 double val = (_isThick)?(double)_data.GetValue(i):100.0;
                 int ind = chartResult.Series[0].Points.AddXY((i+1) * step, val);
-                chartResult.Series[0].Points[ind].Color = (_isThick) ? DrawResults.GetThicknessColor(val) : DrawResults.GetDefectColor((int)val);
+                double amp = (double)_data.GetValue(i);
+                chartResult.Series[0].Points[ind].Color = (_isThick) ? DrawResults.GetThicknessColor(val) : DrawResults.GetDefectColor((int)amp);
             }
 
         }
@@ -92,11 +93,14 @@ namespace USPC
             //chartResult.ChartAreas[0].InnerPlotPosition.Y = 0;
             //chartResult.ChartAreas[0].InnerPlotPosition.Width = 100;
             //chartResult.ChartAreas[0].InnerPlotPosition.Height = 100;
+            ChartArea a = chartResult.ChartAreas[0];
+            a.AxisX.Minimum = 0;
+            a.AxisX.Maximum = 200;
+            a.AxisX.Interval = 10;
+            a.AxisY.Interval = 0;
+            //a.AxisY.LabelStyle.Enabled = false;
+            //a.AxisY.MajorGrid.Enabled = false;
 
-            chartResult.ChartAreas[0].AxisX.Minimum = 0;
-            chartResult.ChartAreas[0].AxisX.Maximum = 200;
-            chartResult.ChartAreas[0].AxisX.Interval = 10;
-            //chartResult.ChartAreas[0].AxisY.Minimum = 0;
             //chartResult.ChartAreas[0].AxisY.Maximum = Program.typeSize.maxDetected;
             //chartResult.ChartAreas[0].AxisY.Interval = 1;
 
@@ -167,7 +171,10 @@ namespace USPC
                 default:
                     return base.ProcessCmdKey(ref msg, keyData);
             }
-            UpdateChart(zone, sensor, Program.result.zonesLengths[zone]);
+            if (Program.result.zonesLengths.Count>=zone)
+                UpdateChart(zone, sensor, Program.result.zonesLengths[zone]);
+            else
+                UpdateChart(zone, sensor, 200);
             return true;
         }
 
