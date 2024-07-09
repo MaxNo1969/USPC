@@ -620,5 +620,54 @@ namespace USPC
             frEmul.FormClosed += new FormClosedEventHandler((object _o, FormClosedEventArgs _e) => { /*btnSettings.Enabled = true;*/ miEmul.Enabled = true; });
             frEmul.Show();
         }
+
+        private void saveResultToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+                        SaveFileDialog sfd = new SaveFileDialog();
+            sfd.Filter = "Файлы данных (*.bintube)|*.bintube|Все файлы (*.*)|*.*";
+            if (sfd.ShowDialog() == DialogResult.OK)
+            {
+                try
+                {
+                    using (FileStream fs = File.OpenWrite(sfd.FileName))
+                    {
+                        FRWaitLongProcess frm = new FRWaitLongProcess(this);                        
+                        frm.Show();
+                        frm.setMes(string.Format("Сохранение файла {0}", sfd.FileName));
+                        Program.result.saveRes(fs);
+                        frm.Close();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
+                }
+            }
+        }
+
+        private void loadResultToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog ofd = new OpenFileDialog();
+            ofd.Filter = "Файлы данных (*.bintube)|*.bintube|Все файлы (*.*)|*.*";
+            if (ofd.ShowDialog() == DialogResult.OK)
+            {
+                try
+                {
+                    using (FileStream fs = File.OpenRead(ofd.FileName))
+                    {
+                        FRWaitLongProcess frm = new FRWaitLongProcess(this);
+                        frm.Show();
+                        frm.setMes(string.Format("Загрузка файла {0}", ofd.FileName));
+                        Program.result = Result.loadRes(fs);
+                        frm.Close();
+                        PutDataOnCharts();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
+                }
+            }
+        }
     }
 }

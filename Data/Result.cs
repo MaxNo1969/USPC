@@ -12,6 +12,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 
 namespace Data
 {
+    [Serializable]
     public class ListValues
     {
         private List<Ascan> _list = new List<Ascan>();
@@ -50,6 +51,7 @@ namespace Data
             _list.Clear();
         }
     }
+    [Serializable]
     public class ListSensors
     {
         private List<ListValues> _list = new List<ListValues>();
@@ -87,7 +89,7 @@ namespace Data
             _list.Clear();
         }
     }
-
+    [Serializable]
     public class ListZones
     {
         private List<ListSensors> _list = new List<ListSensors>();
@@ -125,7 +127,8 @@ namespace Data
             _list.Clear();
         }
     }
-
+    
+    [Serializable]
     class Result
     {
         public int zone {get;private set;}
@@ -355,7 +358,7 @@ namespace Data
             {
                 
                 BinaryFormatter formatter = new BinaryFormatter();
-                Result result = (Result)formatter.Deserialize(_stream);
+                Result result = (Result)formatter.UnsafeDeserialize(_stream,null);
                 return result;
             }
             catch (Exception ex)

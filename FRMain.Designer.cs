@@ -77,11 +77,11 @@
             this.cbTypeSize = new System.Windows.Forms.ToolStripComboBox();
             this.btnStart = new System.Windows.Forms.ToolStripButton();
             this.lay = new System.Windows.Forms.TableLayoutPanel();
+            this.ResultChart = new System.Windows.Forms.DataVisualization.Charting.Chart();
+            this.cbInterrupt = new System.Windows.Forms.CheckBox();
             this.ThickView = new USPC.UC4SensorView();
             this.LinearView = new USPC.UC4SensorView();
             this.CrossView = new USPC.UC4SensorView();
-            this.ResultChart = new System.Windows.Forms.DataVisualization.Charting.Chart();
-            this.cbInterrupt = new System.Windows.Forms.CheckBox();
             boardStateLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.menu.SuspendLayout();
             this.sb.SuspendLayout();
@@ -202,12 +202,14 @@
             this.loadResultToolStripMenuItem.Name = "loadResultToolStripMenuItem";
             this.loadResultToolStripMenuItem.Size = new System.Drawing.Size(230, 22);
             this.loadResultToolStripMenuItem.Text = "Загрузить результат";
+            this.loadResultToolStripMenuItem.Click += new System.EventHandler(this.loadResultToolStripMenuItem_Click);
             // 
             // saveResultToolStripMenuItem
             // 
             this.saveResultToolStripMenuItem.Name = "saveResultToolStripMenuItem";
             this.saveResultToolStripMenuItem.Size = new System.Drawing.Size(230, 22);
             this.saveResultToolStripMenuItem.Text = "Выгрузить результат";
+            this.saveResultToolStripMenuItem.Click += new System.EventHandler(this.saveResultToolStripMenuItem_Click);
             // 
             // toolStripMenuItem4
             // 
@@ -351,7 +353,7 @@
             this.info.AutoSize = false;
             this.info.BorderSides = System.Windows.Forms.ToolStripStatusLabelBorderSides.Right;
             this.info.Name = "info";
-            this.info.Size = new System.Drawing.Size(783, 19);
+            this.info.Size = new System.Drawing.Size(814, 19);
             this.info.Spring = true;
             this.info.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
@@ -471,30 +473,6 @@
             this.lay.Size = new System.Drawing.Size(1218, 507);
             this.lay.TabIndex = 5;
             // 
-            // ThickView
-            // 
-            this.ThickView.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.ThickView.Location = new System.Drawing.Point(6, 306);
-            this.ThickView.Name = "ThickView";
-            this.ThickView.Size = new System.Drawing.Size(1206, 141);
-            this.ThickView.TabIndex = 2;
-            // 
-            // LinearView
-            // 
-            this.LinearView.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.LinearView.Location = new System.Drawing.Point(6, 156);
-            this.LinearView.Name = "LinearView";
-            this.LinearView.Size = new System.Drawing.Size(1206, 141);
-            this.LinearView.TabIndex = 1;
-            // 
-            // CrossView
-            // 
-            this.CrossView.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.CrossView.Location = new System.Drawing.Point(6, 6);
-            this.CrossView.Name = "CrossView";
-            this.CrossView.Size = new System.Drawing.Size(1206, 141);
-            this.CrossView.TabIndex = 0;
-            // 
             // ResultChart
             // 
             chartArea1.AxisY.LabelStyle.Enabled = false;
@@ -519,6 +497,30 @@
             this.cbInterrupt.Text = "Прерывание на просмотр";
             this.cbInterrupt.UseVisualStyleBackColor = true;
             this.cbInterrupt.CheckedChanged += new System.EventHandler(this.cbInterrupt_CheckedChanged);
+            // 
+            // ThickView
+            // 
+            this.ThickView.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.ThickView.Location = new System.Drawing.Point(6, 306);
+            this.ThickView.Name = "ThickView";
+            this.ThickView.Size = new System.Drawing.Size(1206, 141);
+            this.ThickView.TabIndex = 2;
+            // 
+            // LinearView
+            // 
+            this.LinearView.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.LinearView.Location = new System.Drawing.Point(6, 156);
+            this.LinearView.Name = "LinearView";
+            this.LinearView.Size = new System.Drawing.Size(1206, 141);
+            this.LinearView.TabIndex = 1;
+            // 
+            // CrossView
+            // 
+            this.CrossView.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.CrossView.Location = new System.Drawing.Point(6, 6);
+            this.CrossView.Name = "CrossView";
+            this.CrossView.Size = new System.Drawing.Size(1206, 141);
+            this.CrossView.TabIndex = 0;
             // 
             // FRMain
             // 
