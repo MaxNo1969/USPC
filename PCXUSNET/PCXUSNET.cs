@@ -12,7 +12,7 @@ namespace USPC
         PCXUSNetworkClient netClient;
         Object obj;
 
-        int error = 0;
+        static int error = 0;
         public int Err { get { return error; } }
 
         public PCXUSNET(string _serverAddr)
@@ -36,7 +36,7 @@ namespace USPC
             error = netClient.callNetworkFunction(cmd,out obj);
             if (error == 0)
             {
-                ret = (double)obj;
+                if (obj != null) ret = (double)obj;
             }
             else
             {
@@ -56,7 +56,10 @@ namespace USPC
             string s = string.Format("{0},{1},{2},{3}", "readdouble", _paramName, _board, _channel);
             int ret = client.callNetworkFunction(s, out retval);
             if (ret == 0)
+            {
+                error = 0;
                 return (double)retval;
+            }
             else
             {
                 log.add(LogRecord.LogReason.error, "{0}: {1}: Error: callNetworkFunction(\"{2}\") returns {3}", "FRTestAscaNet", System.Reflection.MethodBase.GetCurrentMethod().Name, s, ret);

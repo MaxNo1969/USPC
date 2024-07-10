@@ -155,7 +155,7 @@ namespace USPC
         #endregion запуск/остановка сбора данных по всем платам
 
         bool controlCycle = false;
-        bool boardsPrepared = false;
+        //bool boardsPrepared = false;
 
         void worker_DoWork(object sender, DoWorkEventArgs e)
         {
@@ -202,12 +202,12 @@ namespace USPC
                             {
                                 //Здесь подготовка модуля к работе
                                 {
-                                    if (!boardsPrepared)
-                                    {
-                                        //Инициализируем платы и загружаем конфигурацию
-                                        Program.prepareBoardsForWork(false);
-                                        boardsPrepared = true;
-                                    }
+                                    //if (!boardsPrepared)
+                                    //{
+                                    //    //Инициализируем платы и загружаем конфигурацию
+                                    //    Program.prepareBoardsForWork(false);
+                                    //    boardsPrepared = true;
+                                    //}
                                     //Program.result.addDeadZoneStart();
                                 }
                                 if (Program.sl["ЦИКЛ"].Val)
@@ -281,7 +281,7 @@ namespace USPC
                             //По окончании сбора, обработки и передачи результата. 
                             Program.sl["РАБОТА"].Val = false;
                             //stopWorkers();
-                            boardsPrepared = false;
+                            //boardsPrepared = false;
                             speedCalced = false;
                             e.Cancel = true;
                             return;

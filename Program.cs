@@ -28,6 +28,7 @@ namespace USPC
         public const int numChannes = 12;
         public const int countZones = 70;
         public static PCXUSNET pcxus = null;
+        public static AscanParams ascanParams = null;
         public static void prepareBoardsForWork(bool _foAcquition)
         {
             if (boardState != BoardState.Opened)
@@ -85,9 +86,16 @@ namespace USPC
             {
                 FormPosSaver.deser();
                 pcxus = new PCXUSNET(AppSettings.s.serverAddr);
+                FRWaitLongProcess frLongProcess = new FRWaitLongProcess(null);
+                frLongProcess.setMes("Открываем платы...");
+                frLongProcess.Show();
+                prepareBoardsForWork(false);
+                ascanParams = new AscanParams();
+                ascanParams.LoadParamsFromBoard();
+                frLongProcess.Close();
                 sl = new DefSignals();
                 frMain = new FRMain();
-                if(ThreadPool.SetMinThreads(1000, 100))
+                if(ThreadPool.SetMinThreads(100, 100))
                     Application.Run(frMain);
             }
             catch (Exception e)

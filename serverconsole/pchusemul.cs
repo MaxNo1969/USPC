@@ -120,6 +120,7 @@ namespace USPC
             try
             {
                 log.add(LogRecord.LogReason.info, string.Format("{0}: {1}: {2}={3}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, _paramName, boardParams[_paramName]));
+                error = 0;
                 return boardParams[_paramName];
             }
             catch (KeyNotFoundException ex)
@@ -146,6 +147,7 @@ namespace USPC
                 return false;
             }
             hPCXUS = 1;
+            error = 0;
             Thread.Sleep(2000);
             return true;
         }
@@ -155,6 +157,7 @@ namespace USPC
         {
             if (!checkHandle()) return false;
             log.add(LogRecord.LogReason.info, "{0}: {1}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name);
+            error = 0;
             hPCXUS = 0;
             return true;
         }
@@ -163,6 +166,7 @@ namespace USPC
         {
             if (!checkHandle()) return false;
             log.add(LogRecord.LogReason.info, "{0}: {1}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name);
+            error = 0;
             Thread.Sleep(2000);
             return true;
         }
@@ -171,6 +175,7 @@ namespace USPC
         {
             if (!checkHandle()) return false;
             log.add(LogRecord.LogReason.info, "{0}: {1}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name);
+            error = 0;
             return true;
         }
 
@@ -180,6 +185,7 @@ namespace USPC
             bufferSize = _bufferSize;
             boardStatus = ACQ_STATUS.ACQ_WAITING_START;
             log.add(LogRecord.LogReason.info, "{0}: {1}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name);
+            error = 0;
             return true;
         }
 
@@ -192,6 +198,7 @@ namespace USPC
             _NumberOfScansRead = numberOfScans;
             if (!checkHandle()) return false;
             log.add(LogRecord.LogReason.info, "{0}: {1}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name);
+            error = 0;
             return true;
         }
 
@@ -201,6 +208,7 @@ namespace USPC
             boardStatus = ACQ_STATUS.ACQ_RUNNING;
             scanCounter = 0;
             log.add(LogRecord.LogReason.info, "{0}: {1}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name);
+            error = 0;
             return true;            
         }
 
@@ -210,6 +218,7 @@ namespace USPC
             boardStatus = ACQ_STATUS.ACQ_FINISHED_WITHOUT_SCANSBACKLOG;
             scanCounter = 0;
             log.add(LogRecord.LogReason.info, "{0}: {1}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name);
+            error = 0;
             return true;
         }
         public bool clear(Int32 _board)
@@ -218,6 +227,7 @@ namespace USPC
             scanCounter = 0;
             bufferSize = 0;
             log.add(LogRecord.LogReason.info, "{0}: {1}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name);
+            error = 0;
             return true;
         }
         uint scanCounter = 0;
@@ -225,6 +235,7 @@ namespace USPC
         {
             if (!checkHandle()) return 0;
             log.add(LogRecord.LogReason.info, "{0}: {1}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name);
+            error = 0;
             return 0;
         }
         const double scopeVelocity = 6400.0;
@@ -265,6 +276,7 @@ namespace USPC
                 }
             }
             //log.add(LogRecord.LogReason.info, "{0}: {1}: {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name,numberOfScans);
+            error = 0;
             return numberOfScans;
         }
 
@@ -291,48 +303,6 @@ namespace USPC
             //log.add(LogRecord.LogReason.info, "{0}: {1}: Board={2} Test={3} Amp={4} tof={5}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, _board,_test,_ascan.G1Amp,_ascan.G1TofWt);
             error = 0;
             return true;
-        }
-
-        public AscanInfo GetAscanInfo(int _board, int _channel)
-        {
-            AscanInfo info = new AscanInfo();
-
-            // Part 1.  This part gets parameters to display Ascan according to: 
-            //          - the scope video mode
-            //          - the scope zero calibration
-            //          To display gates according to:
-            //          - the wave alternance selection (phase)   
-            
-            info.Video = (AscanInfo.VideoMode)getParamValueDouble("scope_video",_board,_channel);
-            info.ZeroVideo = getParamValueDouble("scope_zero", _board, _channel);
-            info.GIFPhase = (AscanInfo.PhaseType)getParamValueDouble("gateIF_phase",_board,_channel);
-            info.G1Phase = (AscanInfo.PhaseType)getParamValueDouble("gate1_phase", _board, _channel);
-            info.G2Phase = (AscanInfo.PhaseType)getParamValueDouble("gate2_phase", _board, _channel);
-
-            // Part 2.  This part gets parameters to convert Ascan data coming from acquisition to Ascan structure ready to display 
-
-            info.gate1_trigger = getParamValueDouble("gate1_trigger", _board, _channel);
-            info.gate1_position = getParamValueDouble("gate1_position", _board, _channel);
-            info.gate1_width = getParamValueDouble("gate1_width", _board, _channel);
-            info.gate1_level = getParamValueDouble("gate1_level", _board, _channel);
-            info.gate1_level_alarm = getParamValueDouble("gate1_nb_alarm_level", _board, _channel);
-
-            info.gate2_trigger = getParamValueDouble("gate2_trigger", _board, _channel);
-            info.gate2_position = getParamValueDouble("gate2_position", _board, _channel);
-            info.gate2_width = getParamValueDouble("gate2_width", _board, _channel);
-            info.gate2_level = getParamValueDouble("gate2_level", _board, _channel);
-            info.gate2_level_alarm = getParamValueDouble("gate2_nb_alarm_level", _board, _channel);
-
-            info.gateIF_trigger = getParamValueDouble("gateIF_trigger", _board, _channel);
-            info.gateIF_position = getParamValueDouble("gateIF_position", _board, _channel);
-            info.gateIF_width = getParamValueDouble("gateIF_width", _board, _channel);
-            info.gateIF_level = getParamValueDouble("gateIF_level", _board, _channel);
-
-            info.scope_trigger = getParamValueDouble("scope_trigger", _board, _channel);
-            info.scope_offset = getParamValueDouble("scope_offset", _board, _channel);
-            info.scope_range = getParamValueDouble("scope_range", _board, _channel);
-            log.add(LogRecord.LogReason.info, "{0}: {1}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name);
-            return info;
         }
     }
 }

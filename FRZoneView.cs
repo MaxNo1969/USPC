@@ -188,11 +188,8 @@ namespace USPC
             Ascan ascan = Program.result.values[zone][sensor][ascanIndex];
             int board = (sensor < 4) ? 0 : 1;
             int realSensor = sensor - board * 4;
-            if (ascanIndex < Program.result.values[zone][sensor].Count && realSensor < 12 && board < 2)
-            {
-                FRShowAscan frm = new FRShowAscan(board, realSensor, ascanIndex, ascan, Program.frMain);
-                frm.Show();
-            }
+            FRShowAscan frm = new FRShowAscan(board, realSensor, ascanIndex, ascan, Program.frMain);
+            frm.Show();
         }
 
         private void chartResult_CursorPositionChanged(object sender, CursorEventArgs e)

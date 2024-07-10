@@ -28,7 +28,7 @@ namespace USPC
             log.onLogChanged += new log.OnLogChanged(WriteLog);
             string logDirectory = "Log";
             DateTime dt = DateTime.Now; 
-            string fileName = logDirectory+"\\"+string.Format("{0}-{1:D4}-{2:D2}-{3:D2}.log","log",dt.Year,dt.Month,dt.Day);
+            string fileName = logDirectory+"\\"+string.Format("{0}-{1:D4}-{2:D2}-{3:D2}-{4:D2}-{5:D2}-{6:D2}}.log","log",dt.Year,dt.Month,dt.Day,dt.Hour,dt.Minute,dt.Second);
             try
             {
                 if (!Directory.Exists(logDirectory)) Directory.CreateDirectory(logDirectory);

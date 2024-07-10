@@ -16,51 +16,16 @@ namespace USPC
     public partial class FRShowAscan : Form
     {
         Ascan ascan;
-        AscanInfo info;
         int board = 0;
         int test = 0;
         int meas = 0;
-
-        public double GetVal(string _paramName)
+        AscanParams pars = Program.ascanParams;
+        double par(string _name)
         {
-            return PCXUSNET.GetVal(board, test, _paramName);
+            return pars.get(board, test, _name);
         }
 
-        public AscanInfo GetAscanInfoNet(int _board, int _channel)
-        {
-            AscanInfo info = new AscanInfo();
-            // Part 1.  This part gets parameters to display Ascan according to: 
-            //          - the scope video mode
-            //          - the scope zero calibration
-            //          To display gates according to:
-            //          - the wave alternance selection (phase)   
-            //PCXUSNetworkClient client = new PCXUSNetworkClient(Program.serverAddr);
-            //Object retval = new Object();
-            ///double val;
-            info.Video = (AscanInfo.VideoMode)GetVal("scope_video");
-            info.ZeroVideo = GetVal("scope_zero");
-            info.GIFPhase = (AscanInfo.PhaseType)GetVal("gateIF_phase");
-            info.G1Phase = (AscanInfo.PhaseType)GetVal("gate1_phase");
-            info.G2Phase = (AscanInfo.PhaseType)GetVal("gate2_phase");
-            // Part 2.  This part gets parameters to convert Ascan data coming from acquisition to Ascan structure ready to display 
-            info.gate1_trigger = GetVal("gate1_trigger");
-            info.gate1_position = GetVal("gate1_position");
-            info.gate1_level = GetVal("gate1_level");
-            info.gate1_level_alarm = GetVal("gate1_nb_alarm_level");
-
-            info.gate2_trigger = GetVal("gate2_trigger");
-            info.gate2_position = GetVal("gate2_position");
-            info.gate2_level = GetVal("gate2_level");
-            info.gate2_level_alarm = GetVal("gate2_nb_alarm_level");
-
-            info.scope_trigger = GetVal("scope_trigger");
-            info.scope_offset = GetVal("scope_offset");
-            info.scope_range = GetVal("scope_range");
-            return info;
-        }
-
-
-        public FRShowAscan(int _board, int _test, int _meas,Ascan _ascan,FRMain _frMain)
+        public FRShowAscan(int _board, int _test, int _meas, Ascan _ascan, FRMain _frMain)
         {
             InitializeComponent();
             board = _board;
@@ -70,17 +35,16 @@ namespace USPC
             label7.Text = test.ToString();
             label9.Text = meas.ToString();
             ascan = _ascan;
-            info = GetAscanInfoNet(board,test);
             gateIF.UpdateGate(Gate.GateNum.GateIF, ascan);
             gate1.UpdateGate(Gate.GateNum.Gate1, ascan);
             gate2.UpdateGate(Gate.GateNum.Gate2, ascan);
 
-            UpdateAscan(ascan, info);
+            UpdateAscan(ascan);
 
         }
 
         // This function draws an Ascan and gates...
-        public void UpdateAscan(Ascan Ascan, AscanInfo Info)
+        public void UpdateAscan(Ascan Ascan)
         {
             bool GatePositivePart;
             bool GateNegativePart;
@@ -89,29 +53,23 @@ namespace USPC
             AscanChart.Series["AscanPlot"].Points.Clear();
 
             // Set scales axis
-            if (Info.Video == AscanInfo.VideoMode.RF)
-                AscanChart.ChartAreas["Default"].AxisY.Minimum = -100.0;
-            else
-                AscanChart.ChartAreas["Default"].AxisY.Minimum = 0.0;
+            AscanChart.ChartAreas["Default"].AxisY.Minimum = 0.0;
 
             AscanChart.ChartAreas["Default"].AxisY.Maximum = 100.0;
             AscanChart.ChartAreas["Default"].AxisY.Interval = 20.0;
 
-            AscanChart.ChartAreas["Default"].AxisX.Minimum = Info.ZeroVideo + Ascan.AscanBegin / 1000.0;
-            //AscanChart.ChartAreas["Default"].AxisX.Maximum = Info.ZeroVideo + Ascan.AscanBegin / 1000.0 + Ascan.TimeEqu / 1000.0;
-            AscanChart.ChartAreas["Default"].AxisX.Maximum = Info.ZeroVideo + Ascan.AscanBegin / 1000.0 + Info.scope_range;
+            AscanChart.ChartAreas["Default"].AxisX.Minimum = par("zero_video") + Ascan.AscanBegin / 1000.0;
+            //AscanChart.ChartAreas["Default"].AxisX.Maximum = par("zero_video") + Ascan.AscanBegin / 1000.0 + Ascan.TimeEqu / 1000.0;
+            AscanChart.ChartAreas["Default"].AxisX.Maximum = par("zero_video") + Ascan.AscanBegin / 1000.0 + par("scope_range");
                       
             // Draw Ascan plot
             if (Ascan.DataSize == 0) return;
 
             //double Step = Ascan.TimeEqu / (Ascan.DataSize - 1)  / 1000.0;
-            double Step = Info.scope_range / (Ascan.DataSize - 1);
+            double Step = par("scope_range") / (Ascan.DataSize - 1);
             for (int iPoint = 0; iPoint < Ascan.DataSize; iPoint++)
             {
-                if (Info.Video == AscanInfo.VideoMode.RF)
-                    AscanChart.Series["AscanPlot"].Points.AddXY(Info.ZeroVideo + Ascan.AscanBegin / 1000.0 + Step * iPoint, Ascan.Points[iPoint] - 127);
-                else
-                    AscanChart.Series["AscanPlot"].Points.AddXY(Info.ZeroVideo + Ascan.AscanBegin / 1000.0 + Step * iPoint, Ascan.Points[iPoint]);
+                AscanChart.Series["AscanPlot"].Points.AddXY(par("zero_video") + Ascan.AscanBegin / 1000.0 + Step * iPoint, Ascan.Points[iPoint]);
             }
 
             // Draw Gate 1 plot
@@ -122,8 +80,8 @@ namespace USPC
             //if ((Ascan.G1InAscan & Ascan.GateInAscan.GateStartInAscan) == Ascan.GateInAscan.GateStartInAscan ||
             //    (Ascan.G1InAscan & Ascan.GateInAscan.GateEndInAscan) == Ascan.GateInAscan.GateEndInAscan)
             {
-                double Begin = Info.ZeroVideo + Ascan.G1Begin / 1000.0;
-                double End = Info.ZeroVideo + Ascan.G1End / 1000.0;
+                double Begin = par("zero_video") + Ascan.G1Begin / 1000.0;
+                double End = par("zero_video") + Ascan.G1End / 1000.0;
                 double Level = Ascan.G1Level;
                 double Level2 = Ascan.G1Level * Math.Pow(10.0, (Ascan.G1AlarmFilterLevel & Ascan.G1_FILTER_LEVEL_MASK) / -20.0);
 
@@ -137,14 +95,14 @@ namespace USPC
                 AscanChart.Series["Gate1Neg2Plot"].Points.AddXY(End, -1 * Level2);
             }
 
-            switch (Info.G1Phase)
+            switch ((AscanInfo.PhaseType)par("gate1_phase"))
             {
                 case AscanInfo.PhaseType.PositiveWave: // Positive wave
                     GatePositivePart = true;
                     GateNegativePart = false;
                     break;
                 case AscanInfo.PhaseType.NegativeWave: // Negative wave
-                    GatePositivePart = (Info.Video >= AscanInfo.VideoMode.PositiveWave);
+                    GatePositivePart = (par("scope_video") >= (double)AscanInfo.VideoMode.PositiveWave);
                     GateNegativePart = true;
                     break;
                 case AscanInfo.PhaseType.FullWave: // Full wave
@@ -174,8 +132,8 @@ namespace USPC
             //if ((Ascan.G2InAscan & Ascan.GateInAscan.GateStartInAscan) == Ascan.GateInAscan.GateStartInAscan ||
             //    (Ascan.G2InAscan & Ascan.GateInAscan.GateEndInAscan) == Ascan.GateInAscan.GateEndInAscan)
             {
-                double Begin = Info.ZeroVideo + Ascan.G2Begin / 1000.0;
-                double End = Info.ZeroVideo + Ascan.G2End / 1000.0;
+                double Begin = par("zero_video") + Ascan.G2Begin / 1000.0;
+                double End = par("zero_video") + Ascan.G2End / 1000.0;
                 double Level = Ascan.G2Level;
                 double Level2 = Ascan.G2Level * Math.Pow(10.0, ((Ascan.G2AlarmFilterLevel & Ascan.G2_FILTER_LEVEL_MASK) >> 4) / -20.0);
 
@@ -189,14 +147,14 @@ namespace USPC
                 AscanChart.Series["Gate2Neg2Plot"].Points.AddXY(End, -1 * Level2);
             }
 
-            switch (Info.G2Phase)
+            switch ((AscanInfo.PhaseType)par("gate2_phase"))
             {
                 case AscanInfo.PhaseType.PositiveWave: // Positive wave
                     GatePositivePart = true;
                     GateNegativePart = false;
                     break;
                 case AscanInfo.PhaseType.NegativeWave: // Negative wave
-                    GatePositivePart = (Info.Video >= AscanInfo.VideoMode.PositiveWave);
+                    GatePositivePart = (par("scope_video") >= (double)AscanInfo.VideoMode.PositiveWave);
                     GateNegativePart = true;
                     break;
                 case AscanInfo.PhaseType.FullWave: // Full wave
@@ -224,8 +182,8 @@ namespace USPC
             //if ((Ascan.GIFInAscan & Ascan.GateIFInAscan.GateStartInAscan) == Ascan.GateIFInAscan.GateStartInAscan ||
             //    (Ascan.GIFInAscan & Ascan.GateIFInAscan.GateEndInAscan) == Ascan.GateIFInAscan.GateEndInAscan)
             {
-                double Begin = Info.ZeroVideo + Ascan.GIFBegin / 1000.0;
-                double End = Info.ZeroVideo + Ascan.GIFEnd / 1000.0;
+                double Begin = par("zero_video") + Ascan.GIFBegin / 1000.0;
+                double End = par("zero_video") + Ascan.GIFEnd / 1000.0;
                 double Level = Ascan.GIFLevel;
 
                 AscanChart.Series["GateIFPosPlot"].Points.AddXY(Begin, Level);
@@ -234,14 +192,14 @@ namespace USPC
                 AscanChart.Series["GateIFNegPlot"].Points.AddXY(End, -1 * Level);
             }
 
-            switch (Info.GIFPhase)
+            switch ((AscanInfo.PhaseType)par("gateIF_phase"))
             {
                 case AscanInfo.PhaseType.PositiveWave: // Positive wave
                     GatePositivePart = true;
                     GateNegativePart = false;
                     break;
                 case AscanInfo.PhaseType.NegativeWave: // Negative wave
-                    GatePositivePart = (Info.Video >= AscanInfo.VideoMode.PositiveWave);
+                    GatePositivePart = (par("scope_video") >= (double)AscanInfo.VideoMode.PositiveWave);
                     GateNegativePart = true;
                     break;
                 case AscanInfo.PhaseType.FullWave: // Full wave
