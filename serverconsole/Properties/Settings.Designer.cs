@@ -46,5 +46,29 @@ namespace serverconsole.Properties {
                 this["ConfigName"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("100")]
+        public int AscanTimeout {
+            get {
+                return ((int)(this["AscanTimeout"]));
+            }
+            set {
+                this["AscanTimeout"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("100")]
+        public int ThreadTimeout {
+            get {
+                return ((int)(this["ThreadTimeout"]));
+            }
+            set {
+                this["ThreadTimeout"] = value;
+            }
+        }
     }
 }

@@ -87,8 +87,8 @@ namespace USPC
                 FormPosSaver.deser();
                 pcxus = new PCXUSNET(AppSettings.s.serverAddr);
                 FRWaitLongProcess frLongProcess = new FRWaitLongProcess(null);
-                frLongProcess.setMes("Открываем платы...");
                 frLongProcess.Show();
+                frLongProcess.setMes("Открываем платы...");
                 prepareBoardsForWork(false);
                 ascanParams = new AscanParams();
                 ascanParams.LoadParamsFromBoard();

@@ -17,6 +17,8 @@ namespace USPC
         const int CMD_SIZE = 512;
         const int bufferSize = 5000000;
         static AcqAscan[] data = new AcqAscan[bufferSize];
+        
+        public AscanReaderThread ascansReaderThread = null;
 
         TCPServer server = null;
         IPCXUS pcxus = null;
@@ -267,6 +269,68 @@ namespace USPC
                                 _stream.Write(BitConverter.GetBytes(ret), 0, sizeof(UInt32));
                                 _stream.Close();
                             }
+                            return;
+                        }
+                    case "start_read_ascans":
+                        {
+                            if (ascansReaderThread == null)
+                            {
+                                ascansReaderThread = new AscanReaderThread(pcxus);
+                                ascansReaderThread.start();
+                            }
+                            ret = 0;
+                            _stream.Write(BitConverter.GetBytes(ret), 0, sizeof(UInt32));
+                            _stream.Close();
+                            return;
+                        }
+                    case "stop_read_ascans":
+                        {
+                            if (ascansReaderThread != null)
+                            {
+                                ascansReaderThread.stop();
+                                ascansReaderThread = null;
+                            }
+                            ret = 0;
+                            _stream.Write(BitConverter.GetBytes(ret), 0, sizeof(UInt32));
+                            _stream.Close();
+                            return;
+                        }
+                    case "get_ascans_count":
+                        {
+                            UInt32 ascansCount = 0;
+                            if (ascansReaderThread != null)
+                            {
+                                ascansCount = (UInt32)ascansReaderThread.ascansCount;
+                            }
+                            ret = 0;
+                            _stream.Write(BitConverter.GetBytes(ascansCount), 0, sizeof(UInt32));
+                            _stream.Close();
+                            return;
+                        }
+                    case "get_ascans":
+                        {
+                            UInt32 count;
+                            if (ascansReaderThread != null && (count=(UInt32)ascansReaderThread.queue.Count)>0)
+                            {
+                                _stream.Write(BitConverter.GetBytes(count), 0, sizeof(UInt32));
+                                Ascan[] ascans = new Ascan[count];
+                                for (int i = 0; i < count; i++)
+                                {
+                                    ascans[i] = ascansReaderThread.queue.Dequeue();
+                                }
+                                IFormatter formatter = new BinaryFormatter();
+                                formatter.Serialize(_stream, ascans);
+                                _stream.Close();
+                                return;
+                            }
+                            else
+                            {
+                                ret = (UInt32)ErrorCode.PCXUS_ACQ_READ_ERROR;
+                                byte[] byteArray = BitConverter.GetBytes(ret);
+                                _stream.Write(byteArray, 0, byteArray.Length);
+                                _stream.Close();
+                            }
+                            _stream.Close();
                             return;
                         }
                     default:

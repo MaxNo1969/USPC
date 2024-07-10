@@ -44,11 +44,11 @@ namespace USPC
                     int numberOfBytesRead = stream.Read(bytesResult, 0, bytesResult.Length);
                     Int32 result = BitConverter.ToInt32(bytesResult, 0);
                     //Ошибка
-                    if (result != 0)
-                    {
-                        ret = null;
-                        return result;
-                    }
+                    //if (result != 0)
+                    //{
+                    //    ret = null;
+                    //    return result;
+                    //}
                     string[] funcAndArgs = _func.Split(new char[] { ',' });
                     switch (funcAndArgs[0])
                     {
@@ -67,6 +67,20 @@ namespace USPC
                                 double retval = BitConverter.ToDouble(doubleBytes, 0);
                                 log.add(LogRecord.LogReason.debug, "{0}: {1}: command = \"{2}\", {3} = {4}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, _func, funcAndArgs[0], retval);
                                 ret = (Object)retval;
+                                return result;
+                            }
+                        case "get_ascans_count":
+                            {
+                                log.add(LogRecord.LogReason.debug, "{0}: {1}: command = \"{2}\", {3} = {4}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, _func, funcAndArgs[0], result);
+                                ret = (Object)result;
+                                return result;
+                            }
+                        case "get_ascans":
+                            {
+                                IFormatter formatter = new BinaryFormatter();
+                                Ascan[] scans = (Ascan[])formatter.Deserialize(stream);
+                                //log.add(LogRecord.LogReason.debug, "{0}: {1}: command = \"{2}\", {3} scans readed", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, _func, scans.Length);
+                                ret = (Object)scans;
                                 return result;
                             }
                         case "readstring":

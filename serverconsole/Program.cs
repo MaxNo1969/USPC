@@ -14,7 +14,7 @@ namespace USPC
         public static string configName = Settings.Default.ConfigName;
         public static Dictionary<string, string> cmdLineArgs = null;
         public static StreamWriter fileStream = null;
-        private static void WriteLog()
+        public static void WriteLog()
         {
             LogRecord logRecord = log.get();
             if (logRecord != null)
@@ -23,12 +23,15 @@ namespace USPC
                 if (fileStream != null) fileStream.WriteLine(string.Format("{0}\t{1}\t{2}", logRecord.dt, logRecord.reason, logRecord.text));
             }
         }
+
+        public static Queue<Ascan> queue = new Queue<Ascan>();
+
         static void Main(string[] args)
         {
             log.onLogChanged += new log.OnLogChanged(WriteLog);
             string logDirectory = "Log";
-            DateTime dt = DateTime.Now; 
-            string fileName = logDirectory+"\\"+string.Format("{0}-{1:D4}-{2:D2}-{3:D2}-{4:D2}-{5:D2}-{6:D2}}.log","log",dt.Year,dt.Month,dt.Day,dt.Hour,dt.Minute,dt.Second);
+            DateTime dt = DateTime.Now;
+            string fileName = logDirectory+"\\"+string.Format("{0}-{1:D4}-{2:D2}-{3:D2}-{4:D2}-{5:D2}-{6:D2}.log","log",dt.Year,dt.Month,dt.Day,dt.Hour,dt.Minute,dt.Second);
             try
             {
                 if (!Directory.Exists(logDirectory)) Directory.CreateDirectory(logDirectory);
@@ -50,10 +53,11 @@ namespace USPC
             log.add(LogRecord.LogReason.info, "{0}: {1}: Директория с файлами настроек: {2}", "Program", System.Reflection.MethodBase.GetCurrentMethod().Name, uspcDir);
             log.add(LogRecord.LogReason.info, "{0}: {1}: Файл настроек: {2}", "Program", System.Reflection.MethodBase.GetCurrentMethod().Name, configName);
             log.add(LogRecord.LogReason.info, "Program started...");
+            PCXUSNetworkServer server = null;
             try
             {
                 //Запускаем сервер
-                PCXUSNetworkServer server = new PCXUSNetworkServer(pcxus);
+                server = new PCXUSNetworkServer(pcxus);
                 server.start();
                 log.add(LogRecord.LogReason.info, "{0}: {1}: {2}", "Program", System.Reflection.MethodBase.GetCurrentMethod().Name, "server started");
                 while (!Console.KeyAvailable) ;
@@ -64,6 +68,7 @@ namespace USPC
             }
             finally
             {
+                if(server!=null)server.stop();              
                 log.onLogChanged = null;
                 if (fileStream != null)
                 {

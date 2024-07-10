@@ -8,5 +8,11 @@
     <Setting Name="ConfigName" Type="System.String" Scope="User">
       <Value Profile="(Default)">default.us</Value>
     </Setting>
+    <Setting Name="AscanTimeout" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">100</Value>
+    </Setting>
+    <Setting Name="ThreadTimeout" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">100</Value>
+    </Setting>
   </Settings>
 </SettingsFile>
