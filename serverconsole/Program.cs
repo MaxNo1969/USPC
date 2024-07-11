@@ -52,6 +52,7 @@ namespace USPC
                 pcxus = new PCXUS();
             log.add(LogRecord.LogReason.info, "{0}: {1}: Директория с файлами настроек: {2}", "Program", System.Reflection.MethodBase.GetCurrentMethod().Name, uspcDir);
             log.add(LogRecord.LogReason.info, "{0}: {1}: Файл настроек: {2}", "Program", System.Reflection.MethodBase.GetCurrentMethod().Name, configName);
+            log.add(LogRecord.LogReason.info, "{0}: {1}:  AscanTimeout={2},ThreadTimeout={3}", "Program", System.Reflection.MethodBase.GetCurrentMethod().Name,Settings.Default.AscanTimeout,Settings.Default.ThreadTimeout);
             log.add(LogRecord.LogReason.info, "Program started...");
             PCXUSNetworkServer server = null;
             try
