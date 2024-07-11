@@ -176,6 +176,9 @@
     <Compile Include="UC4SensorView.Designer.cs">
       <DependentUpon>UC4SensorView.cs</DependentUpon>
     </Compile>
+    <Compile Include="Workers\AscansPacketReader.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Workers\ZoneWorker.cs">
       <SubType>Component</SubType>
     </Compile>

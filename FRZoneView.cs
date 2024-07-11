@@ -133,7 +133,7 @@ namespace USPC
             {
                 case Keys.Right:
                     {
-                        if (zone < Program.result.zone - 1)
+                        if (zone < Program.result.zone)
                             zone++;
                         else
                             zone = 0;
@@ -144,7 +144,7 @@ namespace USPC
                         if (zone > 0)
                             zone--;
                         else
-                            zone = Program.result.zone - 1;
+                            zone = Program.result.zone;
                         break;
                     }
                 case Keys.Up:
@@ -188,7 +188,7 @@ namespace USPC
             Ascan ascan = Program.result.values[zone][sensor][ascanIndex];
             int board = (sensor < 4) ? 0 : 1;
             int realSensor = sensor - board * 4;
-            FRShowAscan frm = new FRShowAscan(board, realSensor, ascanIndex, ascan, Program.frMain);
+            FRShowAscan frm = new FRShowAscan(board, zone, realSensor, ascanIndex);
             frm.Show();
         }
 

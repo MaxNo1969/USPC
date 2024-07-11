@@ -49,7 +49,7 @@ namespace serverconsole.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("100")]
+        [global::System.Configuration.DefaultSettingValueAttribute("20")]
         public int AscanTimeout {
             get {
                 return ((int)(this["AscanTimeout"]));
@@ -61,7 +61,7 @@ namespace serverconsole.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("100")]
+        [global::System.Configuration.DefaultSettingValueAttribute("5")]
         public int ThreadTimeout {
             get {
                 return ((int)(this["ThreadTimeout"]));

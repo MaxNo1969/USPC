@@ -16,6 +16,7 @@ namespace USPC
     public partial class FRShowAscan : Form
     {
         Ascan ascan;
+        int zone = 0;
         int board = 0;
         int test = 0;
         int meas = 0;
@@ -25,16 +26,18 @@ namespace USPC
             return pars.get(board, test, _name);
         }
 
-        public FRShowAscan(int _board, int _test, int _meas, Ascan _ascan, FRMain _frMain)
+        public FRShowAscan(int _board, int _zone,int _test, int _meas)
         {
             InitializeComponent();
+            Owner = Program.frMain;
+            zone = _zone;
             board = _board;
             test = _test;
             meas = _meas;
             label6.Text = board.ToString();
             label7.Text = test.ToString();
             label9.Text = meas.ToString();
-            ascan = _ascan;
+            ascan = Program.result.values[zone][test][meas];
             gateIF.UpdateGate(Gate.GateNum.GateIF, ascan);
             gate1.UpdateGate(Gate.GateNum.Gate1, ascan);
             gate2.UpdateGate(Gate.GateNum.Gate2, ascan);
@@ -234,5 +237,44 @@ namespace USPC
         {
             AscanChart.SetBounds(0, 58, ClientSize.Width - 150, ClientSize.Height - 58);
         }
+
+        protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
+        {
+            switch (keyData)
+            {
+                case Keys.Right:
+                    {
+                        if (meas < Program.result.values[zone][test].Count - 1)
+                            meas++;
+                        else
+                            meas = 0;
+                        break;
+                    }
+                case Keys.Left:
+                    {
+                        if (meas > 0)
+                            meas--;
+                        else
+                            meas = Program.result.values[zone][test].Count;
+                        break;
+                    }
+                case Keys.Escape:
+                    {
+                        Close();
+                        return true;
+                    }
+                default:
+                    return base.ProcessCmdKey(ref msg, keyData);
+            }
+            label9.Text = meas.ToString();
+            label9.Refresh();
+            ascan = Program.result.values[zone][test][meas];
+            gateIF.UpdateGate(Gate.GateNum.GateIF, ascan);
+            gate1.UpdateGate(Gate.GateNum.Gate1, ascan);
+            gate2.UpdateGate(Gate.GateNum.Gate2, ascan);
+            UpdateAscan(ascan);
+            return true;
+        }
+
     }
 }

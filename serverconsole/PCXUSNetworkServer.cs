@@ -76,7 +76,7 @@ namespace USPC
                 strReadedFromStream = strReadedFromStream.Trim(new char[] {'\0'});
                 string[] cmdAndParams = strReadedFromStream.Split(new char[] { ',' });
                 cmdAndParams[0] = cmdAndParams[0].ToLower();
-                if (cmdAndParams[0] != "ascan")
+                if (cmdAndParams[0] != "ascan" && cmdAndParams[0]!="get_ascans")
                 {
                     if (cmdAndParams.Length < 1)
                     {

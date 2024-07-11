@@ -208,7 +208,7 @@ namespace Data
                                     zoneSensorResults[_zone][sensReal] = val;
                             else if (board == 0)
                             {
-                                if (zoneSensorResults[_zone][sensReal] != Result.deadZone && val < zoneSensorResults[_zone][sensReal])
+                                if (zoneSensorResults[_zone][sensReal] != Result.deadZone && val < zoneSensorResults[_zone][sensReal] && val != 0)
                                     zoneSensorResults[_zone][sensReal] = val;
                             }
                             else

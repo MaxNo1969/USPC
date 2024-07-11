@@ -18,8 +18,10 @@ namespace USPC
 {
     class TubeWorker:BackgroundWorker
     {
-        public AscansReader ascansReader = null;
-        public ZoneWorker zbWorker = null;
+        //public AscansReader ascansReader = null;
+        public AscansPacketReader packetReader = new AscansPacketReader();
+        //Воркер по добавлению зон
+        public ZoneWorker zbWorker = new ZoneWorker();
         DefSignals sl = Program.sl;
         bool speedCalced = false;
         Result result = Program.result;
@@ -32,9 +34,6 @@ namespace USPC
             DoWork += new DoWorkEventHandler(worker_DoWork);
             ProgressChanged += new ProgressChangedEventHandler(worker_ProgressChanged);
             RunWorkerCompleted += new RunWorkerCompletedEventHandler(worker_RunWorkerCompleted);
-            //Воркер по добавлению зон
-            zbWorker = new ZoneWorker();
-            //zoneThread = new ZoneThread();
             speedCalced = false;
         }
 
@@ -137,11 +136,7 @@ namespace USPC
         void stopWorkers()
         {
             log.add(LogRecord.LogReason.debug, "{0}: {1}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name);
-            if (ascansReader != null)
-            {
-                ascansReader.stop();
-                ascansReader = null;
-            }
+            packetReader.CancelAsync();
             zbWorker.CancelAsync();
         }
 
@@ -149,8 +144,7 @@ namespace USPC
         {
             log.add(LogRecord.LogReason.debug, "{0}: {1}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name);
             zbWorker.RunWorkerAsync();
-            ascansReader = new AscansReader(AppSettings.s.BoardReadTimeout);  
-            ascansReader.start();
+            packetReader.RunWorkerAsync();
         }
         #endregion запуск/остановка сбора данных по всем платам
 
