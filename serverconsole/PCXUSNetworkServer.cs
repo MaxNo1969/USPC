@@ -312,6 +312,7 @@ namespace USPC
                             UInt32 count;
                             if (ascansReaderThread != null && (count=(UInt32)ascansReaderThread.queue.Count)>0)
                             {
+                                log.add(LogRecord.LogReason.debug, "{0}: {1}: {2} передаём {3} ascans", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, "get_ascans", count);
                                 _stream.Write(BitConverter.GetBytes(count), 0, sizeof(UInt32));
                                 Ascan[] ascans = new Ascan[count];
                                 for (int i = 0; i < count; i++)

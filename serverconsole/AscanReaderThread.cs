@@ -63,18 +63,23 @@ namespace USPC
                                 log.add(LogRecord.LogReason.error, "{0}: {1}: Error: {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message);
                                 queue.Clear();
                             }
+                            catch (ArgumentException ex)
+                            {
+                                log.add(LogRecord.LogReason.error, "{0}: {1}: Error: {2}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ex.Message);
+                                queue.Clear();
+                            }
 
                             ascansCount++;
                             if(ascansCount%1000==0)
-                                log.add(LogRecord.LogReason.info, "{0}: {1}: Считано {2} сканов", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ascansCount);
+                                log.add(LogRecord.LogReason.info, "{0}: {1}: Считано {2} сканов, {3}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, ascansCount,queue.Count);
                         }
                         else
                         {
                             log.add(LogRecord.LogReason.warning, "{0}: {1}: Не удалось прочитать ascan board={2} sensor={3}", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, board, sensor);
-                        }
-                        Thread.Sleep(threadTimeout);
+                        }                        
                     }
                 }
+                Thread.Sleep(threadTimeout);
             }
             //log.add(LogRecord.LogReason.debug, "{0}: {1}: {2} Вышли из ReadAscans", GetType().Name, System.Reflection.MethodBase.GetCurrentMethod().Name, thread.Name);
             return;

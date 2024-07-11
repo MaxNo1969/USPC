@@ -82,6 +82,7 @@ namespace EMUL
             //Снимаем все сигналы 
             //sl.ClearAllOutputSignals();
             //sl.ClearAllInputSignals();
+            timerStrob.Dispose();
             pbTube.Value = 0;
             btnStart.Enabled = true;
             btnStop.Enabled = false;
@@ -242,11 +243,17 @@ namespace EMUL
                         timerStrob.Dispose();
                         worker.ReportProgress(101, "Снимаем сигнал \"КОНТРОЛЬ\"");
                         sl.set(sl["КОНТРОЛЬ"], false);
-                        while (!sl.get("РЕЗУЛЬТАТ")) Application.DoEvents();
+                        if(sl.get("РЕЗУЛЬТАТ"))
+                            worker.ReportProgress(101, "ГОДНО!");
+                        else
+                            worker.ReportProgress(101, "БРАК!");
+                        while (!sl.get("СТРБРЕЗ")) Application.DoEvents();
                         worker.ReportProgress(101, "Получили результат...");
                         sl.set(sl["БАЗА"], false);
                         worker.ReportProgress(101, "Снимаем сигнал \"БАЗА\"...");
                         worker.ReportProgress(101, "Закончено...");
+                        worker.ReportProgress(101, "Снимаем сигнал \"ЦИКЛ\"");
+                        sl.set(sl["ЦИКЛ"], false);
                         break;
                     }
                     else
@@ -261,8 +268,6 @@ namespace EMUL
                     }
                     Thread.Sleep(500);
                 }
-                worker.ReportProgress(101, "Снимаем сигнал \"ЦИКЛ\"");
-                sl.set(sl["ЦИКЛ"], false);
             }
         }
     }
